@@ -1,0 +1,314 @@
+import React, { useState } from "react";
+import { Col, Row, Tabs, Tab, Card } from "react-bootstrap";
+import { useSearchParams } from "react-router-dom";
+import Breadcrumb from "src/components/common/breadcrumb";
+import PtSwitch from "src/components/features/elements/switch";
+import { toast } from "react-toastify";
+import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
+import VendorPlanSubscriptions from "./VendorPlanSubscriptions";
+import EditPlan from "./Popups/EditPlan";
+import _ from "lodash";
+import { VendorPlan } from "./VendorPlans";
+
+const vendorPlan: VendorPlan = {
+  planName: "Executive",
+  description: "Best fit for mid-level vendors to expand operations",
+  price: 49,
+  currency: "AED",
+  frequency: "monthly",
+  status: true,
+  features: [
+    "Access to vendor dashboard",
+    "Up to 200 product listings",
+    "Advanced reporting tools",
+    "Priority support",
+    "Bulk upload option",
+  ],
+};
+
+const VendorPlanDetailPage = () => {
+  //IMPORTS
+  const [searchParams] = useSearchParams();
+  const planId: any = searchParams.get("_id");
+
+  //STATE
+  const [isEditOpen, setEditOpen] = useState<any>(null);
+  const [isStatusOpen, setStatusOpen] = useState<boolean>(false);
+
+  //DATA
+  // const { data: plan } = useGetPosterPlanById(planId, !!planId);
+  // const { data: analytics } = useGetSubscriptionAnalytics(
+  //   { orderType: ORDER_TYPES.POSTER_PLAN, planId },
+  //   !!planId
+  // );
+
+  //MUTATION
+  // const { mutateAsync: updatePlan } = useUpdatePosterPlanById();
+
+  //HANDLERS
+  // const handleChangeStatus = async () => {
+  //   try {
+  //     const res = await updatePlan({
+  //       id: plan?._id,
+  //       isActive: !plan?.isActive,
+  //     });
+  //     toast(res?.data?.message, {
+  //       containerId: "default",
+  //       className: "no-icon notification-success",
+  //     });
+  //     setStatusOpen(false);
+  //   } catch (error) {
+  //     toast(_.capitalize(errorMsg(error).toLowerCase()), {
+  //       containerId: "default",
+  //       className: "no-icon notification-danger",
+  //     });
+  //   }
+  // };
+
+  return (
+    <>
+      <Breadcrumb
+        current={`${_.capitalize(vendorPlan?.planName.toLowerCase())} Plan`}
+        paths={[
+          {
+            name: "Dashboard",
+            url: "/dashboard",
+          },
+          {
+            name: "Plans",
+            url: "/subscriptions/plans",
+          },
+          {
+            name: `${_.capitalize(
+              vendorPlan?.planName.toLowerCase()
+            )} Vendor Plan`,
+            url: `/subscriptions/vendor-plans/detail?_id=${planId}`,
+          },
+        ]}
+      />
+      <div>
+        <Row className="pt-0">
+          <Col lg={3} className="py-3">
+            <Card className={`card-modern   `}>
+              <Card.Body className="py-4 box text-dark">
+                <Row className="align-items-center justify-content-between">
+                  <Col
+                    // sm={4}
+                    className="col-12"
+                  >
+                    <h3
+                      className="text-4-1 my-0 "
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      Total Subscriptions
+                    </h3>
+                    <strong className="text-6 ">
+                      {/* {formatNumberShort(analytics?.totalOrders || 0)} */}0
+                    </strong>
+                  </Col>
+                  <Col
+                    sm={4}
+                    className="text-center text-sm-right ml-auto  mt-4 mt-sm-0 d-flex justify-content-end"
+                  >
+                    <i className="bx bx-group icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col lg={3} className="py-3">
+            <Card className={`card-modern  `}>
+              <Card.Body className="py-4 box text-dark">
+                <Row className="align-items-center justify-content-between">
+                  <Col
+                    // sm={4}
+                    className="col-12"
+                  >
+                    <h3
+                      className="text-4-1 my-0 "
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      Active Subscriptions
+                    </h3>
+                    <strong className="text-6 ">
+                      {/* {formatNumberShort(analytics?.activeOrders || 0)} */}0
+                    </strong>
+                  </Col>
+
+                  <Col
+                    sm={4}
+                    className="text-center text-sm-right ml-auto  mt-4 mt-sm-0 d-flex justify-content-end"
+                  >
+                    <i className="bx bx-hourglass icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col lg={3} className="py-3">
+            <Card className={`card-modern  `}>
+              <Card.Body className="py-4 box text-dark">
+                <Row className="align-items-center justify-content-between">
+                  <Col
+                    // sm={4}
+                    className="col-12"
+                  >
+                    <h3
+                      className="text-4-1 my-0 "
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      Expired Subscriptions
+                    </h3>
+                    <strong className="text-6 ">
+                      {/* {formatNumberShort(analytics?.expiredOrders || 0)} */}
+                      0
+                    </strong>
+                  </Col>
+
+                  <Col
+                    sm={4}
+                    className="text-center text-sm-right ml-auto  mt-4 mt-sm-0 d-flex justify-content-end"
+                  >
+                    <i className="bx bx-hourglass icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col lg={3} className="py-3">
+            <Card className={`card-modern `}>
+              <Card.Body className="py-4 box text-dark">
+                <Row className="align-items-center justify-content-between">
+                  <Col
+                    // sm={4}
+                    className="col-12"
+                  >
+                    <h3
+                      className="text-4-1 my-0"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      Total Revenue
+                    </h3>
+                    <strong className="text-6 ">
+                      {/* ${formatNumberShort(analytics?.totalRevenue || 0.0)} */}
+                      0
+                    </strong>
+                  </Col>
+                  <Col
+                    sm={4}
+                    className="text-center text-sm-right ml-auto mt-4 mt-sm-0 d-flex justify-content-end"
+                  >
+                    <i className="bx bx-dollar icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={12} className="py-3">
+            <Card className="card-modern">
+              <Card.Header className="d-flex align-items-center justify-content-between">
+                <Card.Title>Plan Details</Card.Title>
+                <div
+                  className="action_btn "
+                  onClick={() => {
+                    setEditOpen(planId);
+                  }}
+                >
+                  <i className="fas fa-pencil-alt"></i>
+                </div>
+              </Card.Header>
+              <Card.Body>
+                <Row>
+                  <Col>
+                    <div>
+                      <h6>Name</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {_.capitalize(vendorPlan?.planName.toLowerCase())}
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Price</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        $ {vendorPlan?.price}
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Description</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {vendorPlan?.description}
+                      </h5>
+                    </div>
+                  </Col>
+                  <Col>
+                    <div>
+                      <h6 className="mb-0">Status</h6>
+                      <div
+                        className="d-flex align-items-center"
+                        onClick={() => {
+                          setStatusOpen(true);
+                        }}
+                      >
+                        <PtSwitch
+                          className="mr-2"
+                          on={vendorPlan?.status}
+                          size="sm"
+                          variant="success"
+                        />
+                        <h5 className=" text-dark font-weight-500 ">
+                          {vendorPlan?.status ? "Active" : "Inactive"}
+                        </h5>
+                      </div>
+                    </div>
+                    <div>
+                      <h6>Features</h6>
+                      <div className=" list-unstyled">
+                        {vendorPlan?.features &&
+                          vendorPlan?.features?.length > 0 &&
+                          vendorPlan?.features?.map((feature: any) => (
+                            <li className="d-flex align-items-center m-0 p-0">
+                              <i className="bx bx-check bg-gray p-1 rounded-circle mr-2"></i>
+                              <h5 className="my-1 text-dark font-weight-500 ">
+                                {feature}
+                              </h5>
+                            </li>
+                          ))}
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col lg={12} className="py-3">
+            <Card className="card-modern">
+              <Card.Body>
+                <VendorPlanSubscriptions planId={planId} header={true} />
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+      <ConfirmationPopup
+        submit={() =>
+          toast("Status change ", {
+            containerId: "default",
+            className: "no-icon notification-success",
+          })
+        }
+        // submit={() => handleChangeStatus()}
+        isOpen={isStatusOpen}
+        toggle={() => setStatusOpen(!isStatusOpen)}
+        text={"Are you sure that you want to change the status of this Plan?"}
+      />
+      <EditPlan
+        id={isEditOpen}
+        isOpen={isEditOpen !== null}
+        toggle={() => setEditOpen(null)}
+      />
+    </>
+  );
+};
+
+export default VendorPlanDetailPage;

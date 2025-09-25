@@ -1,0 +1,12 @@
+.log-viewer {
+    font-family: monospace;
+    font-size: 0.85rem;
+
+    i, span {
+        vertical-align: middle;
+    }
+
+    td:first-child {
+        vertical-align: middle;
+    }
+}

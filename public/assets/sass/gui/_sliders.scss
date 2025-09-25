@@ -1,0 +1,36 @@
+.slider-range {
+    position: relative;
+    height: 6px;
+    background: #ebebeb;
+    border-radius: 3px;
+}
+
+.slider-track {
+    position: absolute;
+    height: 100%;
+    background-color: #999;
+    border-radius: 3px;
+}
+
+.slider-thumb {
+    width: 20px;
+    height: 20px;
+    border: 6px solid #fff;
+    border-radius: 50%;
+    background-color: #999;
+    box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.4);
+    outline: none;
+
+    &:hover {
+        box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.3);
+    }
+}
+
+@each $state in $states {
+    .slider-range.slider-range-#{nth($state, 1)} {
+        .slider-track,
+        .slider-thumb {
+            background-color: #{nth($state, 2)};
+        }
+    }
+}

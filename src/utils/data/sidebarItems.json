@@ -1,0 +1,97 @@
+[
+  {
+    "name": "Dashboard",
+    "icon": "LuLayoutDashboard",
+    "url": "/dashboard"
+  },
+  {
+    "name": "Products",
+    "icon": "PiTireBold",
+    "url": "/products"
+  },
+  {
+    "name": "Brands",
+    "icon": "TbBrand4Chan",
+    "url": "/brands"
+  },
+  {
+    "name": "Attributes",
+    "icon": "TbBrand4Chan",
+    "url": "/attributes"
+  },
+  {
+    "name": "Vendors",
+    "icon": "bx bx-group",
+    "url": "/vendors"
+  },
+  {
+    "name": "Retailers",
+    "icon": "bx bx-group",
+    "url": "/retailers"
+  },
+  {
+    "name": "Sales Executives",
+    "icon": "bx bx-group",
+    "url": "/sales-executives"
+  },
+
+  {
+    "name": "Customer Supports",
+    "icon": "bx bx-help-circle",
+    "url": "#",
+    "children": [
+      {
+        "name": "Vendors",
+        "url": "/customer-supports/vendors"
+      },
+      {
+        "name": "Retailers",
+        "url": "/customer-supports/retailers"
+      }
+    ]
+  },
+  {
+    "name": "Subscriptions",
+    "icon": "bx bx-package",
+    "url": "#",
+    "children": [
+      {
+        "name": "Vendor Plans",
+        "url": "/subscriptions/vendor-plans"
+      },
+      {
+        "name": "Retailer Plans",
+        "url": "/subscriptions/retailer-plans"
+      }
+    ]
+  },
+  {
+    "name": "CMS",
+    "icon": "bx bx-package",
+    "url": "#",
+    "children": [
+      {
+        "name": "Offers",
+        "url": "/cms/offers"
+      },
+      {
+        "name": "Blogs",
+        "url": "#",
+        "children": [
+          {
+            "name": "All Blogs",
+            "url": "/cms/blogs"
+          },
+          {
+            "name": "Categories",
+            "url": "/cms/blogs/categories"
+          },
+          {
+            "name": "Tags",
+            "url": "/cms/blogs/tags"
+          }
+        ]
+      }
+    ]
+  }
+]

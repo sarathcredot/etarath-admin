@@ -1,0 +1,61 @@
+/* File Upload */
+.fileupload {
+	.uneditable-input {
+		height: 37px;
+		display: inline-block;
+		margin-bottom: 0px;
+		vertical-align: middle;
+		cursor: text;
+		background: #fff;
+		border: 1px solid #ccc;
+		padding: 6px 10px;
+		width: 200px;
+		overflow: hidden;
+		border-radius: 2px;
+
+		.fa, .fab, .fal, .far, .fas {
+			position: absolute;
+			top: 12px;
+			left: 26px;
+		}
+
+		.fileupload-preview {
+			display: inline-block;
+			float: left;
+			overflow: hidden;
+			padding: 0 0 0 17px;
+			text-overflow: ellipsis;
+			width: 100%;
+		}
+	}
+
+	.btn {
+		border-radius: 0;
+	}
+
+	.btn-file {
+		position: relative;
+		overflow: hidden;
+
+		> input {
+			position: absolute;
+			top: 0;
+			right: 0;
+			margin: 0;
+			opacity: 0;
+			filter: alpha(opacity=0);
+			transform: translate(-300px, 0) scale(4);
+			font-size: 23px;
+			direction: ltr;
+			cursor: pointer;
+		}
+	}
+}
+
+@media only screen and (max-width: 479px) {
+	.fileupload {
+		.uneditable-input {
+			width: 170px;
+		}
+	}
+}

@@ -1,0 +1,43 @@
+@media (min-width: 1024px) {
+    .chart-with-sidebar {
+        .apexcharts-legend {
+            border-left: 1px solid #dadada;
+            border-top: 1px solid #dadada;
+            border-right: 1px solid #dadada;
+            bottom: auto !important;
+            padding: 0 !important;
+        }
+
+        .apexcharts-legend-series {
+            position: relative;
+        }
+
+        .apexcharts-legend-text {
+            display: block;
+            padding: 20px 10px;
+            color: #808697;
+            border-bottom: 1px solid #dadada;
+            transition: all ease 0.5s;
+
+            &:hover {
+                padding-left: 20px;
+                color: $color-primary;
+            }
+
+            strong {
+                display: block;
+                color: #33353F;
+                font-size: 1.2em;
+            }
+        }
+
+        .apexcharts-legend-marker {
+            position: absolute;
+            height: auto !important;
+            margin-right: 0;
+            bottom: 0;
+            left: auto !important;
+            right: 0;
+        }
+    }
+}

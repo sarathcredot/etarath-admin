@@ -1,0 +1,13 @@
+.lazy-load-image-background {
+    display: block;
+    position: relative;
+    width: 100%;
+
+    img, span {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+    }
+}
