@@ -14,7 +14,6 @@ import { toast } from "react-toastify";
 import Pagination from "src/components/common/Pagination";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 import Loader from "src/components/features/loader";
-import { Tournament } from "src/types/tournament.types";
 import { generateFilePath } from "src/services/url.service";
 import { formatDate } from "src/utils/formats";
 import PtSwitch from "src/components/features/elements/switch";
