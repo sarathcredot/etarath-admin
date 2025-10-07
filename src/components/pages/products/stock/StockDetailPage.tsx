@@ -197,38 +197,61 @@ const StockDetailPage = () => {
                       </h5>
                     </div>
                   </Col>
+                  <Col lg={3}>
+                    <div>
+                      <h6>Available Stock</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {stock?.stock}
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Price </h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {stock?.price} AED
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Warranty Period </h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {stock?.warrantyPeriod} Year
+                      </h5>
+                    </div>
+                  </Col>
                   <Col md={3} xl={2}>
                     <div>
                       <h6>Verification</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                        {stock?.requestedBy?.isActive}
-                      </h5>
+                      <span
+                        className={`ecommerce-status ${
+                          stock?.isVerified === "approved"
+                            ? "completed"
+                            : stock?.isVerified === "rejected"
+                            ? "failed"
+                            : "on-hold"
+                        } text-dark font-weight-500`}
+                      >
+                        {stock?.isVerified}
+                      </span>
                     </div>
+
                     <div>
-                      <h6>Year</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                        {product?.yearOfManufacturer}
-                      </h5>
-                    </div>
-                    <div>
-                      <h6 className="mb-0">Product Status</h6>
+                      <h6 className="mb-0">Status</h6>
                       <div
                         className="d-flex align-items-center"
                         onClick={() => {
                           handlestatusChange(
-                            product ? product?._id : "",
-                            !product?.isSuspend
+                            stock ? stock?._id : "",
+                            !stock?.isSuspend
                           );
                         }}
                       >
                         <PtSwitch
                           className="mr-2"
-                          on={!product?.isSuspend}
+                          on={!stock?.isSuspend}
                           size="sm"
                           variant="success"
                         />
                         <h5 className=" text-dark font-weight-500 ">
-                          {!product?.isSuspend ? "Active" : "Suspended"}
+                          {!stock?.isSuspend ? "Active" : "Suspended"}
                         </h5>
                       </div>
                     </div>
@@ -236,7 +259,6 @@ const StockDetailPage = () => {
                 </Row>
                 <Card.Header className="d-flex align-items-center justify-content-between m-0 p-0 mt-5 mb-4">
                   <Card.Title>Product Details</Card.Title>
-                 
                 </Card.Header>
                 <Row>
                   <Col md={6} xl={2}>
@@ -252,12 +274,12 @@ const StockDetailPage = () => {
                         {product?.brand?.name}
                       </h5>
                     </div>
-                    <div>
+                    {/* <div>
                       <h6>Category</h6>
                       <h5 className=" text-dark font-weight-500 ">
                         {product?.category}
                       </h5>
-                    </div>
+                    </div> */}
                   </Col>
                   <Col md={3} xl={2}>
                     <div>
@@ -292,7 +314,7 @@ const StockDetailPage = () => {
                         {product?.size}
                       </h5>
                     </div>
-                    <div>
+                    {/* <div>
                       <h6 className="mb-0">Status</h6>
                       <div
                         className="d-flex align-items-center"
@@ -313,7 +335,7 @@ const StockDetailPage = () => {
                           {!product?.isSuspend ? "Active" : "Blocked"}
                         </h5>
                       </div>
-                    </div>
+                    </div> */}
                   </Col>
                   <Col xl={6} className="px-3 mb-n3 ">
                     <div>

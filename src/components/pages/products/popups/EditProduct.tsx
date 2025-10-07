@@ -57,7 +57,7 @@ const EditProduct = ({ isOpen, toggle, productId }: Props) => {
     initialValues: {
       productName: "",
       brand: "",
-      category: "",
+      // category: "",
       origin: "",
       yearOfManufacturer: "",
       width: "",
@@ -232,108 +232,6 @@ const EditProduct = ({ isOpen, toggle, productId }: Props) => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-
-              <Col lg={6} className=" px-2 py-1 ">
-                <Form.Group className="align-items-center">
-                  <Form.Label className="col-form-label">Brand</Form.Label>
-                  <Form.Control
-                    style={{ color: "#000" }}
-                    //   size="md"
-                    as="select"
-                    name="brand"
-                    value={formik.values.brand}
-                    onChange={formik.handleChange}
-                    isInvalid={!!formik.errors.brand && formik.touched.brand}
-                  >
-                    <option disabled selected hidden value="">
-                      Select Brand
-                    </option>
-                    {brands?.result?.map((item: any, index: number) => (
-                      <option key={index} value={item?._id}>
-                        {item?.name}
-                      </option>
-                    ))}
-                  </Form.Control>
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.brand}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-              <Col lg={6} className="px-4 py-1 ">
-                <Form.Group as={Row} className="align-items-center">
-                  <Form.Label className="col-form-label">Category</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter category"
-                    name="category"
-                    value={formik.values.category}
-                    onChange={formik.handleChange}
-                    isInvalid={
-                      !!formik.errors.category && formik.touched.category
-                    }
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.category}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-              <Col lg={6} className=" px-2 py-1 ">
-                <Form.Group className="align-items-center">
-                  <Form.Label className="col-form-label">Origin</Form.Label>
-                  <Form.Control
-                    style={{ color: "#000" }}
-                    //   size="md"
-                    as="select"
-                    name="origin"
-                    value={formik.values.origin}
-                    onChange={formik.handleChange}
-                    isInvalid={!!formik.errors.origin && formik.touched.origin}
-                  >
-                    <option disabled selected hidden value="">
-                      Select Origin
-                    </option>
-                    {attributes?.origin?.map((item: string, index: number) => (
-                      <option key={index} value={item}>
-                        {item}
-                      </option>
-                    ))}
-                  </Form.Control>
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.origin}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-              <Col lg={6} className=" px-2 py-1 ">
-                <Form.Group className="align-items-center">
-                  <Form.Label className="col-form-label">Year</Form.Label>
-                  <Form.Control
-                    style={{ color: "#000" }}
-                    //   size="md"
-                    as="select"
-                    name="yearOfManufacturer"
-                    value={formik.values.yearOfManufacturer}
-                    onChange={formik.handleChange}
-                    isInvalid={
-                      !!formik.errors.yearOfManufacturer &&
-                      formik.touched.yearOfManufacturer
-                    }
-                  >
-                    <option disabled selected hidden value="">
-                      Select year
-                    </option>
-                    {attributes?.yearOfManufacturer?.map(
-                      (item: string, index: number) => (
-                        <option key={index} value={item}>
-                          {item}
-                        </option>
-                      )
-                    )}
-                  </Form.Control>
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.yearOfManufacturer}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
               <Col lg={4} className="px-4 py-1 ">
                 <Form.Group as={Row} className="align-items-center">
                   <Form.Label className="col-form-label">Width</Form.Label>
@@ -379,6 +277,107 @@ const EditProduct = ({ isOpen, toggle, productId }: Props) => {
                   />
                   <Form.Control.Feedback type="invalid">
                     {formik.errors.size}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+              <Col lg={4} className=" px-2 py-1 ">
+                <Form.Group className="align-items-center">
+                  <Form.Label className="col-form-label">Brand</Form.Label>
+                  <Form.Control
+                    style={{ color: "#000" }}
+                    //   size="md"
+                    as="select"
+                    name="brand"
+                    value={formik.values.brand}
+                    onChange={formik.handleChange}
+                    isInvalid={!!formik.errors.brand && formik.touched.brand}
+                  >
+                    <option disabled selected hidden value="">
+                      Select Brand
+                    </option>
+                    {brands?.result?.map((item: any, index: number) => (
+                      <option key={index} value={item?._id}>
+                        {item?.name}
+                      </option>
+                    ))}
+                  </Form.Control>
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.brand}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+              {/* <Col lg={6} className="px-4 py-1 ">
+                <Form.Group as={Row} className="align-items-center">
+                  <Form.Label className="col-form-label">Category</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter category"
+                    name="category"
+                    value={formik.values.category}
+                    onChange={formik.handleChange}
+                    isInvalid={
+                      !!formik.errors.category && formik.touched.category
+                    }
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.category}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col> */}
+              <Col lg={4} className=" px-2 py-1 ">
+                <Form.Group className="align-items-center">
+                  <Form.Label className="col-form-label">Origin</Form.Label>
+                  <Form.Control
+                    style={{ color: "#000" }}
+                    //   size="md"
+                    as="select"
+                    name="origin"
+                    value={formik.values.origin}
+                    onChange={formik.handleChange}
+                    isInvalid={!!formik.errors.origin && formik.touched.origin}
+                  >
+                    <option disabled selected hidden value="">
+                      Select Origin
+                    </option>
+                    {attributes?.origin?.map((item: string, index: number) => (
+                      <option key={index} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </Form.Control>
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.origin}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+              <Col lg={4} className=" px-2 py-1 ">
+                <Form.Group className="align-items-center">
+                  <Form.Label className="col-form-label">Year</Form.Label>
+                  <Form.Control
+                    style={{ color: "#000" }}
+                    //   size="md"
+                    as="select"
+                    name="yearOfManufacturer"
+                    value={formik.values.yearOfManufacturer}
+                    onChange={formik.handleChange}
+                    isInvalid={
+                      !!formik.errors.yearOfManufacturer &&
+                      formik.touched.yearOfManufacturer
+                    }
+                  >
+                    <option disabled selected hidden value="">
+                      Select year
+                    </option>
+                    {attributes?.yearOfManufacturer?.map(
+                      (item: string, index: number) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      )
+                    )}
+                  </Form.Control>
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.yearOfManufacturer}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>

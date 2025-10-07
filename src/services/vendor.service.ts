@@ -63,20 +63,43 @@ export const useUpdateVendor = () => {
   });
 };
 
-// // DELETE A ATTRIBUTE
-// export const deleteAttribute = async (data: {
-//   type: string;
-//   attribute: string;
-// }) => {
-//   return await axiosAuth.delete(`${baseUrl}`, { data });
-// };
+// SUSPEND/UNSUSPEND A VENDOR
 
-// export const useDeleteAttribute = () => {
-//   const queryClient = useQueryClient();
-//   return useMutation({
-//     mutationFn: deleteAttribute,
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: ["attributes"] });
-//     },
-//   });
-// };
+export const updateVendorStatus = async ({
+  id,
+  isActive,
+}: {
+  id: string;
+  isActive: boolean;
+}) => {
+  if (!id) throw new Error("Vendor id required");
+  return await axiosAuth.put(`${baseUrl}/issuspend/${id}`, {
+    isSuspend: isActive,
+  });
+};
+
+export const useUpdateVendorStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateVendorStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["vendors"] });
+      queryClient.invalidateQueries({ queryKey: ["vendor"] });
+    },
+  });
+};
+
+// GET ALL VENDOR STOCKS
+
+export const getStocksByVendorId = async (vendorId: string) => {
+  if (!vendorId) throw new Error("No vendor id provided");
+  return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/all-stocks`);
+};
+
+export const useGetStocksByVendorId = (vendorId: string, enabled: boolean) => {
+  return useQuery({
+    queryKey: ["stocks", vendorId],
+    queryFn: () => getStocksByVendorId(vendorId).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};

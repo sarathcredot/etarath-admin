@@ -1,3 +1,4 @@
+import { EditorState } from "draft-js";
 import * as Yup from "yup";
 
 export const LoginValidationSchema = Yup.object().shape({
@@ -14,7 +15,7 @@ export const ProductValidationSchema = Yup.object().shape({
     .required("Product name is required")
     .max(100, "Product name cannot exceed 100 characters"),
   brand: Yup.string().required("Brand is required"),
-  category: Yup.string().required("Category is required"),
+  // category: Yup.string().required("Category is required"),
   origin: Yup.string().required("Origin is required"),
   yearOfManufacturer: Yup.string().required("Year is required"),
   width: Yup.number()
@@ -40,6 +41,13 @@ export const StockValidationSchema = Yup.object().shape({
   price: Yup.string().required("Sale Price is required"),
   requestedBy: Yup.string().required("Select vendor"),
   warrantyPeriod: Yup.string().required("Warranty Period is required"),
+  type: Yup.string().required("Type is required"),
+});
+export const StockEditValidationSchema = Yup.object().shape({
+  stock: Yup.string().required("Quantity is required"),
+  price: Yup.string().required("Sale Price is required"),
+  warrantyPeriod: Yup.string().required("Warranty Period is required"),
+  type: Yup.string().required("Type is required"),
 });
 
 // brand validation schema
@@ -66,9 +74,6 @@ export const VendorValidationSchema = Yup.object().shape({
       "Enter a valid Emirates ID number (e.g. 784-1995-1234567-1)"
     ),
   eidFile: Yup.mixed().required("EID Document is required"),
-  password: Yup.string()
-    .required("Contact Number is required")
-    .min(6, "At least 6 characters required"),
   imgUrl: Yup.mixed().required("Profile is required"),
 });
 
@@ -88,9 +93,6 @@ export const EditVendorValidationSchema = Yup.object().shape({
       "Enter a valid Emirates ID number (e.g. 784-1995-1234567-1)"
     ),
   eidFile: Yup.mixed().required("EID Document is required"),
-  // password: Yup.string()
-  //   .required("Contact Number is required")
-  //   .min(6, "At least 6 characters required"),
   imgUrl: Yup.mixed().required("Profile is required"),
 });
 
@@ -112,9 +114,6 @@ export const RetailerValidationSchema = Yup.object().shape({
       "Enter a valid Emirates ID number (e.g. 784-1995-1234567-1)"
     ),
   eidFile: Yup.mixed().required("EID Document is required"),
-  password: Yup.string()
-    .required("Contact Number is required")
-    .min(6, "At least 6 characters required"),
   imgUrl: Yup.mixed().required("Profile is required"),
 });
 
@@ -134,52 +133,8 @@ export const EditRetailerValidationSchema = Yup.object().shape({
       "Enter a valid Emirates ID number (e.g. 784-1995-1234567-1)"
     ),
   eidFile: Yup.mixed().required("EID Document is required"),
-  // password: Yup.string()
-  //   .required("Contact Number is required")
-  //   .min(6, "At least 6 characters required"),
   imgUrl: Yup.mixed().required("Profile is required"),
 });
-
-// export const VendorValidationSchema = Yup.object().shape({
-//   fullName: Yup.string().required("Full Name is required"),
-//   email: Yup.string()
-//     .required("Email is required")
-//     .email("Enter a valid email address"),
-//   contactNumber: Yup.string().required("Contact Number is required"),
-//   nationality: Yup.string().required("Nationality is required"),
-//   eidNo: Yup.string()
-// .required("EID Number is required")
-// .matches(
-//   /^784-(19|20)\d{2}-\d{7}-\d{1}$/,
-//   "Enter a valid Emirates ID number (e.g. 784-1995-1234567-1)"
-// ),
-//   EID: Yup.mixed().required("EID Document is required"),
-
-//   shopName: Yup.string().required("Shop Name is required"),
-//   businessType: Yup.string().required("Business Type is required"),
-//   shopLocation: Yup.string().required("Shop Location is required"),
-//   tradeLicenseNo: Yup.string().required("Trade License Number is required"),
-//   tradeLicense: Yup.mixed().required("Trade License Document is required"),
-//   shopAddress: Yup.string().required("Shop Address is required"),
-//   city: Yup.string().required("City is required"),
-//   post: Yup.string().required("Post is required"),
-//   businessHours: Yup.string().required("Business Hours is required"),
-//   shopContactNumber: Yup.string().required("Shop Contact Number is required"),
-//   shopLogo: Yup.mixed().required("Shop Photo or Logo is required"),
-
-//   brands: Yup.array()
-//     .of(Yup.string().required("Brand is required"))
-//     .min(1, "At least one brand is required"),
-//   typesOfTires: Yup.array()
-//     .of(Yup.string().required("Type of tire is required"))
-//     .min(1, "At least one type of tire is required"),
-//   averageMonthlyPurchaseVolume: Yup.string().required(
-//     "Average monthly purchase volume is required"
-//   ),
-//   preferredPaymentMethod: Yup.string().required(
-//     "Preferred payment method is required"
-//   ),
-// });
 
 export const AttributeValidationSchema = Yup.object().shape({
   attribute: Yup.string().required("Attribute is required"),
@@ -190,17 +145,61 @@ export const OfferValidationSchema = Yup.object().shape({
     .integer("must be intiger")
     .required("Priority is required"),
 });
+const getEditorText = (editorState: EditorState) => {
+  const contentState = editorState.getCurrentContent();
+  return contentState.getPlainText().trim();
+};
 export const BlogValidationSchema = Yup.object().shape({
-  imageUrl: Yup.mixed().required("Blog Image is required"),
+  imgUrl: Yup.mixed().required("Blog Image is required"),
   title: Yup.string().required("Title is required"),
-  content: Yup.string().required("Content is required"),
   category: Yup.string().required("Category is required"),
   tags: Yup.array().min(1).required("Tags are required"),
-  date: Yup.date().required("Date is required"),
+  date: Yup.string().required("Date is required"),
+  content: Yup.mixed().test("is-empty", "Content is required", (value) => {
+    // value is EditorState
+    if (!value) return false;
+    const text = getEditorText(value as EditorState);
+    return text.length > 0;
+  }),
 });
 export const BlogCategoryValidationSchema = Yup.object().shape({
   category: Yup.string().required("Category is required"),
 });
 export const BlogTagValidationSchema = Yup.object().shape({
   tag: Yup.string().required("Tag is required"),
+});
+
+// VENDOR KYC VALIDATION SCHEMA
+
+export const VendorKycValidationSchema = Yup.object().shape({
+  shop_name: Yup.string().required("Shop Name is required"),
+  business_type: Yup.string().required("Bussiness Type is required"),
+  shop_location: Yup.string().required("Shop Location is required"),
+  tradeLicenseNumber: Yup.string().required(
+    "Enter Trade License/ Business Registration Number "
+  ),
+  documents: Yup.object().shape({
+    tradeLicense: Yup.mixed().required(
+      "Upload Trade License/ Business Registration"
+    ),
+  }),
+  shop_address: Yup.string().required("Shop Address is required"),
+  city: Yup.string().required("City is required"),
+  post: Yup.string().required("Post is required"),
+  business_hours: Yup.string().required("Business Hours is required"),
+  shop_contact_number: Yup.string().required("Shop Contact Number is required"),
+  shop_photo_logo: Yup.mixed().required("Upload Shop Photo or Logo"),
+});
+export const VendorEditKycValidationSchema = Yup.object().shape({
+  shop_name: Yup.string().required("Shop Name is required"),
+  business_type: Yup.string().required("Bussiness Type is required"),
+  shop_location: Yup.string().required("Shop Location is required"),
+  tradeLicenseNumber: Yup.string().required(
+    "Enter Trade License/ Business Registration Number "
+  ),
+  shop_address: Yup.string().required("Shop Address is required"),
+  city: Yup.string().required("City is required"),
+  post: Yup.string().required("Post is required"),
+  business_hours: Yup.string().required("Business Hours is required"),
+  shop_contact_number: Yup.string().required("Shop Contact Number is required"),
 });

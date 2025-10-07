@@ -146,7 +146,7 @@ const BrandsDetailPage = () => {
                       <h6>Logo</h6>
                       <div
                         className="product_image_div"
-                        style={{ cursor: "default" }}
+                        style={{ cursor: "default",width:200,height:200 }}
                       >
                         <img
                           src={generateFilePath(brand?.imageUrl)}

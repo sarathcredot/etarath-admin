@@ -70,3 +70,29 @@ export const useUpdateRetailer = () => {
     },
   });
 };
+
+// SUSPEND/UNSUSPEND A RETAILER
+
+export const updateRetailerStatus = async ({
+  id,
+  isActive,
+}: {
+  id: string;
+  isActive: boolean;
+}) => {
+  if (!id) throw new Error("Retailer id required");
+  return await axiosAuth.put(`${baseUrl}/issuspend/${id}`, {
+    isSuspend: isActive,
+  });
+};
+
+export const useUpdateRetailerStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateRetailerStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["retailers"] });
+      queryClient.invalidateQueries({ queryKey: ["retailer"] });
+    },
+  });
+};

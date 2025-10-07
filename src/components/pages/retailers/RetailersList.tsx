@@ -17,6 +17,8 @@ import Loader from "src/components/features/loader";
 import { debounce } from "lodash";
 import AddRetailer from "./forms/AddRetailer";
 import { generateFilePath } from "src/services/url.service";
+import EditRetailer from "./forms/EditRetailer";
+import { useUpdateRetailerStatus } from "src/services/retailer.service";
 
 type Props = {
   header?: boolean;
@@ -49,54 +51,32 @@ const RetailersList = ({
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [isStatusOpen, setStatusOpen] = useState<boolean>(false);
   const [selectedRetailer, setSelectedRetailer] = useState<any>(null);
-
+  console.log(selectedRetailer, "selectedRetailer");
   //MUTATIONS
-  // const { mutateAsync: updateOrganiser } = useUpdateOrganiser();
-  // const { mutateAsync: deleteOrganiser } = useDeleteOrganiser();
+  const { mutateAsync: updateRetailerStatus } = useUpdateRetailerStatus();
 
   //HANDLERS
-  const handleDeleteOrganizer = async (organiserId: string) => {
+  const handleChangeStatus = async (retailerId: string, isActive: boolean) => {
     try {
-      if (!organiserId) throw new Error("Organiser ID is required!");
-
-      // const resp = await deleteOrganiser(organiserId);
-
-      // setSelectedRetailer(null);
-      // setDeleteOpen(false);
-      // toast(resp?.data?.message, {
-      //   containerId: "default",
-      //   className: "no-icon notification-success",
-      // });
-    } catch (error) {
-      console.log(error, "ERROR IN DLTE ORGNSER");
-      toast("Can't delete Organiser right now, please try later!", {
-        containerId: "default",
-        className: "no-icon notification-danger",
-      });
-      setDeleteOpen(false);
-    }
-  };
-  const handleChangeStatus = async (organiserId: string, isActive: boolean) => {
-    try {
-      if (!organiserId) throw new Error("Organiser ID is required!");
+      if (!retailerId) throw new Error("Retailer ID is required!");
       if (typeof isActive !== "boolean")
         throw new Error("Unexpected Active status!");
 
-      // const resp = await updateOrganiser({
-      //   id: organiserId,
-      //   isActive: !isActive,
-      // });
+      const resp = await updateRetailerStatus({
+        id: retailerId,
+        isActive: !isActive,
+      });
 
-      // setSelectedRetailer(null);
-      // setStatusOpen(false);
-      // toast(resp?.data?.message, {
-      //   containerId: "default",
-      //   className: "no-icon notification-success",
-      // });
-    } catch (error) {
-      toast("Can't update Organiser right now, please try later!", {
+      setSelectedRetailer(null);
+      setStatusOpen(false);
+      toast(resp?.data?.message, {
         containerId: "default",
         className: "no-icon notification-success",
+      });
+    } catch (error) {
+      toast("Can't update Retailer right now, please try later!", {
+        containerId: "default",
+        className: "no-icon notification-danger",
       });
       setStatusOpen(false);
     }
@@ -126,7 +106,7 @@ const RetailersList = ({
                   {header && (
                     <Col>
                       <h5 className="m-0 card-title h5 font-weight-bold">
-                        retailers
+                        Retailers
                       </h5>
                     </Col>
                   )}
@@ -152,6 +132,7 @@ const RetailersList = ({
                       className="font-weight-semibold px-3"
                       variant="dark"
                       style={{ background: "#000" }}
+                      // onClick={() => navigate("/retailers/add-retailer")}
                       onClick={() => setAddOpen(true)}
                     >
                       + Add Retailer
@@ -258,7 +239,7 @@ const RetailersList = ({
                           >
                             <PtSwitch
                               className="mr-1"
-                              on={!item?.isSuspended}
+                              on={!item?.isSuspend}
                               size="sm"
                               variant="success"
                             />
@@ -269,8 +250,8 @@ const RetailersList = ({
                             <div
                               className="action_btn "
                               onClick={() => {
-                                setEditOpen(true);
                                 setSelectedRetailer(item);
+                                setEditOpen(true);
                               }}
                             >
                               <i className="fas fa-pencil-alt"></i>
@@ -304,17 +285,8 @@ const RetailersList = ({
         </Row>
       </div>
       <ConfirmationPopup
-        submit={() => handleDeleteOrganizer(selectedRetailer?._id)}
-        isOpen={isDeleteOpen}
-        toggle={() => setDeleteOpen(!isDeleteOpen)}
-        text={"Are you sure that you want to delete this retailer?"}
-      />
-      <ConfirmationPopup
         submit={() =>
-          handleChangeStatus(
-            selectedRetailer?._id,
-            selectedRetailer?.isSuspended
-          )
+          handleChangeStatus(selectedRetailer?._id, selectedRetailer?.isSuspend)
         }
         isOpen={isStatusOpen}
         toggle={() => setStatusOpen(!isStatusOpen)}
@@ -323,6 +295,11 @@ const RetailersList = ({
         }
       />
       <AddRetailer isOpen={isAddOpen} toggle={() => setAddOpen(!isAddOpen)} />
+      <EditRetailer
+        retailerId={selectedRetailer?._id}
+        isOpen={isEditOpen}
+        toggle={() => setEditOpen(!isEditOpen)}
+      />
     </>
   );
 };

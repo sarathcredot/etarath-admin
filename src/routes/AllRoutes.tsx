@@ -54,21 +54,20 @@ import VendorPlans from "src/components/pages/subscriptions/vendor-plans/VendorP
 import VendorPlanDetailPage from "src/components/pages/subscriptions/vendor-plans/VendorPlanDetailPage";
 import RetailerPlanDetailPage from "src/components/pages/subscriptions/retailer-plans/RetailerPlanDetailPage";
 import RetailerPlans from "src/components/pages/subscriptions/retailer-plans/RetailerPlans";
-import AddVendorPage from "src/components/pages/vendors/forms/AddVendorpage";
 import OffersPage from "src/components/pages/cms/offers/OffersPage";
 import AttributesPage from "src/components/pages/attributes/AttributesPage";
 import RetailersList from "src/components/pages/retailers/RetailersList";
 import RetailersDetailPage from "src/components/pages/retailers/RetailersDetailPage";
 import RetailersPage from "src/components/pages/retailers/RetailersPage";
-import AddRetailerPage from "src/components/pages/retailers/forms/AddRetailerPage";
 import ProductsDetailPage from "src/components/pages/products/ProductsDetailPage";
 import BrandsDetailPage from "src/components/pages/brands/BrandsDetailPage";
 import AttributePage from "src/components/pages/attributes/attribute/AttributePage";
 import BlogsPage from "src/components/pages/cms/blogs/BlogsPage";
-import VendorTokenList from "src/components/pages/customer-supports/vendors/VendorTokenList";
 import BlogCategories from "src/components/pages/cms/blogs/categories/BlogCategories";
 import BlogTags from "src/components/pages/cms/blogs/tags/BlogTags";
 import StockDetailPage from "src/components/pages/products/stock/StockDetailPage";
+import KycsPage from "src/components/pages/kycs/KycsPage";
+import TokenList from "src/components/pages/customer-supports/TokenList";
 
 interface RouteProps {
   path: string;
@@ -84,16 +83,10 @@ const adminRoutes: Array<RouteProps> = [
   // Vendors
   { path: "/vendors", exact: true, component: <VendorsPage /> },
   { path: "/vendors/detail", component: <VendorsDetailPage /> },
-  { path: "/vendors/add-vendor", exact: true, component: <AddVendorPage /> },
 
   // Retailers
   { path: "/retailers", exact: true, component: <RetailersPage /> },
   { path: "/retailers/detail", component: <RetailersDetailPage /> },
-  {
-    path: "/retailers/add-retailer",
-    exact: true,
-    component: <AddRetailerPage />,
-  },
 
   // Sales Executives
   {
@@ -121,6 +114,9 @@ const adminRoutes: Array<RouteProps> = [
   { path: "/attributes", exact: true, component: <AttributesPage /> },
   { path: "/attributes/:attribute", component: <AttributePage /> },
 
+  // Kycs
+  { path: "/kycs", exact: true, component: <KycsPage /> },
+
   // Subscriptions
 
   {
@@ -145,8 +141,7 @@ const adminRoutes: Array<RouteProps> = [
   // { path: "/packages/detail",  component: <PackagesDetailPage /> },
 
   // Customer Supports
-  { path: "/customer-supports/vendors", component: <VendorTokenList /> },
-  { path: "/customer-supports/retailers", component: <VendorTokenList /> },
+  { path: "/customer-supports", component: <TokenList /> },
 
   // CMS
   { path: "/cms/offers", component: <OffersPage /> },

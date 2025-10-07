@@ -5,21 +5,6 @@
     "url": "/dashboard"
   },
   {
-    "name": "Products",
-    "icon": "PiTireBold",
-    "url": "/products"
-  },
-  {
-    "name": "Brands",
-    "icon": "TbBrand4Chan",
-    "url": "/brands"
-  },
-  {
-    "name": "Attributes",
-    "icon": "TbBrand4Chan",
-    "url": "/attributes"
-  },
-  {
     "name": "Vendors",
     "icon": "bx bx-group",
     "url": "/vendors"
@@ -34,21 +19,41 @@
     "icon": "bx bx-group",
     "url": "/sales-executives"
   },
+  {
+    "name": "KYC",
+    "icon": "bx bx-group",
+    "url": "/kycs"
+  },
+  {
+    "name": "Products",
+    "icon": "PiTireBold",
+    "url": "/products"
+  },
+  {
+    "name": "Brands",
+    "icon": "TbBrand4Chan",
+    "url": "/brands"
+  },
+  {
+    "name": "Attributes",
+    "icon": "TbBrand4Chan",
+    "url": "#",
+    "children": [
+      {
+        "name": "Origin",
+        "url": "/attributes/origin"
+      },
+      {
+        "name": "Year",
+        "url": "/attributes/year_of_manufacture"
+      }
+    ]
+  },
 
   {
     "name": "Customer Supports",
     "icon": "bx bx-help-circle",
-    "url": "#",
-    "children": [
-      {
-        "name": "Vendors",
-        "url": "/customer-supports/vendors"
-      },
-      {
-        "name": "Retailers",
-        "url": "/customer-supports/retailers"
-      }
-    ]
+    "url": "/customer-supports"
   },
   {
     "name": "Subscriptions",

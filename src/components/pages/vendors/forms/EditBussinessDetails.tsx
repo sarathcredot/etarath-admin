@@ -1,17 +1,16 @@
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 import MediaGalleryModal from "src/components/features/modals/media-gallery-modal";
 import { errorMsg } from "src/utils/toast";
-import {
-  VendorKycValidationSchema,
-} from "src/validations/validationSchemas";
+import { VendorEditKycValidationSchema } from "src/validations/validationSchemas";
 import _ from "lodash";
+import { useUploadFile } from "src/services/fileUpload.service";
 import {
-  useUploadFile,
-} from "src/services/fileUpload.service";
-import { useCreateVendorKyc } from "src/services/vendor-kyc.service";
+  useGetKycDetailsByVendorId,
+  useUpdateVendorKyc,
+} from "src/services/vendor-kyc.service";
 import { TimePicker } from "antd";
 import dayjs from "dayjs";
 import Select from "react-select";
@@ -121,13 +120,20 @@ const locations = [
   { value: "ZWE", label: "ZWE" },
 ];
 
-const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
-  console.log(userId, "= = USER ID");
+const EditBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
+  console.log(userId, "= = VENDOR ID");
   // STATES
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
 
+  // QUERIES
+  const {
+    data: kycDetails,
+    isLoading,
+    refetch,
+  } = useGetKycDetailsByVendorId(userId ? userId : "", !!userId);
+
   // MUTATIONS
-  const { mutateAsync: createVendorKyc } = useCreateVendorKyc();
+  const { mutateAsync: updateVendorKyc } = useUpdateVendorKyc();
   const { mutateAsync: uploadFile } = useUploadFile();
 
   //FORMINK
@@ -147,16 +153,16 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
       shop_contact_number: "",
       shop_photo_logo: "" as any,
     },
-    validationSchema: VendorKycValidationSchema,
+    validationSchema: VendorEditKycValidationSchema,
 
     onSubmit: (values) => {
       console.log(values, "VALUES");
-      handleAddVendorKyc(values);
+      handleEditVendorKyc(values);
     },
   });
 
   //HANDLERS
-  const handleAddVendorKyc = async (values: any) => {
+  const handleEditVendorKyc = async (values: any) => {
     if (userId) {
       try {
         if (typeof values?.documents?.tradeLicense !== "string") {
@@ -172,7 +178,7 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
           values.shop_photo_logo = response.data.data;
         }
         values.shop_contact_number = values.shop_contact_number.toString();
-        const res = await createVendorKyc({ userId, data: values });
+        const res = await updateVendorKyc({ userId, data: values });
         if (res.status === 200) {
           toast(res?.data?.message, {
             containerId: "default",
@@ -195,15 +201,48 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
     }
   };
 
-  const timeFormat = "hh:mm A";
+  useEffect(() => {
+    if (kycDetails) {
+      formikKyc.setValues({
+        shop_name: kycDetails?.shop_name ? kycDetails?.shop_name : "",
+        business_type: kycDetails?.business_type
+          ? kycDetails?.business_type
+          : "",
+        shop_location: kycDetails?.shop_location
+          ? kycDetails?.shop_location
+          : "",
+        tradeLicenseNumber: kycDetails?.tradeLicenseNumber
+          ? kycDetails?.tradeLicenseNumber
+          : "",
+        documents: {
+          tradeLicense: kycDetails?.documents?.tradeLicense
+            ? kycDetails?.documents?.tradeLicense
+            : "",
+        },
+        shop_address: kycDetails?.shop_address ? kycDetails?.shop_address : "",
+        city: kycDetails?.city ? kycDetails?.city : "",
+        post: kycDetails?.post ? kycDetails?.post : "",
+        business_hours: kycDetails?.business_hours
+          ? kycDetails?.business_hours
+          : "",
+        shop_contact_number: kycDetails?.shop_contact_number
+          ? kycDetails?.shop_contact_number
+          : "",
+        shop_photo_logo: kycDetails?.shop_photo_logo
+          ? kycDetails?.shop_photo_logo
+          : "",
+      });
+    }
+  }, [userId, kycDetails]);
 
+  const timeFormat = "hh:mm A";
   console.log(formikKyc.values, "VALUES");
   console.log(formikKyc.errors, "ERRORS");
   return (
     <>
       <Modal show={isOpen} onHide={toggle} centered={true} size="xl">
         <Modal.Header>
-          <h3 className="my-2">Add Bussiness Details</h3>
+          <h3 className="my-2">Edit Bussiness Details</h3>
         </Modal.Header>
         <Form onSubmit={formikKyc.handleSubmit}>
           <Modal.Body>
@@ -609,4 +648,4 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
   );
 };
 
-export default AddBussinessDetails;
+export default EditBussinessDetails;

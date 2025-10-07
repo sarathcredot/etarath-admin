@@ -60,7 +60,7 @@ const VendorPlanSubscriptions = ({ header = false, planId }: any) => {
                   {header && (
                     <Col>
                       <h5 className="m-0 card-title h5 font-weight-bold">
-                        Subscriptions
+                        Active Subscriptions
                       </h5>
                     </Col>
                   )}
@@ -111,8 +111,7 @@ const VendorPlanSubscriptions = ({ header = false, planId }: any) => {
                       </td>
                     </tr>
                   )}
-                  {false &&
-                    (!subscriptions || subscriptions?.length === 0) && (
+                  {true && (
                       <tr>
                         <td
                           colSpan={9}
@@ -181,7 +180,7 @@ const VendorPlanSubscriptions = ({ header = false, planId }: any) => {
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
                 totalButtonsToShow={3}
-                totalPages={20}
+                totalPages={1}
                 style={{ marginTop: "20px" }}
               />
             )}

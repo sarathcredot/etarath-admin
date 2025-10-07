@@ -1,12 +1,21 @@
 import React, { useMemo, useState } from "react";
-import { Col, Row,  Card } from "react-bootstrap";
+import { Col, Row, Tabs, Tab, Card, Button } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import Breadcrumb from "src/components/common/breadcrumb";
 import PtSwitch from "src/components/features/elements/switch";
 import { toast } from "react-toastify";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 
-import EditVendor from "./forms/EditRetailer";
+import { User } from "src/types/user.types";
+import { generateFilePath } from "src/services/url.service";
+import { useKycVerification } from "src/services/kyc.service";
+import EditRetailer from "./forms/EditRetailer";
+import AddBussinessDetails from "../vendors/forms/AddBussinessDetails";
+import EditBussinessDetails from "../vendors/forms/EditBussinessDetails";
+import {
+  useGetRetailerById,
+  useUpdateRetailerStatus,
+} from "src/services/retailer.service";
 
 const RetailersDetailPage = () => {
   //IMPORTS
@@ -15,7 +24,12 @@ const RetailersDetailPage = () => {
 
   //STATE
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
+  const [isKycEditOpen, setKycEditOpen] = useState<boolean>(false);
   const [isStatusOpen, setStatusOpen] = useState<boolean>(false);
+  const [is_kyc_approve_open, set_is_kyc_approve_open] =
+    useState<boolean>(false);
+  const [is_kyc_reject_open, set_is_kyc_reject_open] = useState<boolean>(false);
+  const [isKycOpen, setKycOpen] = useState<boolean>(false);
   //pagination
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
@@ -38,48 +52,85 @@ const RetailersDetailPage = () => {
     }
 
     if (retailerID) {
-      obj.organiserId = retailerID;
+      obj.retailerID = retailerID;
     }
 
     return obj;
   }, [page, limit, search]);
 
-  //DATA
-  // const { data: organiser } = useGetOrganiserById(retailerID, !!retailerID);
-  // const { data: tournamentsData, isLoading: isTournamentsLoading } =
-  //   useGetAllOrganisersTournaments(queryObj);
+  // QUERIES
+  const { data: retailer, isLoading: isRetailerLoading } = useGetRetailerById(
+    retailerID ? retailerID : "",
+    !!retailerID
+  ) as {
+    data: User;
+    isLoading: boolean;
+  };
 
-  //MUTATION
-  // const { mutateAsync: updateOrganiser } = useUpdateOrganiser();
+  //MUTATIONS
+  const { mutateAsync: updateRetailerStatus } = useUpdateRetailerStatus();
+  const { mutateAsync: kycVerification } = useKycVerification();
 
   //HANDLERS
-  const handleChangeStatus = async (isActive: boolean) => {
-    // try {
-    //   if (typeof isActive !== "boolean")
-    //     throw new Error("Unexpected Active status!");
+  const handleChangeStatus = async (retailerId: string, isActive: boolean) => {
+    try {
+      if (!retailerId) throw new Error("Retailer ID is required!");
+      if (typeof isActive !== "boolean")
+        throw new Error("Unexpected Active status!");
 
-    //   const resp = await updateOrganiser({
-    //     id: retailerID,
-    //     isActive: !isActive,
-    //   });
-    //   toast(resp?.data?.message, {
-    //     containerId: "default",
-    //     className: "no-icon notification-success",
-    //   });
-    //   setStatusOpen(false);
-    // } catch (error) {
-    //   toast("Can't update Organiser right now, please try later!", {
-    //     containerId: "default",
-    //     className: "no-icon notification-success",
-    //   });
-    //   setStatusOpen(false);
-    // }
+      const resp = await updateRetailerStatus({
+        id: retailerId,
+        isActive: !isActive,
+      });
+
+      setStatusOpen(false);
+      toast(resp?.data?.message, {
+        containerId: "default",
+        className: "no-icon notification-success",
+      });
+    } catch (error) {
+      toast("Can't update Retailer right now, please try later!", {
+        containerId: "default",
+        className: "no-icon notification-danger",
+      });
+      setStatusOpen(false);
+    }
+  };
+  const handleKycVerification = async (retailerId: string, status: string) => {
+    try {
+      if (!retailerId) throw new Error("Retailer ID is required!");
+      const resp = await kycVerification({
+        userId: retailerId,
+        status: status,
+      });
+
+      toast(resp?.data?.message, {
+        containerId: "default",
+        className: "no-icon notification-success",
+      });
+    } catch (error) {
+      console.log(error);
+      toast("Can't update kyc right now, please try later!", {
+        containerId: "default",
+        className: "no-icon notification-danger",
+      });
+    }
+    set_is_kyc_approve_open(false);
+    set_is_kyc_reject_open(false);
+  };
+
+  // show the file in new tab
+  const showFile = (fileUrl?: string) => {
+    if (fileUrl) {
+      const url = generateFilePath(fileUrl);
+      window.open(url, "_blank");
+    }
   };
 
   return (
     <>
       <Breadcrumb
-        current={ "Retailer"}
+        current={"Retailer Detail"}
         paths={[
           {
             name: "Dashboard",
@@ -90,48 +141,18 @@ const RetailersDetailPage = () => {
             url: "/retailers",
           },
           {
-            name:  "retailer",
+            name: "retailer detail",
             url: `/retailers/detail?_id=${retailerID}`,
           },
         ]}
       />
       <div>
         <Row>
-          {/* <Col
-            lg={12}
-            className=" "
-          >
-            <div className="banner_section">
-              <div className="w-100 banner_image_div">
-                <img
-                  className="banner_image"
-                  src="/assets/images/banner/banner_1.png"
-                  alt=""
-                />
-                <div className="edit-icon" >
-                  <div onClick={()=> setEditBannerOpen(true)}>
-
-                 <i className="bx bxs-edit fa " ></i>
-                  </div>
-                </div>
-              </div>
-              <div className="content" style={{zIndex:1000}}>
-                <div className="logo_div" >
-                  <img
-                    className="logo_img"
-                    src="/assets/images/banner/Pepsi_IPL_logo 1.png"
-                    alt=""
-                  />
-                </div>
-                <h1>Pepsi Indian Premier League</h1>
-              </div>
-            </div>
-          </Col> */}
           <Col
             lg={12}
             // className="mt-5"
           >
-            <Card className="card-modern">
+            <Card className="card-modern" style={{ minHeight: "100%" }}>
               <Card.Header className="d-flex align-items-center justify-content-between">
                 <Card.Title>Details</Card.Title>
                 <div
@@ -147,31 +168,67 @@ const RetailersDetailPage = () => {
                 <Row>
                   <Col>
                     <div>
+                      <h6>Profile</h6>
+                      <div>
+                        <img
+                          src={generateFilePath(retailer?.imgUrl)}
+                          width={100}
+                          height={100}
+                          alt="profile"
+                          // style={{ borderRadius: "50%" }}
+                        />
+                      </div>
+                    </div>
+                    <div>
                       <h6>Full Name</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        Full Name
+                        {retailer?.userName || "-"}
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Email</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {retailer?.email || "-"}
                       </h5>
                     </div>
                     <div>
                       <h6>Phone Number</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        Phone Number
+                        {retailer?.phoneNumber || "-"}
                       </h5>
                     </div>
                   </Col>
                   <Col>
                     <div>
+                      <h6>EID No</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {retailer?.eidNo || "-"}
+                      </h5>
+                    </div>
+                    {retailer?.eidFile && (
+                      <div className="mt-3 ">
+                        <Button
+                          variant="dark"
+                          onClick={() => showFile(retailer?.eidFile)}
+                        >
+                          {/* <i className="fas fa-arrow-up-from-bracket"></i> */}
+                          EID Document
+                        </Button>
+                      </div>
+                    )}
+                    <div className="pt-2">
                       <h6>Verification Status</h6>
                       <span
                         className={`ecommerce-status ${
-                          true ? "completed" : "pending"
+                          retailer?.isVerified === "approved"
+                            ? "completed"
+                            : retailer?.isVerified === "rejected"
+                            ? "failed"
+                            : "on-hold"
                         } text-dark font-weight-500`}
                       >
-                        {true ? "Completed" : "Pending"}
+                        {retailer?.isVerified}
                       </span>
-                      {/* <span className={`ecommerce-status ${item?.isVerified ? "completed" : "on-hold"}`}>
-                              {item?.isVerified ? "Completed" : "Pending"}
-                            </span> */}
                     </div>
                     <div>
                       <h6 className="mb-0">Status</h6>
@@ -183,12 +240,12 @@ const RetailersDetailPage = () => {
                       >
                         <PtSwitch
                           className="mr-2"
-                          on={true}
+                          on={!retailer?.isSuspend}
                           size="sm"
                           variant="success"
                         />
                         <h5 className=" text-dark font-weight-500 ">
-                          {true ? "Active" : "Blocked"}
+                          {!retailer?.isSuspend ? "Active" : "Blocked"}
                         </h5>
                       </div>
                     </div>
@@ -196,64 +253,282 @@ const RetailersDetailPage = () => {
                 </Row>
               </Card.Body>
             </Card>
-
-            {/* <div
-              className="tabs"
-              style={{ borderRadius: "5px", overflow: "hidden" }}
-            >
-              <Tabs className="nav-justified">
-                <Tab
-                  eventKey="about"
-                  title="About"
-                >
-                  <p>About</p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitat.
-                  </p>
-                </Tab>
-                <Tab
-                  eventKey="tournaments"
-                  title="Tournaments"
-                >
-                  <div className="mt-2">
-                    <TournamentsList />
-                  </div>
-                </Tab>
-              </Tabs>
-            </div> */}
-          </Col>
-          <Col lg={12} className="mt-4">
-            <Card className="card-modern">
-              <Card.Body>
-                {/* <TournamentsList
-                  header={true}
-                  tournamentsData={tournamentsData}
-                  isLoading={isTournamentsLoading}
-                  setPage={setPage}
-                  setLimit={setLimit}
-                  setSearch={setSearch}
-                  page={page}
-                  limit={limit}
-                  search={search}
-                /> */}
-              </Card.Body>
-            </Card>
           </Col>
         </Row>
+        <div
+          className="tabs"
+          style={{ borderRadius: "5px", marginTop: "20px", overflow: "hidden" }}
+        >
+          <Tabs className="nav-justified">
+            <Tab eventKey="kyc" title="Bussiness Details">
+              <Row>
+                {retailer?.kyc && (
+                  <Col lg={4}>
+                    <Card
+                      className="card-modern"
+                      style={{ border: "2px solid #ddd ", height: "100%" }}
+                    >
+                      {/* <Card.Header className="d-flex align-items-center justify-content-end"></Card.Header> */}
+                      <Card.Body
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Row>
+                          <Col className="text-center">
+                            <div>
+                              <div>
+                                <img
+                                  src={generateFilePath(
+                                    retailer?.kyc?.shop_photo_logo
+                                  )}
+                                  width={150}
+                                  height={150}
+                                  alt="profile"
+                                  style={{
+                                    borderRadius: "50%",
+                                    marginBottom: 20,
+                                  }}
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <h6>Shop Name</h6>
+                              <h5 className=" text-dark font-weight-500 ">
+                                {retailer?.kyc?.shop_name}
+                              </h5>
+                            </div>
+                            <div
+                              className="d-flex justify-content-center text-center"
+                              style={{ gap: 20 }}
+                            >
+                              <div className="text-center w-100 ">
+                                <h6>Shop Contact Number</h6>
+                                <h5 className=" text-dark font-weight-500 ">
+                                  {retailer?.kyc?.shop_contact_number}
+                                </h5>
+                              </div>
+                            </div>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                )}
+                <Col>
+                  <Card
+                    className="card-modern"
+                    style={{ border: "2px solid #ddd " }}
+                  >
+                    <Card.Header className="d-flex align-items-center justify-content-between">
+                      <Card.Title>Bussiness Details</Card.Title>
+                      {retailer?.kyc ? (
+                        <div
+                          className="d-flex align-items-center"
+                          style={{ gap: 10 }}
+                        >
+                          {retailer?.kyc?.kycStatus === "pending" && (
+                            <>
+                              <div
+                                title="Approve KYC"
+                                className="action_btn bg-success"
+                                onClick={() => {
+                                  set_is_kyc_approve_open(true);
+                                }}
+                              >
+                                <i className="fas fa-check text-light"></i>
+                              </div>
+                              <div
+                                title="Reject KYC"
+                                className="action_btn bg-danger"
+                                onClick={() => {
+                                  set_is_kyc_reject_open(true);
+                                }}
+                              >
+                                <i className="fas fa-x-mark text-light"></i>
+                              </div>
+                            </>
+                          )}
+                          <div
+                            title="Edit KYC"
+                            className="action_btn bg-dark"
+                            onClick={() => {
+                              setKycEditOpen(true);
+                            }}
+                          >
+                            <i className="fas fa-pencil-alt text-light"></i>
+                          </div>
+                        </div>
+                      ) : (
+                        <Button
+                          className="font-weight-semibold"
+                          variant="dark"
+                          //   size="md"
+                          onClick={() => setKycOpen(true)}
+                        >
+                          + Add Bussiness Details
+                        </Button>
+                      )}
+                    </Card.Header>
+                    <Card.Body>
+                      <Row>
+                        <Col>
+                          <div>
+                            <h6>Shop Name</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.shop_name || "-"}
+                            </h5>
+                          </div>
+                          <div>
+                            <h6>Bussiness Type</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.business_type || "-"}
+                            </h5>
+                          </div>
+                          <div>
+                            <h6>Shop Contact Number</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.shop_contact_number || "-"}
+                            </h5>
+                          </div>
+                          <div>
+                            <h6>Trade License Number</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.tradeLicenseNumber || "-"}
+                            </h5>
+                          </div>
+                          {retailer?.kyc && (
+                            <div className="mt-3">
+                              <Button
+                                variant="dark"
+                                onClick={() =>
+                                  showFile(
+                                    retailer?.kyc?.documents?.tradeLicense
+                                  )
+                                }
+                              >
+                                {/* <i className="fas fa-arrow-up-from-bracket"></i> */}
+                                Trade License
+                              </Button>
+                            </div>
+                          )}
+                        </Col>
+                        <Col>
+                          <div>
+                            <h6>Shop Address</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.shop_address || "-"}
+                            </h5>
+                          </div>
+                          <div>
+                            <h6>Shop Location</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.shop_location || "-"}
+                            </h5>
+                          </div>
+                          <div>
+                            <h6>City</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.city || "-"}
+                            </h5>
+                          </div>
+                          <div>
+                            <h6>Post</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.post || "-"}
+                            </h5>
+                          </div>
+                          {retailer?.kyc && (
+                            <div className="mt-3">
+                              <Button
+                                variant="dark"
+                                onClick={() =>
+                                  showFile(retailer?.kyc?.shop_photo_logo)
+                                }
+                              >
+                                {/* <i className="fas fa-arrow-up-from-bracket"></i> */}
+                                Shop Photo
+                              </Button>
+                            </div>
+                          )}
+                        </Col>
+                        <Col>
+                          <div>
+                            <h6>Bussiness Hours</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.business_hours || "-"}
+                            </h5>
+                          </div>
+                          <div>
+                            <h6>Verification Status</h6>
+                            {retailer?.kyc ? (
+                              <span
+                                className={`ecommerce-status ${
+                                  retailer?.kyc?.kycStatus === "approved"
+                                    ? "completed"
+                                    : retailer?.kyc?.kycStatus === "rejected"
+                                    ? "failed"
+                                    : "on-hold"
+                                } text-dark font-weight-500`}
+                              >
+                                {retailer?.kyc?.kycStatus}
+                              </span>
+                            ) : (
+                              "-"
+                            )}
+                          </div>
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
+            </Tab>
+            <Tab eventKey="orders" title="Orders">
+              {/* <VendorStocksList
+                retailerId={vendor && vendor?._id ? vendor?._id : ""}
+              /> */}
+            </Tab>
+          </Tabs>
+        </div>
       </div>
       <ConfirmationPopup
-        submit={() => handleChangeStatus(true)}
+        submit={() => handleChangeStatus(retailer?._id, retailer?.isSuspend)}
         isOpen={isStatusOpen}
         toggle={() => setStatusOpen(!isStatusOpen)}
         text={
-          "Are you sure that you want to change the status of this organizer?"
+          "Are you sure that you want to change the status of this retailer?"
         }
       />
-      <EditVendor
+      <ConfirmationPopup
+        submit={() => handleKycVerification(retailer?._id, "approved")}
+        isOpen={is_kyc_approve_open}
+        toggle={() => set_is_kyc_approve_open(!is_kyc_approve_open)}
+        text={"Are you sure that you want to approve this kyc?"}
+      />
+      <ConfirmationPopup
+        submit={() => handleKycVerification(retailer?._id, "rejected")}
+        isOpen={is_kyc_reject_open}
+        toggle={() => set_is_kyc_reject_open(!is_kyc_reject_open)}
+        text={"Are you sure that you want to reject this kyc?"}
+      />
+      <EditRetailer
+        retailerId={retailerID ? retailerID : ""}
         isOpen={isEditOpen}
         toggle={() => setEditOpen(!isEditOpen)}
-        organiserId={retailerID}
+      />
+
+      <AddBussinessDetails
+        isOpen={isKycOpen}
+        toggle={() => setKycOpen(!isKycOpen)}
+        userId={retailer ? retailer?._id : retailerID ? retailerID : ""}
+      />
+      <EditBussinessDetails
+        isOpen={isKycEditOpen}
+        toggle={() => setKycEditOpen(!isKycEditOpen)}
+        userId={retailer ? retailer?._id : retailerID ? retailerID : ""}
       />
     </>
   );

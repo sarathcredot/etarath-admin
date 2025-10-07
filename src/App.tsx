@@ -2,9 +2,8 @@
 // import Routes from "./routes";
 import { Route, Routes } from "react-router-dom";
 import Layout from "./components/layout";
-import { adminRoutes ,authRoutes } from "./routes/AllRoutes";
+import { adminRoutes, authRoutes } from "./routes/AllRoutes";
 import Authmiddleware from "./middleware/Authmiddleware";
-
 
 const App = () => {
   return (
@@ -13,18 +12,16 @@ const App = () => {
         <Route
           path={route?.path}
           element={
-            <Authmiddleware>    
+            <Authmiddleware>
               <Layout>{route?.component}</Layout>
-            </Authmiddleware> 
+            </Authmiddleware>
           }
           key={index}
         />
       ))}
-      {
-        authRoutes.map((route,index)=>(
-           <Route path={route?.path} element={route?.component} key={index} />    
-        ))
-      }
+      {authRoutes.map((route, index) => (
+        <Route path={route?.path} element={route?.component} key={index} />
+      ))}
     </Routes>
   );
 };

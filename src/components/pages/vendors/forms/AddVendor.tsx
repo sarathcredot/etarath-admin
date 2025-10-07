@@ -27,6 +27,7 @@ const AddVendor = ({ isOpen, toggle }: Props) => {
   // STATES
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
   const [isKycOpen, setKycOpen] = useState<boolean>(false);
+  const [vendorId, setVendorId] = useState<string>("");
 
   // MUTATIONS
   const { mutateAsync: createVendor } = useAddVendor();
@@ -38,7 +39,6 @@ const AddVendor = ({ isOpen, toggle }: Props) => {
       userName: "",
       email: "",
       phoneNumber: "",
-      password: "",
       eidNo: "",
       eidFile: "" as any,
       imgUrl: "" as any,
@@ -69,13 +69,17 @@ const AddVendor = ({ isOpen, toggle }: Props) => {
       }
 
       const res = await createVendor(values);
-      toast(res?.data?.message, {
-        containerId: "default",
-        className: "no-icon notification-success",
-      });
-      formik.resetForm();
-      toggle();
-      setKycOpen(true);
+      console.log(res, "= = VENDOR RES");
+      if (res.status === 200) {
+        setVendorId(res?.data?.data?._id);
+        toast(res?.data?.message, {
+          containerId: "default",
+          className: "no-icon notification-success",
+        });
+        formik.resetForm();
+        toggle();
+        setKycOpen(true);
+      }
     } catch (error: any) {
       toast(_.capitalize(errorMsg(error).toLowerCase()), {
         containerId: "default",
@@ -110,7 +114,7 @@ const AddVendor = ({ isOpen, toggle }: Props) => {
                             ? formik.values.imgUrl.copy_link
                             : URL.createObjectURL(formik.values.imgUrl?.file)
                         }
-                        alt="brand logo"
+                        alt="profile"
                         width={"100%"}
                         height={"100%"}
                         style={{ objectFit: "cover" }}
@@ -128,7 +132,7 @@ const AddVendor = ({ isOpen, toggle }: Props) => {
               ) : (
                 <Col lg={3} className="px-2 py-1 ">
                   <div>
-                    Logo
+                    Profile
                     <div
                       className="user_image_div mt-1"
                       onClick={() => setIsUploadOpen(true)}
@@ -240,24 +244,6 @@ const AddVendor = ({ isOpen, toggle }: Props) => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              <Col lg={12} className="px-4 pb-1  ">
-                <Form.Group as={Row} className="align-items-center">
-                  <Form.Label className="col-form-label">Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Enter password"
-                    name="password"
-                    value={formik.values.password}
-                    onChange={formik.handleChange}
-                    isInvalid={
-                      !!formik.errors.password && formik.touched.password
-                    }
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.password}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
             </Row>
           </Modal.Body>
           <Modal.Footer>
@@ -294,6 +280,7 @@ const AddVendor = ({ isOpen, toggle }: Props) => {
       <AddBussinessDetails
         isOpen={isKycOpen}
         toggle={() => setKycOpen(!isKycOpen)}
+        userId={vendorId}
       />
     </>
   );

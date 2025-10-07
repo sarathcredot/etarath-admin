@@ -86,7 +86,6 @@ const EditVendor = ({ isOpen, toggle, vendorId }: Props) => {
         userName: vendor?.userName,
         email: vendor?.email,
         phoneNumber: vendor?.phoneNumber,
-        // password: vendor?.password,
         eidNo: vendor?.eidNo,
         eidFile: vendor?.eidFile,
         imgUrl: vendor?.imgUrl || "",
@@ -223,33 +222,6 @@ const EditVendor = ({ isOpen, toggle, vendorId }: Props) => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              {/* <Col lg={6} className="px-4 py-1  ">
-                <Form.Group as={Row} className="align-items-center">
-                  <Form.Label className="col-form-label">
-                    Upload EID{" "}
-                  </Form.Label>
-                  <Form.Control
-                    type="file"
-                    placeholder="Upload EID Document"
-                    name="eidFile"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      if (e.currentTarget?.files && e.currentTarget?.files[0]) {
-                        formik.setFieldValue(
-                          "eidFile",
-                          e.currentTarget.files[0]
-                        );
-                      }
-                    }}
-                    isInvalid={
-                      !!(formik.errors.eidFile && formik.touched.eidFile)
-                    }
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.eidFile}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col> */}
-
               <Col lg={6} className="px-4 py-1">
                 <Form.Group as={Row} className="align-items-center">
                   {/* If EID already uploaded, show link/preview */}
@@ -286,25 +258,6 @@ const EditVendor = ({ isOpen, toggle, vendorId }: Props) => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-
-              {/* <Col lg={12} className="px-4 pb-1  ">
-                <Form.Group as={Row} className="align-items-center">
-                  <Form.Label className="col-form-label">Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Enter password"
-                    name="password"
-                    value={formik.values.password}
-                    onChange={formik.handleChange}
-                    isInvalid={
-                      !!formik.errors.password && formik.touched.password
-                    }
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.password}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col> */}
             </Row>
           </Modal.Body>
           <Modal.Footer>

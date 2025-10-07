@@ -166,7 +166,7 @@ const AttributesPage = () => {
                   currentPage={page}
                   setCurrentPage={setPage}
                   totalButtonsToShow={3}
-                  totalPages={2}
+                  totalPages={1}
                   style={{ marginTop: "20px" }}
                 />
               </Col>

@@ -257,9 +257,9 @@ progress {
     vertical-align: baseline
 }
 
-[type=number]::-webkit-inner-spin-button, [type=number]::-webkit-outer-spin-button {
+/* [type=number]::-webkit-inner-spin-button, [type=number]::-webkit-outer-spin-button {
     height: auto
-}
+} */
 
 [type=search] {
     outline-offset: -2px;

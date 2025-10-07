@@ -177,12 +177,12 @@ const ProductsDetailPage = () => {
                         {product?.brand?.name}
                       </h5>
                     </div>
-                    <div>
+                    {/* <div>
                       <h6>Category</h6>
                       <h5 className=" text-dark font-weight-500 ">
                         {product?.category}
                       </h5>
-                    </div>
+                    </div> */}
                   </Col>
                   <Col md={3} xl={2}>
                     <div>

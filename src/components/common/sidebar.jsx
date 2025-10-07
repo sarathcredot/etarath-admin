@@ -7,7 +7,7 @@ import menuData from "../../utils/data/menu.json";
 import sideBarItems from "../../utils/data/sidebarItems.json";
 import withRouter from "./WithRouter";
 import { GiCartwheel, GiCarWheel } from "react-icons/gi";
-import { PiTireLight,PiTireBold } from "react-icons/pi";
+import { PiTireLight, PiTireBold } from "react-icons/pi";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { TbBrand4Chan } from "react-icons/tb";
 
@@ -91,7 +91,19 @@ function Sidebar(props) {
                                 onToggle();
                               }}
                             >
-                              <i className={item.icon}></i>
+                              {/* <i className={item.icon}></i> */}
+                              {item.icon.startsWith("bx") ? (
+                                <i
+                                  className={item.icon}
+                                  style={{ fontSize: "22px" }}
+                                ></i>
+                              ) : // if it's react-icon string, grab from map
+                              iconsMap[item.icon] ? (
+                                React.createElement(iconsMap[item.icon], {
+                                  className: "text-white mr-3",
+                                  size: "20px",
+                                })
+                              ) : null}
                               <span>{item.name}</span>
                             </a>
 
@@ -194,12 +206,15 @@ function Sidebar(props) {
                       className="nav-link "
                     >
                       {item.icon.startsWith("bx") ? (
-                        <i className={item.icon} style={{ fontSize: "22px" }}></i>
+                        <i
+                          className={item.icon}
+                          style={{ fontSize: "22px" }}
+                        ></i>
                       ) : // if it's react-icon string, grab from map
                       iconsMap[item.icon] ? (
                         React.createElement(iconsMap[item.icon], {
                           className: "text-white mr-3",
-                         size: "20px",
+                          size: "20px",
                         })
                       ) : null}
                       <span>{item.name}</span>
@@ -216,7 +231,6 @@ function Sidebar(props) {
 }
 
 export default withRouter(Sidebar);
-
 
 // side bar child items json file
 

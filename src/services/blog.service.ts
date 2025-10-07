@@ -40,6 +40,7 @@ export const useAddBlog = () => {
   return useMutation({
     mutationFn: addBlog,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
       queryClient.invalidateQueries({ queryKey: ["blog"] });
     },
   });

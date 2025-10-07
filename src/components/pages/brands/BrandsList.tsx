@@ -265,7 +265,7 @@ const BrandsList = ({
                               className="mr-1 w-100"
                               src={generateFilePath(item?.imageUrl)}
                               // src={"/assets/images/brands/CEAT.svg"}
-                              alt="product image"
+                              alt="logo"
                               crossOrigin="anonymous"
                             />
                           </Link>

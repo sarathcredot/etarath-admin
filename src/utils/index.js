@@ -133,3 +133,4 @@ export const isEdgeBrowser = function () {
         return true;
     return false;
 }
+

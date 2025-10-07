@@ -11,24 +11,20 @@ import {
   Row,
   Table,
 } from "react-bootstrap";
-import Lightbox from "react-image-lightbox";
-import { Link } from "react-router-dom";
 import Breadcrumb from "src/components/common/breadcrumb";
 import PtSwitch from "src/components/features/elements/switch";
 import Loader from "src/components/features/loader";
 import Pagination from "src/components/features/pagination";
-import AddOffer from "./popups/AddBlog";
 import {
   useDeleteOffer,
-  useGetOffers,
-  useUpdateOfferStatus,
 } from "src/services/offer.service";
 import { generateFilePath } from "src/services/url.service";
-import EditOffer from "./popups/EditBlog";
 import { toast } from "react-toastify";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
-import { useGetBlogs } from "src/services/blog.service";
+import { useGetBlogs, useUpdateBlogStatus } from "src/services/blog.service";
 import AddBlog from "./popups/AddBlog";
+import dayjs from "dayjs";
+import EditBlog from "./popups/EditBlog";
 
 const BlogsPage = () => {
   const [search, setSearch] = useState<string>("");
@@ -38,11 +34,11 @@ const BlogsPage = () => {
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
 
   // QUERIES
-  const { data: blogs, isLoading:blogsLoading } = useGetBlogs();
+  const { data: blogs, isLoading: blogsLoading } = useGetBlogs();
   const isLoading = false;
 
   // MUTATIONS
-  const { mutateAsync: updateOfferStatus } = useUpdateOfferStatus();
+  const { mutateAsync: updateBlogStatus } = useUpdateBlogStatus();
   const { mutateAsync: deleteOffer } = useDeleteOffer();
 
   //pagination
@@ -58,7 +54,7 @@ const BlogsPage = () => {
   const handleStatusChange = async (id: string, status: boolean) => {
     try {
       if (id) {
-        const res = await updateOfferStatus({ id, status });
+        const res = await updateBlogStatus({ id, status });
         if (res) {
           toast(res?.data?.message, {
             containerId: "default",
@@ -187,20 +183,21 @@ const BlogsPage = () => {
                           </td>
                         </tr>
                       )}
-                      {!isLoading && (!blogs || blogs.length === 0) && (
-                        <tr>
-                          <td
-                            colSpan={9}
-                            style={{ textAlign: "center", height: "100px" }}
-                          >
-                            No bolgs found.
-                          </td>
-                        </tr>
-                      )}
+                      {!isLoading &&
+                        (!blogs || blogs?.result?.length === 0) && (
+                          <tr>
+                            <td
+                              colSpan={9}
+                              style={{ textAlign: "center", height: "100px" }}
+                            >
+                              No bolgs found.
+                            </td>
+                          </tr>
+                        )}
                       {!isLoading &&
                         blogs &&
-                        blogs?.length > 0 &&
-                        blogs?.map((item: any, index: any) => (
+                        blogs?.result?.length > 0 &&
+                        blogs?.result?.map((item: any, index: any) => (
                           <tr>
                             <td>
                               <strong>
@@ -221,7 +218,7 @@ const BlogsPage = () => {
                               >
                                 <img
                                   className="mr-1"
-                                  src={generateFilePath(item?.imageUrl)}
+                                  src={generateFilePath(item?.imgUrl)}
                                   alt="product"
                                   width="100"
                                   height="50"
@@ -229,8 +226,15 @@ const BlogsPage = () => {
                                 />
                               </div>
                             </td>
-                            <td className="">{item?.link}</td>
-                            <td>{item?.priority}</td>
+                            <td className="">{item?.title}</td>
+                            <td>{item?.category}</td>
+                            {/* tags are array of strings  */}
+                            <td>{item?.tags}</td>
+                            <td>
+                              {item?.date
+                                ? dayjs(item.date).format("DD-MM-YYYY")
+                                : "-"}
+                            </td>
                             <td>
                               <div
                                 onClick={() => {
@@ -300,8 +304,8 @@ const BlogsPage = () => {
       </Card>
 
       <AddBlog isOpen={isOpen} toggle={() => setIsOpen(!isOpen)} />
-      <EditOffer
-        offerId={selectedBlog?._id}
+      <EditBlog
+        blogId={selectedBlog?._id}
         isOpen={isEditOpen}
         toggle={() => setIsEditOpen(!isEditOpen)}
       />

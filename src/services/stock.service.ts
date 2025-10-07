@@ -79,48 +79,49 @@ export const useCreateStock = () => {
 };
 
 // UPDATE EXISTING STOCK
-export const updateProduct = async ({
-  id,
+export const updateStock = async ({
+  productId,
+  stockId,
   data,
 }: {
-  id: string;
+  productId?: string;
+  stockId: string;
   data: any;
 }) => {
-  if (!id) throw new Error("Id is required");
-  return await axiosAuth.put(`${baseUrl}/${id}`, data);
+  if (!stockId) throw new Error("stock id is required");
+  return await axiosAuth.put(`${baseUrl}/${productId}/product-stock/${stockId}`, data);
 };
 
-export const useUpdateProduct = () => {
+export const useUpdateStock = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: updateProduct,
+    mutationFn: updateStock,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["product"] });
+      queryClient.invalidateQueries({ queryKey: ["stocks"] });
+      queryClient.invalidateQueries({ queryKey: ["stock"] });
     },
   });
 };
 
 // DELETE A PRODUCT
-export const deleteProduct = async (id: string) => {
-  if (!id) throw new Error("Id is required");
+export const deleteStock = async (id: string) => {
+  if (!id) throw new Error("Stock Id is required");
   return await axiosAuth.delete(`${baseUrl}/${id}`);
 };
 
-export const useDeleteProduct = () => {
+export const useDeleteStock = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deleteProduct,
+    mutationFn: deleteStock,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["product"] });
-      queryClient.invalidateQueries({ queryKey: ["products-by-brand-id"] });
+      queryClient.invalidateQueries({ queryKey: ["stocks"] });
+      queryClient.invalidateQueries({ queryKey: ["stock"] });
     },
   });
 };
 
 // ACTIVE CONTROLLER FOR PRODUCT
-export const updateProductStatus = async ({
+export const updateStockStatus = async ({
   id,
   status,
 }: {
@@ -131,14 +132,13 @@ export const updateProductStatus = async ({
   return await axiosAuth.put(`${baseUrl}/${id}/issuspend-product`, { status });
 };
 
-export const useUpdateProductStatus = () => {
+export const useUpdateStockStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: updateProductStatus,
+    mutationFn: updateStockStatus,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["product"] });
-      queryClient.invalidateQueries({ queryKey: ["products-by-brand-id"] });
+      queryClient.invalidateQueries({ queryKey: ["stocks"] });
+      queryClient.invalidateQueries({ queryKey: ["stock"] });
     },
   });
 };

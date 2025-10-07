@@ -15,7 +15,7 @@ import { Brand } from "../brands/BrandsList";
 export type Product = {
   _id: string;
   productName: string;
-  category: string;
+  // category: string;
   brand: Brand;
   width: number;
   height: number;
@@ -93,159 +93,6 @@ const ProductsList = ({
     });
     setDeleteOpen(false);
   };
-
-  // const products: Product[] = [
-  //   {
-  //     productName: "Bridgestone Dueler H/T 684 II",
-  //     categoryName: "SUV Tires",
-  //     brand: "Bridgestone",
-  //     width: 265,
-  //     height: 60,
-  //     rimSize: 18,
-  //     images: [
-  //       "/assets/images/products/image_1.svg",
-  //       "/assets/images/products/image_2.svg",
-  //       "/assets/images/products/image_3.svg",
-  //       "/assets/images/products/image_4.svg",
-  //     ],
-  //     status: true,
-  //   },
-  //   {
-  //     productName: "Michelin Pilot Sport 4",
-  //     categoryName: "Performance Tires",
-  //     brand: "Michelin",
-  //     width: 225,
-  //     height: 45,
-  //     rimSize: 17,
-  //     images: [
-  //       "/assets/images/products/image_1.svg",
-  //       "/assets/images/products/image_2.svg",
-  //       "/assets/images/products/image_3.svg",
-  //       "/assets/images/products/image_4.svg",
-  //     ],
-  //     status: true,
-  //   },
-  //   {
-  //     productName: "Goodyear Wrangler All-Terrain Adventure",
-  //     categoryName: "All-Terrain Tires",
-  //     brand: "Goodyear",
-  //     width: 275,
-  //     height: 65,
-  //     rimSize: 18,
-  //     images: [
-  //       "/assets/images/products/image_1.svg",
-  //       "/assets/images/products/image_2.svg",
-  //       "/assets/images/products/image_3.svg",
-  //       "/assets/images/products/image_4.svg",
-  //     ],
-  //     status: true,
-  //   },
-  //   {
-  //     productName: "Continental CrossContact LX25",
-  //     categoryName: "Crossover Tires",
-  //     brand: "Continental",
-  //     width: 235,
-  //     height: 55,
-  //     rimSize: 18,
-  //     images: [
-  //       "/assets/images/products/image_1.svg",
-  //       "/assets/images/products/image_2.svg",
-  //       "/assets/images/products/image_3.svg",
-  //       "/assets/images/products/image_4.svg",
-  //     ],
-  //     status: true,
-  //   },
-  //   {
-  //     productName: "Pirelli Scorpion Verde",
-  //     categoryName: "SUV Tires",
-  //     brand: "Pirelli",
-  //     width: 255,
-  //     height: 50,
-  //     rimSize: 19,
-  //     images: [
-  //       "/assets/images/products/image_1.svg",
-  //       "/assets/images/products/image_2.svg",
-  //       "/assets/images/products/image_3.svg",
-  //       "/assets/images/products/image_4.svg",
-  //     ],
-  //     status: true,
-  //   },
-  //   {
-  //     productName: "Yokohama Geolandar A/T G015",
-  //     categoryName: "All-Terrain Tires",
-  //     brand: "Yokohama",
-  //     width: 265,
-  //     height: 70,
-  //     rimSize: 17,
-  //     images: [
-  //       "/assets/images/products/image_1.svg",
-  //       "/assets/images/products/image_2.svg",
-  //       "/assets/images/products/image_3.svg",
-  //       "/assets/images/products/image_4.svg",
-  //     ],
-  //     status: true,
-  //   },
-  //   {
-  //     productName: "Hankook Ventus V12 Evo2",
-  //     categoryName: "Performance Tires",
-  //     brand: "Hankook",
-  //     width: 245,
-  //     height: 40,
-  //     rimSize: 18,
-  //     images: [
-  //       "/assets/images/products/image_1.svg",
-  //       "/assets/images/products/image_2.svg",
-  //       "/assets/images/products/image_3.svg",
-  //       "/assets/images/products/image_4.svg",
-  //     ],
-  //     status: true,
-  //   },
-  //   {
-  //     productName: "Falken Wildpeak A/T3W",
-  //     categoryName: "Off-Road Tires",
-  //     brand: "Falken",
-  //     width: 275,
-  //     height: 70,
-  //     rimSize: 18,
-  //     images: [
-  //       "/assets/images/products/image_1.svg",
-  //       "/assets/images/products/image_2.svg",
-  //       "/assets/images/products/image_3.svg",
-  //       "/assets/images/products/image_4.svg",
-  //     ],
-  //     status: true,
-  //   },
-  //   {
-  //     productName: "Dunlop SP Sport Maxx 050",
-  //     categoryName: "Sedan Tires",
-  //     brand: "Dunlop",
-  //     width: 215,
-  //     height: 55,
-  //     rimSize: 17,
-  //     images: [
-  //       "/assets/images/products/image_1.svg",
-  //       "/assets/images/products/image_2.svg",
-  //       "/assets/images/products/image_3.svg",
-  //       "/assets/images/products/image_4.svg",
-  //     ],
-  //     status: true,
-  //   },
-  //   {
-  //     productName: "Apollo Apterra H/T2",
-  //     categoryName: "Highway Tires",
-  //     brand: "Apollo",
-  //     width: 245,
-  //     height: 65,
-  //     rimSize: 17,
-  //     images: [
-  //       "/assets/images/products/image_1.svg",
-  //       "/assets/images/products/image_2.svg",
-  //       "/assets/images/products/image_3.svg",
-  //       "/assets/images/products/image_4.svg",
-  //     ],
-  //     status: true,
-  //   },
-  // ];
 
   const totalRecords = productsData?.total || 0;
   const totalPages = productsData?.pagination?.totalPages || 0;
@@ -350,7 +197,7 @@ const ProductsList = ({
                     </th>
                     <th>Name</th>
                     <th>Brand</th>
-                    <th>Category</th>
+                    {/* <th>Category</th> */}
 
                     <th>Status</th>
                     <th className="text-center" style={{ width: "80px" }}>
@@ -402,7 +249,7 @@ const ProductsList = ({
                             </Link>
                           </td>
                           <td>{item?.brand}</td>
-                          <td>{capitalize(item?.category)}</td>
+                          {/* <td>{capitalize(item?.category)}</td> */}
 
                           <td>
                             <div

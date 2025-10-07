@@ -22,8 +22,10 @@ import {
   useUpdateProductStatus,
 } from "src/services/product.service";
 import { generateFilePath } from "src/services/url.service";
+import { useGetAllSupportRequests } from "src/services/customer-support.service";
+import dayjs from "dayjs";
 
-const VendorTokenList = () => {
+const TokenList = () => {
   const navigate = useNavigate();
   //STATE
   const [page, setPage] = useState(1);
@@ -53,17 +55,17 @@ const VendorTokenList = () => {
 
   // QUERIES
   const {
-    data: products,
-    isLoading: isProductsLoading,
+    data: requests,
+    isLoading: isRequestsLoading,
     error,
-  }: any = useGetAllProducts();
+  }: any = useGetAllSupportRequests();
 
-  console.log("products = ", products);
+  console.log("requests = ", requests);
 
   return (
     <>
       <Breadcrumb
-        current={"Customer Supports"}
+        current={"Customer Support Requests"}
         paths={[
           {
             name: "dashboard",
@@ -71,10 +73,7 @@ const VendorTokenList = () => {
           },
           {
             name: "customer-supports",
-          },
-          {
-            name: "vendors",
-            url: "/customer-supports/vendors",
+            url: "/customer-supports",
           },
         ]}
       />
@@ -88,11 +87,6 @@ const VendorTokenList = () => {
                 <div className="datatables-header-footer-wrapper">
                   <div className="datatable-header">
                     <Row className="align-items-lg-center justify-content-end mb-3">
-                      <Col>
-                        <h5 className="m-0 card-title h5 font-weight-bold">
-                          Vendors
-                        </h5>
-                      </Col>
                       {/* <Col
                         lg="auto"
                         className="mb-2 mb-lg-0 ml-xl-auto pl-xl-1"
@@ -118,7 +112,7 @@ const VendorTokenList = () => {
                           </Button>
                         </div>
                       </Col> */}
-                      <Col className="col-auto pl-lg-1">
+                      {/* <Col className="col-auto pl-lg-1">
                         <div className="search search-style-1 mx-lg-auto w-auto">
                           <InputGroup>
                             <Form.Control
@@ -131,17 +125,10 @@ const VendorTokenList = () => {
                                 setSearch && setSearch(e.target.value)
                               }
                             />
-                            {/* <InputGroup.Append> */}
-                            {/* <Button
-                              variant="default"
-                              type="submit"
-                            >
-                              <i className="bx bx-search"></i>
-                            </Button> */}
-                            {/* </InputGroup.Append> */}
+                            
                           </InputGroup>
                         </div>
-                      </Col>
+                      </Col> */}
                       {/* <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
                         <Button
                           className="font-weight-semibold"
@@ -163,22 +150,24 @@ const VendorTokenList = () => {
                     <thead>
                       <tr>
                         <th style={{ width: "30px" }}>#</th>
-                        <th>Name</th>
-                        <th>Brand</th>
-                        <th>Category</th>
-                        <th>Origin</th>
-                        <th>Year</th>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Working Mail</th>
+                        <th>Contact Number</th>
+                        <th>Subject</th>
+                        <th>Description</th>
+                        <th>Date</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {isProductsLoading ? (
+                      {isRequestsLoading ? (
                         <tr>
                           <td colSpan={9}>
                             <Loader />
                           </td>
                         </tr>
-                      ) : !isProductsLoading && products?.result?.length > 0 ? (
-                        products?.result?.map((item: any, index: number) => (
+                      ) : !isRequestsLoading && requests?.length > 0 ? (
+                        requests?.map((item: any, index: number) => (
                           <tr key={index}>
                             <td>
                               <Link to={`/products/detail?_id=${item?._id}`}>
@@ -192,27 +181,31 @@ const VendorTokenList = () => {
                               </Link>
                             </td>
                             <td>
-                              <Link to={`/products/detail?_id=${item?._id}`}>
-                                {item?.productName}
-                              </Link>
-                            </td>
-                            <td>
                               <Link
-                                to={`/brands/detail?_id=${item?.brand?._id}`}
+                                to={`/${item?.user?.role}s/detail?_id=${item?.user?._id}`}
                               >
-                                {item?.brand?.name}
+                                {item?.user?.userName || "-"}
                               </Link>
                             </td>
-                            <td>{item?.category}</td>
+                            <td>{item?.user?.role|| "-"}</td>
                             <td>
-                              <Link to={`/attributes/origin`}>
-                                {item?.origin}
-                              </Link>
+                              {item?.working_email ? (
+                                <a
+                                  href={`mailto:${item.working_email}`}
+                                  className="text-blue-600 hover:underline"
+                                >
+                                  {item.working_email}
+                                </a>
+                              ) : (
+                                "-"
+                              )}
                             </td>
+
+                            <td>{item?.contact_number|| "-"}</td>
+                            <td>{capitalize(item?.subject)}</td>
+                            <td>{item?.description|| "-"}</td>
                             <td>
-                              <Link to={`/attributes/year_of_manufacture`}>
-                                {item?.yearOfManufacturer}
-                              </Link>
+                              {dayjs(item?.createdAt).format("DD-MM-YYYY")}
                             </td>
                           </tr>
                         ))
@@ -222,20 +215,20 @@ const VendorTokenList = () => {
                             colSpan={9}
                             style={{ textAlign: "center", height: "100px" }}
                           >
-                            No data found
+                            No requests found
                           </td>
                         </tr>
                       )}
                     </tbody>
                   </Table>
                 </div>
-                <Pagination
+                {/* <Pagination
                   currentPage={page}
                   setCurrentPage={setPage}
                   totalButtonsToShow={3}
-                  totalPages={2}
+                  totalPages={1}
                   style={{ marginTop: "20px" }}
-                />
+                /> */}
                 {/* </Card.Body>
             </Card> */}
               </Col>
@@ -247,4 +240,4 @@ const VendorTokenList = () => {
   );
 };
 
-export default VendorTokenList;
+export default TokenList;

@@ -16,10 +16,9 @@ axiosAuth.interceptors.request.use(
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/sign-in";
-      
     }
     return Promise.reject(error);
-  },
+  }
 );
 
 axiosAuth.interceptors.response.use(
@@ -33,7 +32,7 @@ axiosAuth.interceptors.response.use(
       window.location.href = "/sign-in";
     }
     return Promise.reject(error);
-  },
+  }
 );
 
 export default axiosAuth;

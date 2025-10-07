@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {  Card, Col, Row, Table } from "react-bootstrap";
+import { Card, Col, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Breadcrumb from "src/components/common/breadcrumb";
 import PtSwitch from "src/components/features/elements/switch";
@@ -80,11 +80,11 @@ const VendorPlans = ({ header = false }) => {
       frequency: "monthly",
       status: true,
       features: [
-        "Access to vendor dashboard",
-        "Up to 200 product listings",
-        "Advanced reporting tools",
-        "Priority support",
-        "Bulk upload option",
+        "Lorem ipsum set amet elit sed dotempor enim.",
+        "Lorem ipsum set amet elit.",
+        "Lorem ipsum set amet elit sed.",
+        "Lorem ipsum.",
+        "Lorem ipsum set.",
       ],
     },
     {
@@ -96,11 +96,11 @@ const VendorPlans = ({ header = false }) => {
       frequency: "monthly",
       status: true,
       features: [
-        "Unlimited product listings",
-        "Dedicated account manager",
-        "Custom integrations",
-        "Full analytics suite",
-        "Premium 24/7 support",
+        "Lorem ipsum set amet elit sed dotempor enim.",
+        "Lorem ipsum set amet elit.",
+        "Lorem ipsum set amet elit sed.",
+        "Lorem ipsum.",
+        "Lorem ipsum set.",
       ],
     },
   ];
@@ -210,7 +210,6 @@ const VendorPlans = ({ header = false }) => {
 
                         <th>Plan</th>
                         <th>Price</th>
-                        <th>Features</th>
                         <th>Frequency</th>
                         <th>Status</th>
                         <th className="text-center" style={{ width: "80px" }}>
@@ -226,18 +225,16 @@ const VendorPlans = ({ header = false }) => {
                           </td>
                         </tr>
                       )}
-                      {false &&
-                        vendorPlans &&
-                        vendorPlans.length === 0 && (
-                          <tr>
-                            <td
-                              colSpan={9}
-                              style={{ textAlign: "center", height: "100px" }}
-                            >
-                              No plans found.
-                            </td>
-                          </tr>
-                        )}
+                      {false && vendorPlans && vendorPlans.length === 0 && (
+                        <tr>
+                          <td
+                            colSpan={9}
+                            style={{ textAlign: "center", height: "100px" }}
+                          >
+                            No plans found.
+                          </td>
+                        </tr>
+                      )}
                       {true &&
                         vendorPlans &&
                         vendorPlans?.length > 0 &&
@@ -258,7 +255,7 @@ const VendorPlans = ({ header = false }) => {
                               </Link>
                             </td>
                             <td>{item?.price} AED</td>
-                            <td>
+                            {/* <td>
                               {item?.features
                                 .slice(0, 3)
                                 .map((feature: any, i: number) => (
@@ -269,7 +266,7 @@ const VendorPlans = ({ header = false }) => {
                                   +{item.features.length - 3} more
                                 </li>
                               )}
-                            </td>
+                            </td> */}
                             <td>{capitalize(item?.frequency)}</td>
                             <td>
                               <div

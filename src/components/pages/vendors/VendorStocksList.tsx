@@ -8,27 +8,27 @@ import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 import Loader from "src/components/features/loader";
 import PtSwitch from "src/components/features/elements/switch";
 import { generateFilePath } from "src/services/url.service";
-import { Brand } from "../../brands/BrandsList";
 import {
   useDeleteStock,
   useGetStocksByProductId,
   useUpdateStock,
 } from "src/services/stock.service";
-import AddStock from "./popups/AddStock";
-import { Product } from "../ProductsList";
 import {
   StockEditValidationSchema,
   StockValidationSchema,
 } from "src/validations/validationSchemas";
 import { useFormik } from "formik";
 import Select from "react-select";
-import { useGetAllVendors } from "src/services/vendor.service";
+import {
+  useGetAllVendors,
+  useGetStocksByVendorId,
+} from "src/services/vendor.service";
 import { errorMsg } from "src/utils/toast";
 
-const StocksList = ({
-  productId,
+const VendorStocksList = ({
+  vendorId,
 }: {
-  productId?: string;
+  vendorId?: string;
   isLoading?: boolean;
   setPage?: Dispatch<React.SetStateAction<number>>;
   setLimit?: Dispatch<React.SetStateAction<number>>;
@@ -48,9 +48,9 @@ const StocksList = ({
   const [page, setPage] = useState<number>(1);
 
   // QUERIES
-  const { data: stocks, isLoading: stocksLoading } = useGetStocksByProductId(
-    productId ? productId : "",
-    !!productId
+  const { data: stocks, isLoading: stocksLoading } = useGetStocksByVendorId(
+    vendorId ? vendorId : "",
+    !!vendorId
   );
   const { data: vendors, isLoading, error } = useGetAllVendors(isEditOpen);
 
@@ -153,7 +153,7 @@ const StocksList = ({
                 <Row className="align-items-lg-center justify-content-end mb-3">
                   <Col>
                     <h5 className="m-0 card-title h5 font-weight-bold">
-                      Vendor Products
+                      Products
                     </h5>
                   </Col>
 
@@ -206,16 +206,6 @@ const StocksList = ({
                       </InputGroup>
                     </div>
                   </Col>
-                  {/* <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
-                    <Button
-                      className="font-weight-semibold"
-                      variant="dark"
-                      //   size="md"
-                      onClick={() => setAddOpen(true)}
-                    >
-                      + Add Stock
-                    </Button>
-                  </Col> */}
                 </Row>
               </div>
               <Form onSubmit={formik.handleSubmit}>
@@ -235,7 +225,6 @@ const StocksList = ({
                       >
                         Product
                       </th>
-                      <th>Vendor</th>
                       <th>Quantity</th>
                       <th>Sale Price</th>
                       <th>Warranty Period</th>
@@ -274,7 +263,7 @@ const StocksList = ({
                             <Link
                               style={{ width: "50px", height: "50px" }}
                               className="d-flex align-items-center justify-content-center"
-                              to={`/stock/detail?_id=${item?._id}`}
+                              to={`/products/detail?_id=${item?.product?._id}`}
                             >
                               <img
                                 className="mr-1"
@@ -289,57 +278,6 @@ const StocksList = ({
                               />
                             </Link>
                           </td>
-                          {/* {isEditOpen &&
-                          selectedStock &&
-                          selectedStock?._id === item?._id ? (
-                            <td>
-                              <div>
-                                <Form.Group>
-                                  <Select
-                                    options={vendors?.map((item: any) => ({
-                                      value: item?._id,
-                                      label: item?.userName || item?.email,
-                                    }))}
-                                    value={vendors
-                                      ?.map((item: any) => ({
-                                        value: item?._id,
-                                        label: item?.userName || item?.email,
-                                      }))
-                                      .find(
-                                        (opt: any) =>
-                                          opt.value ===
-                                          formik.values.requestedBy
-                                      )}
-                                    onChange={(selected: any) =>
-                                      formik.setFieldValue(
-                                        "requestedBy",
-                                        selected?.value || ""
-                                      )
-                                    }
-                                    placeholder="Select Vendor"
-                                    isSearchable
-                                    classNamePrefix="react-select"
-                                  />
-                                  {formik.errors.requestedBy &&
-                                    formik.touched.requestedBy && (
-                                      <div className="invalid-feedback d-block">
-                                        {formik.errors.requestedBy}
-                                      </div>
-                                    )}
-                                </Form.Group>
-                              </div>
-                            </td>
-                          ) : ( */}
-                          <td>
-                            <Link
-                              to={`/vendors/detail?_id=${item?.requestedBy?._id}`}
-                            >
-                              {item?.requestedBy?.userName}
-                              <br />
-                              {item?.requestedBy?.email}
-                            </Link>
-                          </td>
-                          {/* )} */}
                           {isEditOpen &&
                           selectedStock &&
                           selectedStock?._id === item?._id ? (
@@ -386,7 +324,11 @@ const StocksList = ({
                               </div>
                             </td>
                           ) : (
-                            <td>{item?.stock}</td>
+                            <td>
+                              <Link to={`/stock/detail?_id=${item?._id}`}>
+                                {item?.stock}
+                              </Link>
+                            </td>
                           )}
                           {isEditOpen &&
                           selectedStock &&
@@ -592,19 +534,8 @@ const StocksList = ({
         toggle={() => setDeleteOpen(!isDeleteOpen)}
         text={"Are you sure that you want to delete this stock?"}
       />
-      {/* <EditProduct
-        productId={selectedStock}
-        isOpen={isEditOpen}
-        toggle={() => setEditOpen(!isEditOpen)}
-      /> */}
-
-      <AddStock
-        productId={productId ? productId : ""}
-        isOpen={isAddOpen}
-        toggle={() => setAddOpen(!isAddOpen)}
-      />
     </>
   );
 };
 
-export default StocksList;
+export default VendorStocksList;

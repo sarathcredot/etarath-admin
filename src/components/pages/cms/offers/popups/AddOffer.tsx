@@ -28,6 +28,7 @@ const AddOffer = ({ isOpen, toggle }: Props) => {
     initialValues: {
       imageUrl: "" as any,
       priority: 1,
+      link: "",
     },
     validationSchema: OfferValidationSchema,
 
@@ -62,7 +63,7 @@ const AddOffer = ({ isOpen, toggle }: Props) => {
   };
   return (
     <>
-      <Modal show={isOpen} onHide={toggle} centered={true} >
+      <Modal show={isOpen} onHide={toggle} centered={true}>
         <Modal.Header>
           <h3 className="my-2">Add Offer</h3>
         </Modal.Header>
@@ -117,7 +118,24 @@ const AddOffer = ({ isOpen, toggle }: Props) => {
                   )}
                 </Col>
               )}
-
+              <Col lg={12} className="px-4 py-1  ">
+                <Form.Group as={Row} className="align-items-center">
+                  <Form.Label className="col-form-label">
+                    Link
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Link"
+                    name="link"
+                    value={formik.values.link}
+                    onChange={formik.handleChange}
+                    isInvalid={!!formik.errors.link && formik.touched.link}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.link}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
               <Col lg={12} className=" px-2 py-1 ">
                 <Form.Group className="align-items-center">
                   <Form.Label className="col-form-label">Priority</Form.Label>

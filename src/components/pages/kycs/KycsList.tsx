@@ -1,25 +1,13 @@
 import React, { Dispatch, useCallback, useMemo, useState } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  InputGroup,
-  Row,
-  Table,
-} from "react-bootstrap";
+import { Col, Form, InputGroup, Row, Table } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import Pagination from "src/components/common/Pagination";
-import PtSwitch from "src/components/features/elements/switch";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 import { toast } from "react-toastify";
 import Loader from "src/components/features/loader";
 import { debounce } from "lodash";
-import AddVendor from "./forms/AddVendor";
-import AddBussinessDetails from "./forms/AddBussinessDetails";
-import { generateFilePath } from "src/services/url.service";
-import EditVendor from "./forms/EditVendor";
 import { useUpdateVendorStatus } from "src/services/vendor.service";
+import { useDeleteKyc } from "src/services/kyc.service";
 
 type Props = {
   header?: boolean;
@@ -33,7 +21,7 @@ type Props = {
   search: string;
 };
 
-const VendorsList = ({
+const KycsList = ({
   header = false,
   vendors,
   isLoading,
@@ -47,40 +35,30 @@ const VendorsList = ({
   const navigate = useNavigate();
   //STATE
   // states for popups
-  const [isAddOpen, setAddOpen] = useState<boolean>(false);
-  const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [isStatusOpen, setStatusOpen] = useState<boolean>(false);
-  const [selectedVendor, setSelectedVendor] = useState<any>(null);
-console.log(selectedVendor,"selectedVendor");
+  const [selectedKyc, setSelectedKyc] = useState<any>(null);
+  console.log(selectedKyc, "selectedKyc");
   //MUTATIONS
-  const { mutateAsync: updateVendorStatus } = useUpdateVendorStatus();
+  const { mutateAsync: deleteKyc } = useDeleteKyc();
 
   //HANDLERS
-  const handleChangeStatus = async (vendorId: string, isActive: boolean) => {
+  const handleDeleteKyc = async (userId: string) => {
     try {
-      if (!vendorId) throw new Error("Vendor ID is required!");
-      if (typeof isActive !== "boolean")
-        throw new Error("Unexpected Active status!");
-
-      const resp = await updateVendorStatus({
-        id: vendorId,
-        isActive: !isActive,
-      });
-
-      setSelectedVendor(null);
-      setStatusOpen(false);
+      if (!userId) throw new Error("User ID is required!");
+      const resp = await deleteKyc(userId);
       toast(resp?.data?.message, {
         containerId: "default",
         className: "no-icon notification-success",
       });
     } catch (error) {
-      toast("Can't update Vendor right now, please try later!", {
+      console.log(error);
+      toast("Can't delete kyc right now, please try later!", {
         containerId: "default",
         className: "no-icon notification-danger",
       });
-      setStatusOpen(false);
     }
+    setSelectedKyc(null);
+    setDeleteOpen(false);
   };
 
   const debouncedHandleSearch = useCallback(
@@ -104,21 +82,13 @@ console.log(selectedVendor,"selectedVendor");
             <div className="datatables-header-footer-wrapper">
               <div className="datatable-header">
                 <Row className="align-items-lg-center justify-content-end mb-3">
-                  {header && (
-                    <Col>
-                      <h5 className="m-0 card-title h5 font-weight-bold">
-                        Vendors
-                      </h5>
-                    </Col>
-                  )}
-
                   <Col className="col-auto pl-lg-1">
                     <div className="search search-style-1 mx-lg-auto w-auto">
                       <InputGroup>
                         <Form.Control
                           type="text"
                           className="search-term"
-                          placeholder="Search by Name"
+                          placeholder="Search "
                           style={{ width: "250px" }}
                           onChange={(e: any) =>
                             debouncedHandleSearch(e.target.value)
@@ -127,17 +97,6 @@ console.log(selectedVendor,"selectedVendor");
                         />
                       </InputGroup>
                     </div>
-                  </Col>
-                  <Col xl="auto" className="">
-                    <Button
-                      className="font-weight-semibold px-3"
-                      variant="dark"
-                      style={{ background: "#000" }}
-                      // onClick={() => navigate("/vendors/add-vendor")}
-                      onClick={() => setAddOpen(true)}
-                    >
-                      + Add Vendor
-                    </Button>
                   </Col>
                 </Row>
               </div>
@@ -151,13 +110,14 @@ console.log(selectedVendor,"selectedVendor");
                 <thead>
                   <tr>
                     <th style={{ width: "30px" }}>#</th>
-                    <th style={{ width: "80px" }}>Profile</th>
+                    {/* <th style={{ width: "80px" }}>Profile</th> */}
 
-                    <th>Full Name</th>
-                    <th>Phone Number</th>
-                    <th>Email</th>
-                    <th>Verifaction</th>
-                    <th>Status</th>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Shop Name</th>
+                    <th>Trade License Number</th>
+                    <th>Shop Address</th>
+                    <th>Verification</th>
                     <th className="text-center" style={{ width: "80px" }}>
                       Actions
                     </th>
@@ -199,7 +159,7 @@ console.log(selectedVendor,"selectedVendor");
                             </strong>
                           </Link>
                         </td>
-                        <td>
+                        {/* <td>
                           <Link
                             to={`/vendors/detail?_id=${item?._id}`}
                             style={{ width: "50px", height: "50px" }}
@@ -215,57 +175,44 @@ console.log(selectedVendor,"selectedVendor");
                               crossOrigin="anonymous"
                             />
                           </Link>
-                        </td>
+                        </td> */}
                         <td>
-                          <Link to={`/vendors/detail?_id=${item?._id}`}>
-                            {item?.userName}
+                          <Link to={`/vendors/detail?_id=${item?.createdBy}`}>
+                            {item?.userDetails?.userName || "-"}
                           </Link>
                         </td>
-                        <td>{item?.phoneNumber}</td>
-                        <td>{item?.email}</td>
+                        <td>{item?.userDetails?.role || "-"}</td>
+                        <td>{item?.shop_name || "-"}</td>
+                        <td>{item?.tradeLicenseNumber}</td>
+                        <td>{item?.shop_address}</td>
                         <td>
                           <div
-                            className={`ecommerce-status ${item?.isVerified}`}
+                            className={`ecommerce-status ${item?.kycStatus}`}
                           >
-                            {item?.isVerified}
-                          </div>
-                        </td>
-
-                        <td>
-                          <div
-                            onClick={() => {
-                              setStatusOpen(true);
-                              setSelectedVendor(item);
-                            }}
-                          >
-                            <PtSwitch
-                              className="mr-1"
-                              on={!item?.isSuspend}
-                              size="sm"
-                              variant="success"
-                            />
+                            {item?.kycStatus}
                           </div>
                         </td>
                         <td>
                           <div className="d-flex align-items-center justify-content-around">
                             <div
-                              className="action_btn "
+                              className="action_btn"
                               onClick={() => {
-                                setSelectedVendor(item);
-                                setEditOpen(true);
+                                navigate(
+                                  `/vendors/detail?_id=${item?.createdBy}`
+                                );
                               }}
                             >
-                              <i className="fas fa-pencil-alt"></i>
+                              <i className="far fa-eye"></i>
                             </div>
-                            {/* <div
+                            <div
                               className="action_btn"
                               onClick={() => {
                                 setDeleteOpen(true);
-                                setSelectedVendor(item);
+                                setSelectedKyc(item);
                               }}
                             >
                               <i className="far fa-trash-alt"></i>
-                            </div> */}
+                            </div>
                           </div>
                         </td>
                       </tr>
@@ -286,21 +233,13 @@ console.log(selectedVendor,"selectedVendor");
         </Row>
       </div>
       <ConfirmationPopup
-        submit={() =>
-          handleChangeStatus(selectedVendor?._id, selectedVendor?.isSuspend)
-        }
-        isOpen={isStatusOpen}
-        toggle={() => setStatusOpen(!isStatusOpen)}
-        text={"Are you sure that you want to change the status of this vendor?"}
-      />
-      <AddVendor isOpen={isAddOpen} toggle={() => setAddOpen(!isAddOpen)} />
-      <EditVendor
-        vendorId={selectedVendor?._id}
-        isOpen={isEditOpen}
-        toggle={() => setEditOpen(!isEditOpen)}
+        submit={() => handleDeleteKyc(selectedKyc?.createdBy)}
+        isOpen={isDeleteOpen}
+        toggle={() => setDeleteOpen(!isDeleteOpen)}
+        text={"Are you sure that you want to delete  this kyc?"}
       />
     </>
   );
 };
 
-export default VendorsList;
+export default KycsList;

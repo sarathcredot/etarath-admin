@@ -20,10 +20,10 @@ const retailerPlan: RetailerPlan = {
   frequency: "monthly",
   status: true,
   features: [
-    "Up to 50 products",
-    "Basic analytics dashboard",
-    "Email support",
-    "1 staff account",
+    "Lorem ipsum set amet elit sed dotempor enim.",
+    "Lorem ipsum set amet elit.",
+    "Lorem ipsum set amet elit sed.",
+    "Lorem ipsum.",
   ],
 };
 

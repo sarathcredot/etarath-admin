@@ -18,11 +18,11 @@ const vendorPlan: VendorPlan = {
   frequency: "monthly",
   status: true,
   features: [
-    "Access to vendor dashboard",
-    "Up to 200 product listings",
-    "Advanced reporting tools",
-    "Priority support",
-    "Bulk upload option",
+    "Lorem ipsum set amet elit sed dotempor enim.",
+    "Lorem ipsum set amet elit.",
+    "Lorem ipsum set amet elit sed.",
+    "Lorem ipsum.",
+    "Lorem ipsum set.",
   ],
 };
 

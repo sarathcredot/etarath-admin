@@ -230,7 +230,7 @@ const ProductsPage = () => {
                         </th>
                         <th>Name</th>
                         <th>Brand</th>
-                        <th>Category</th>
+                        {/* <th>Category</th> */}
                         <th>Origin</th>
                         <th>Year</th>
 
@@ -291,7 +291,7 @@ const ProductsPage = () => {
                                   {item?.brand?.name}
                                 </Link>
                               </td>
-                              <td>{item?.category}</td>
+                              {/* <td>{item?.category}</td> */}
                               <td>
                                 <Link to={`/attributes/origin`}>
                                   {item?.origin}

@@ -36,6 +36,7 @@ const EditOffer = ({ isOpen, toggle, offerId }: Props) => {
     initialValues: {
       imageUrl: "" as any,
       priority: 1,
+      link: "",
     },
     validationSchema: OfferValidationSchema,
 
@@ -68,9 +69,6 @@ const EditOffer = ({ isOpen, toggle, offerId }: Props) => {
       });
     }
   };
-
-  
-
 
   useEffect(() => {
     if (offer) {
@@ -136,7 +134,22 @@ const EditOffer = ({ isOpen, toggle, offerId }: Props) => {
                   )}
                 </Col>
               )}
-
+              <Col lg={12} className="px-4 py-1  ">
+                <Form.Group as={Row} className="align-items-center">
+                  <Form.Label className="col-form-label">Link</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Link"
+                    name="link"
+                    value={formik.values.link}
+                    onChange={formik.handleChange}
+                    isInvalid={!!formik.errors.link && formik.touched.link}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.link}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
               <Col lg={12} className=" px-2 py-1 ">
                 <Form.Group className="align-items-center">
                   <Form.Label className="col-form-label">Priority</Form.Label>

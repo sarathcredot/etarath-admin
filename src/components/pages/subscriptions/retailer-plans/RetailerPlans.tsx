@@ -11,6 +11,7 @@ import EditAuctionPlan from "./Popups/EditAuctionPlan";
 import { errorMsg } from "src/utils/toast";
 import _, { capitalize } from "lodash";
 import Loader from "src/components/features/loader";
+import { useGetAllRetailerPlans } from "src/services/retailer-plans.service";
 
 export type RetailerPlan = {
   planName: string;
@@ -53,9 +54,9 @@ const RetailerPlans = ({ header = false }) => {
   }, [currentPage, limit]);
 
   //DATA
-  // const { data, isLoading } = useGetAllAuctionPlans(queryObj);
+  const { data: retailer_plans, isLoading } = useGetAllRetailerPlans();
   // const auctionPlans = data?.auctionPlans || [];
-  const pagination = { totalPages: 10 } ;
+  const pagination = { totalPages: 10 };
 
   //MUTATION
   // const { mutateAsync: updateAuctionPlan } = useUpdateAuctionPlanById();
@@ -111,10 +112,11 @@ const RetailerPlans = ({ header = false }) => {
       frequency: "monthly",
       status: true,
       features: [
-        "Up to 50 products",
-        "Basic analytics dashboard",
-        "Email support",
-        "1 staff account",
+        "Lorem ipsum set amet elit sed dotempor enim.",
+        "Lorem ipsum set amet elit.",
+        "Lorem ipsum set amet elit sed.",
+        "Lorem ipsum.",
+        "Lorem ipsum set.",
       ],
     },
     {
@@ -126,11 +128,11 @@ const RetailerPlans = ({ header = false }) => {
       frequency: "monthly",
       status: true,
       features: [
-        "Up to 200 products",
-        "Advanced analytics",
-        "Priority email + chat support",
-        "3 staff accounts",
-        "Custom branding",
+        "Lorem ipsum set amet elit sed dotempor enim.",
+        "Lorem ipsum set amet elit.",
+        "Lorem ipsum set amet elit sed.",
+        "Lorem ipsum.",
+        "Lorem ipsum set.",
       ],
     },
     {
@@ -140,14 +142,13 @@ const RetailerPlans = ({ header = false }) => {
       price: 129,
       currency: "AED",
       frequency: "monthly",
-      status: false,
+      status: true,
       features: [
-        "Unlimited products",
-        "Full analytics suite",
-        "Dedicated account manager",
-        "10 staff accounts",
-        "Custom integrations",
-        "Premium support",
+        "Lorem ipsum set amet elit sed dotempor enim.",
+        "Lorem ipsum set amet elit.",
+        "Lorem ipsum set amet elit sed.",
+        "Lorem ipsum.",
+        "Lorem ipsum set.",
       ],
     },
   ];
@@ -177,13 +178,6 @@ const RetailerPlans = ({ header = false }) => {
                 <div className="datatables-header-footer-wrapper">
                   <div className="datatable-header">
                     <Row className="align-items-lg-center justify-content-end mb-3">
-                      {header && (
-                        <Col>
-                          <h5 className="m-0 card-title h5 font-weight-bold">
-                            Auction Plans
-                          </h5>
-                        </Col>
-                      )}
                       {/* <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
                         <Button
                           className="font-weight-semibold"
@@ -234,7 +228,7 @@ const RetailerPlans = ({ header = false }) => {
 
                         <th>Plan</th>
                         <th>Price</th>
-                        <th>Features</th>
+                        {/* <th>Features</th> */}
                         <th>Trial</th>
                         <th>Frequency</th>
                         <th>Status</th>
@@ -284,7 +278,7 @@ const RetailerPlans = ({ header = false }) => {
                                 </Link>
                               </td>
                               <td>{item?.price || 0} AED</td>
-                              <td>
+                              {/* <td>
                                 {item?.features
                                   .slice(0, 3)
                                   .map((feature: any, i: number) => (
@@ -295,7 +289,7 @@ const RetailerPlans = ({ header = false }) => {
                                     +{item.features.length - 3} more
                                   </li>
                                 )}
-                              </td>
+                              </td> */}
                               <td>{item?.trialDays} Days</td>
                               <td>{capitalize(item?.frequency)}</td>
                               <td>
@@ -338,7 +332,7 @@ const RetailerPlans = ({ header = false }) => {
                     </tbody>
                   </Table>
                 </div>
-                {pagination?.totalPages && pagination?.totalPages > 1 && (
+                {/* {pagination?.totalPages && pagination?.totalPages > 1 && (
                   <Pagination
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
@@ -346,7 +340,7 @@ const RetailerPlans = ({ header = false }) => {
                     totalPages={pagination?.totalPages || 0}
                     style={{ marginTop: "20px" }}
                   />
-                )}
+                )} */}
               </Card.Body>
             </Card>
           </Col>
