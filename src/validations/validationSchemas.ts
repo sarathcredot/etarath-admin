@@ -32,8 +32,13 @@ export const ProductValidationSchema = Yup.object().shape({
     .positive("Rim Size must be a positive number"),
   imageUrl: Yup.array()
     .of(Yup.mixed().required("Image is required"))
-    .min(4, " 4 images required")
-    .max(4, " 4 images required"),
+    .min(4, "4 images required")
+    .max(4, "4 images required"),
+  mrp: Yup.string().required("MRP is required"),
+  description: Yup.string().required("Description is required"),
+  features: Yup.array()
+    .of(Yup.string().required("Features is required"))
+    .min(1, "Atleast add 1 feature"),
 });
 // stock validation schema
 export const StockValidationSchema = Yup.object().shape({
@@ -53,7 +58,9 @@ export const StockEditValidationSchema = Yup.object().shape({
 // brand validation schema
 export const BrandValidationSchema = Yup.object().shape({
   name: Yup.string().required("Brand name is required"),
-  imageUrl: Yup.mixed().required("Brand logo is required"),
+  imageUrl: Yup.mixed().required("Primary logo is required"),
+  imageUrl2: Yup.mixed().required("Alternate logo is required"),
+  priority: Yup.string().required("Brand priority is required"),
 });
 
 // vendor validation schema

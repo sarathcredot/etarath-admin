@@ -35,15 +35,34 @@ export const useAddAttribute = () => {
 // DELETE A ATTRIBUTE
 export const deleteAttribute = async (data: {
   type: string;
-  attribute: string;
+  attributeId: string;
 }) => {
-  return await axiosAuth.delete(`${baseUrl}`, { data });
+  return await axiosAuth.delete(`${baseUrl}/`, { data });
 };
 
 export const useDeleteAttribute = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteAttribute,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["attributes"] });
+    },
+  });
+};
+
+// UPDATE ATTRIBUTE STATUS
+export const updateAttributeStatus = async (data: {
+  type: string;
+  attributeId: string;
+  status: boolean;
+}) => {
+  return await axiosAuth.patch(`${baseUrl}/`, data);
+};
+
+export const useUpdateAttributeStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateAttributeStatus,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["attributes"] });
     },

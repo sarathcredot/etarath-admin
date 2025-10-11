@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Breadcrumb from "src/components/common/breadcrumb";
 import { Card } from "react-bootstrap";
-// import { useGetAllTournaments } from "src/services/tournament.service";
 import { toast } from "react-toastify";
 import BrandsList from "./BrandsList";
 import { useGetAllBrands } from "src/services/brand.service";

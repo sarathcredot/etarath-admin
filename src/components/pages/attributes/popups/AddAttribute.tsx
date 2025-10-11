@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
 import _ from "lodash";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { useAddAttribute } from "src/services/attribute.service";
@@ -21,7 +21,7 @@ const AddAttribute = ({ isOpen, toggle, type }: Props) => {
   const formik = useFormik({
     initialValues: {
       attribute: "",
-      type: type,
+      type: "",
     },
     validationSchema: AttributeValidationSchema,
 
@@ -30,7 +30,7 @@ const AddAttribute = ({ isOpen, toggle, type }: Props) => {
       handleAddAttribute(values);
     },
   });
-
+  console.log({ type });
   //HANDLERS
   const handleAddAttribute = async (values: any) => {
     try {
@@ -48,6 +48,14 @@ const AddAttribute = ({ isOpen, toggle, type }: Props) => {
       });
     }
   };
+
+  useEffect(() => {
+    if (isOpen && type) {
+      formik.setFieldValue("type", type);
+    } else {
+      formik.setFieldValue("type", "");
+    }
+  }, [isOpen, toggle, type]);
 
   console.log(formik.errors, "ERRORS");
   return (

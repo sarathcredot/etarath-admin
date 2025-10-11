@@ -29,10 +29,12 @@ export type Brand = {
   _id: string;
   name: string;
   imageUrl: string;
+  imageUrl2: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  productCount:string;
+  productCount: string;
+  priority: string;
 };
 
 const BrandsList = ({
@@ -135,7 +137,7 @@ const BrandsList = ({
   const totalPages = brandsData?.totalPages || 0;
 
   useEffect(() => {
-    console.log(brandsData, "TOURNAMENTS DATA");
+    console.log(brandsData, "BRANDS DATA");
   }, [brandsData]);
   return (
     <>
@@ -234,6 +236,7 @@ const BrandsList = ({
                       Logo
                     </th>
                     <th>Brand</th>
+                    <th>Priority</th>
                     <th>Product Count</th>
                     <th>Status</th>
                     <th className="text-center" style={{ width: "80px" }}>
@@ -253,7 +256,7 @@ const BrandsList = ({
                       <tr key={index}>
                         <td>
                           <Link to={`/brands/detail?_id=${item?._id}`}>
-                            <strong>{page * limit + index + 1}</strong>
+                            <strong>{index + 1}</strong>
                           </Link>
                         </td>
                         <td>
@@ -272,10 +275,11 @@ const BrandsList = ({
                         </td>
                         <td>
                           <Link to={`/brands/detail?_id=${item?._id}`}>
-                            {item?.name}
+                            {item?.name || "-"}
                           </Link>
                         </td>
-                        <td>{item?.productCount}</td>
+                        <td>{item?.priority || "-"}</td>
+                        <td>{item?.productCount }</td>
 
                         <td>
                           <div

@@ -47,13 +47,15 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
     initialValues: {
       productName: "",
       brand: "",
-      // category: "",
+      mrp: "",
       origin: "",
       yearOfManufacturer: "",
       width: "",
       height: "",
       size: "",
       imageUrl: [] as any[],
+      description: "",
+      features: [""] as string[],
     },
     validationSchema: ProductValidationSchema,
 
@@ -79,8 +81,6 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
         (img: any) => typeof img === "string"
       );
 
-      console.log({ files, urls });
-
       let uploadedUrls: string[] = [];
 
       if (files.length > 0) {
@@ -95,8 +95,6 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
 
       // merge old urls + new uploaded urls
       values.imageUrl = [...urls, ...uploadedUrls];
-
-      values.yearOfManufacturer = Number(values.yearOfManufacturer);
 
       console.log(values, "VALUES = = = ");
 
@@ -117,6 +115,7 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
   };
 
   console.log(formik.errors, "ERRORS");
+  console.log(formik.values?.features, "FEATURES");
 
   return (
     <>
@@ -257,7 +256,7 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              <Col lg={4} className=" px-2 py-1 ">
+              <Col lg={6} className=" px-2 py-1 ">
                 <Form.Group className="align-items-center">
                   <Form.Label className="col-form-label">Brand</Form.Label>
                   <Form.Control
@@ -283,25 +282,23 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              {/* <Col lg={6} className="px-4 py-1 ">
+              <Col lg={6} className="px-4 py-1 ">
                 <Form.Group as={Row} className="align-items-center">
-                  <Form.Label className="col-form-label">Category</Form.Label>
+                  <Form.Label className="col-form-label">MRP</Form.Label>
                   <Form.Control
-                    type="text"
-                    placeholder="Enter category"
-                    name="category"
-                    value={formik.values.category}
+                    type="number"
+                    placeholder="Enter MRP"
+                    name="mrp"
+                    value={formik.values.mrp}
                     onChange={formik.handleChange}
-                    isInvalid={
-                      !!formik.errors.category && formik.touched.category
-                    }
+                    isInvalid={!!formik.errors.mrp && formik.touched.mrp}
                   />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.category}
+                    {formik.errors.mrp}
                   </Form.Control.Feedback>
                 </Form.Group>
-              </Col> */}
-              <Col lg={4} className=" px-2 py-1 ">
+              </Col>
+              <Col lg={6} className=" px-2 py-1 ">
                 <Form.Group className="align-items-center">
                   <Form.Label className="col-form-label">Origin</Form.Label>
                   <Form.Control
@@ -316,18 +313,19 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
                     <option disabled selected hidden value="">
                       Select Origin
                     </option>
-                    {attributes?.origin?.map((item: string, index: number) => (
-                      <option key={index} value={item}>
-                        {item}
-                      </option>
-                    ))}
+                    {attributes &&
+                      attributes[0]?.origin?.map((item: any, index: number) => (
+                        <option key={index} value={item?._id}>
+                          {item?.value}
+                        </option>
+                      ))}
                   </Form.Control>
                   <Form.Control.Feedback type="invalid">
                     {formik.errors.origin}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              <Col lg={4} className=" px-2 py-1 ">
+              <Col lg={6} className=" px-2 py-1 ">
                 <Form.Group className="align-items-center">
                   <Form.Label className="col-form-label">Year</Form.Label>
                   <Form.Control
@@ -345,16 +343,138 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
                     <option disabled selected hidden value="">
                       Select year
                     </option>
-                    {attributes?.yearOfManufacturer?.map(
-                      (item: string, index: number) => (
-                        <option key={index} value={item}>
-                          {item}
-                        </option>
-                      )
-                    )}
+                    {attributes &&
+                      attributes[0]?.yearOfManufacturer?.map(
+                        (item: any, index: number) => (
+                          <option key={index} value={item?._id}>
+                            {item?.value}
+                          </option>
+                        )
+                      )}
                   </Form.Control>
                   <Form.Control.Feedback type="invalid">
                     {formik.errors.yearOfManufacturer}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+              <Col lg={12} className="px-4 py-1 ">
+                <Form.Group
+                  as={Row}
+                  className=" "
+                  style={{ flexDirection: "column" }}
+                >
+                  <Form.Label className="col-form-label">Features</Form.Label>
+                  {formik?.values?.features?.map(
+                    (feature: string, index: number) => {
+                      const featureError =
+                        ((formik.touched.features as boolean[] | undefined)?.[
+                          index
+                        ] &&
+                          (formik.errors.features as string[] | undefined)?.[
+                            index
+                          ]) ||
+                        "";
+
+                      return (
+                        <>
+                          <div
+                            key={index}
+                            className="d-flex  mb-1"
+                            style={{ gap: 5 }}
+                          >
+                            <Form.Control
+                              type="text"
+                              placeholder={`Feature ${index + 1}`}
+                              name={`features[${index}]`}
+                              value={feature}
+                              onChange={(e) => {
+                                const updatedFeatures = [
+                                  ...formik?.values?.features,
+                                ];
+                                updatedFeatures[index] = e.target.value;
+                                formik.setFieldValue(
+                                  "features",
+                                  updatedFeatures
+                                );
+                              }}
+                              onBlur={() =>
+                                formik.setFieldTouched(
+                                  `features[${index}]`,
+                                  true
+                                )
+                              }
+                              isInvalid={!!featureError}
+                            />
+                            {formik?.values?.features?.length - 1 === index && (
+                              <Button
+                                variant="dark"
+                                style={{ background: "#000" }}
+                                type="button"
+                                onClick={() => {
+                                  formik.setFieldValue("features", [
+                                    ...formik?.values?.features,
+                                    "",
+                                  ]);
+                                }}
+                              >
+                                +
+                              </Button>
+                            )}
+                            {index !== 0 && (
+                              <Button
+                                variant="danger "
+                                // style={{ background: "#000" }}
+                                type="button"
+                                onClick={() => {
+                                  const updatedFeatures = [
+                                    ...formik?.values?.features,
+                                  ];
+                                  updatedFeatures.splice(index, 1);
+                                  formik.setFieldValue(
+                                    "features",
+                                    updatedFeatures
+                                  );
+                                }}
+                              >
+                                -
+                              </Button>
+                            )}
+                          </div>
+                          <Form.Control.Feedback type="invalid">
+                            {featureError}
+                          </Form.Control.Feedback>
+                        </>
+                      );
+                    }
+                  )}
+                  {/* For top-level array error (like empty features) */}
+                  {typeof formik.errors.features === "string" && (
+                    <div className="text-danger mt-1">
+                      {formik.errors.features}
+                    </div>
+                  )}
+                </Form.Group>
+              </Col>
+              <Col lg={12} className=" pb-2 px-2">
+                <Form.Group className="align-items-center">
+                  <Form.Label className="col-form-label">
+                    Description
+                  </Form.Label>
+                  <Form.Control
+                    style={{ color: "#000" }}
+                    as="textarea"
+                    rows={4}
+                    placeholder="Enter description"
+                    name="description"
+                    value={formik.values.description}
+                    onChange={formik.handleChange}
+                    isInvalid={
+                      !!formik.errors.description &&
+                      !!formik.touched.description
+                    }
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.description}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>

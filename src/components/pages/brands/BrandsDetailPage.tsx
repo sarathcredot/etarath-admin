@@ -141,24 +141,7 @@ const BrandsDetailPage = () => {
               </Card.Header>
               <Card.Body>
                 <Row>
-                  <Col md={2} className="px-3  ">
-                    <div className="">
-                      <h6>Logo</h6>
-                      <div
-                        className="product_image_div"
-                        style={{ cursor: "default",width:200,height:200 }}
-                      >
-                        <img
-                          src={generateFilePath(brand?.imageUrl)}
-                          alt="brand"
-                          width="110"
-                          height="110"
-                          crossOrigin="anonymous"
-                        />
-                      </div>
-                    </div>
-                  </Col>
-                  <Col>
+                  <Col >
                     <div>
                       <h6>Brand </h6>
                       <h5 className=" text-dark font-weight-500 ">
@@ -167,7 +150,7 @@ const BrandsDetailPage = () => {
                     </div>
                     <div>
                       <h6>Product Count</h6>
-                      <h5 className=" text-dark font-weight-500 ">0</h5>
+                      <h5 className=" text-dark font-weight-500 ">{brand?.priority}</h5>
                     </div>
                     {/* </Col>
 
@@ -195,35 +178,48 @@ const BrandsDetailPage = () => {
                       </div>
                     </div>
                   </Col>
+                  <Col  className="pl-3 d-flex justify-content-end" style={{ gap: 10 }}>
+                    <div className="">
+                      <h6>Primary Logo (Dark Version)</h6>
+                      <div
+                        className="product_image_div"
+                        style={{ cursor: "default", width: 200, height: 200 }}
+                      >
+                        <img
+                          src={generateFilePath(brand?.imageUrl)}
+                          alt="brand"
+                          width="110"
+                          height="110"
+                          crossOrigin="anonymous"
+                        />
+                      </div>
+                    </div>
+                    {brand?.imageUrl2 && (
+                      <div className="">
+                        <h6>Alternate Logo (Light Version)</h6>
+                        <div
+                          className="product_image_div"
+                          style={{
+                            cursor: "default",
+                            width: 200,
+                            height: 200,
+                            background: "#0a0a0a",
+                          }}
+                        >
+                          <img
+                            src={generateFilePath(brand?.imageUrl2)}
+                            alt="brand"
+                            width="110"
+                            height="110"
+                            crossOrigin="anonymous"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </Col>
                 </Row>
               </Card.Body>
             </Card>
-
-            {/* <div
-              className="tabs"
-              style={{ borderRadius: "5px", overflow: "hidden" }}
-            >
-              <Tabs className="nav-justified">
-                <Tab
-                  eventKey="about"
-                  title="About"
-                >
-                  <p>About</p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitat.
-                  </p>
-                </Tab>
-                <Tab
-                  eventKey="tournaments"
-                  title="Tournaments"
-                >
-                  <div className="mt-2">
-                    <TournamentsList />
-                  </div>
-                </Tab>
-              </Tabs>
-            </div> */}
           </Col>
           <Col lg={12} className="mt-4">
             <Card className="card-modern">
@@ -235,7 +231,6 @@ const BrandsDetailPage = () => {
         </Row>
       </div>
       <ConfirmationPopup
-        // submit={() => handleChangeStatus(organiser?.isActive)}
         submit={() =>
           toast("Status Update", {
             containerId: "default",

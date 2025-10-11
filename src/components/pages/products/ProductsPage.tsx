@@ -294,12 +294,12 @@ const ProductsPage = () => {
                               {/* <td>{item?.category}</td> */}
                               <td>
                                 <Link to={`/attributes/origin`}>
-                                  {item?.origin}
+                                  {item?.originDetails?.origin?.value}
                                 </Link>
                               </td>
                               <td>
                                 <Link to={`/attributes/year_of_manufacture`}>
-                                  {item?.yearOfManufacturer}
+                                  {item?.yearOfManufacturerDetails?.yearOfManufacturer?.value}
                                 </Link>
                               </td>
 

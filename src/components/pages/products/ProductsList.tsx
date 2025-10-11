@@ -20,9 +20,26 @@ export type Product = {
   width: number;
   height: number;
   size: number;
+  mrp: string;
   imageUrl: string[];
   origin: string;
-  yearOfManufacturer: number;
+  description: string;
+  features: string[];
+  originDetails: {
+    origin: {
+      _id: string;
+      value: string;
+      status: boolean;
+    };
+  };
+  yearOfManufacturer: string;
+  yearOfManufacturerDetails: {
+    yearOfManufacturer: {
+      _id: string;
+      value: string;
+      status: boolean;
+    };
+  };
   isSuspend: boolean;
 };
 
@@ -98,7 +115,7 @@ const ProductsList = ({
   const totalPages = productsData?.pagination?.totalPages || 0;
 
   useEffect(() => {
-    console.log(productsData, "TOURNAMENTS DATA");
+    console.log(productsData, "PRODUCTS DATA");
   }, [productsData]);
   return (
     <>

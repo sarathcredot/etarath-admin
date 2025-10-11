@@ -7,7 +7,11 @@ import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 import Loader from "src/components/features/loader";
 import { capitalCase } from "capital-case";
 import AddAttribute from "./popups/AddAttribute";
-import { useDeleteAttribute } from "src/services/attribute.service";
+import {
+  useDeleteAttribute,
+  useUpdateAttributeStatus,
+} from "src/services/attribute.service";
+import PtSwitch from "src/components/features/elements/switch";
 
 // Type definition
 type Brand = {
@@ -49,6 +53,7 @@ const AttributesList = ({
 
   // MUTATION
   const { mutateAsync: deleteAttribute } = useDeleteAttribute();
+  const { mutateAsync: updateAttributeStatus } = useUpdateAttributeStatus();
 
   //HANDLERS
   const handleDeleteAttribute = async () => {
@@ -81,11 +86,38 @@ const AttributesList = ({
     }
   };
 
+  const handleStatusChange = async (data: {
+    type: string;
+    attributeId: string;
+    status: boolean;
+  }) => {
+    try {
+      const res = await updateAttributeStatus(data);
+      if (res) {
+        toast(res?.data?.message, {
+          containerId: "default",
+          className: "no-icon notification-success",
+        });
+      }
+      console.log('RES = ',res)
+    } catch (error: any) {
+      console.log("error updating attribute :", error);
+      toast(
+        error?.response?.data?.message ||
+          "Something went wrong while updating the attribute status.",
+        {
+          containerId: "default",
+          className: "no-icon notification-danger",
+        }
+      );
+    }
+  };
+
   const totalRecords = attributesData?.total || 0;
   const totalPages = attributesData?.pagination?.totalPages || 0;
 
   useEffect(() => {
-    console.log(attributesData, "TOURNAMENTS DATA");
+    console.log(attributesData, "ATTRIBUTES DATA");
   }, [attributesData]);
   return (
     <>
@@ -177,6 +209,7 @@ const AttributesList = ({
                   <tr>
                     <th style={{ width: "30px" }}>#</th>
                     <th>Attribute</th>
+                    <th style={{ width: "120px" }}>Status</th>
                     <th className="text-center" style={{ width: "80px" }}>
                       Actions
                     </th>
@@ -190,7 +223,7 @@ const AttributesList = ({
                       </td>
                     </tr>
                   ) : attributesData?.length > 0 ? (
-                    attributesData?.map((item: string, index: number) => (
+                    attributesData?.map((item: any, index: number) => (
                       <tr key={index}>
                         <td>
                           <strong>
@@ -202,13 +235,34 @@ const AttributesList = ({
                           </strong>
                         </td>
 
-                        <td>{item}</td>
+                        <td>{item?.value}</td>
+                        <td>
+                          <div
+                            onClick={() => {
+                              handleStatusChange({
+                                type,
+                                attributeId: item?._id,
+                                status: !item?.status,
+                              });
+                            }}
+                          >
+                            <PtSwitch
+                              className="mr-1"
+                              on={item?.status}
+                              size="sm"
+                              variant="success"
+                            />
+                          </div>
+                        </td>
                         <td>
                           <div className="d-flex align-items-center justify-content-around">
                             <div
                               className="action_btn"
                               onClick={() => {
-                                setSelectedAttribute({ type, attribute: item });
+                                setSelectedAttribute({
+                                  type,
+                                  attributeId: item?._id,
+                                });
                                 setDeleteOpen(true);
                               }}
                             >

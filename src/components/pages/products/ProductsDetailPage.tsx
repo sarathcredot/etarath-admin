@@ -115,36 +115,6 @@ const ProductsDetailPage = () => {
       />
       <div>
         <Row>
-          {/* <Col
-            lg={12}
-            className=" "
-          >
-            <div className="banner_section">
-              <div className="w-100 banner_image_div">
-                <img
-                  className="banner_image"
-                  src="/assets/images/banner/banner_1.png"
-                  alt=""
-                />
-                <div className="edit-icon" >
-                  <div onClick={()=> setEditBannerOpen(true)}>
-
-                 <i className="bx bxs-edit fa " ></i>
-                  </div>
-                </div>
-              </div>
-              <div className="content" style={{zIndex:1000}}>
-                <div className="logo_div" >
-                  <img
-                    className="logo_img"
-                    src="/assets/images/banner/Pepsi_IPL_logo 1.png"
-                    alt=""
-                  />
-                </div>
-                <h1>Pepsi Indian Premier League</h1>
-              </div>
-            </div>
-          </Col> */}
           <Col
             lg={12}
             // className="mt-5"
@@ -164,160 +134,158 @@ const ProductsDetailPage = () => {
               </Card.Header>
               <Card.Body>
                 <Row>
-                  <Col md={6} xl={2}>
-                    <div>
-                      <h6>Product Name</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                        {product?.productName}
-                      </h5>
-                    </div>
-                    <div>
-                      <h6>Brand</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                        {product?.brand?.name}
-                      </h5>
-                    </div>
-                    {/* <div>
+                  <Col xl={6}>
+                    <Row>
+                      <Col lg={4}>
+                        <div>
+                          <h6>Product Name</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {product?.productName}
+                          </h5>
+                        </div>
+                        <div>
+                          <h6>Brand</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {product?.brand?.name}
+                          </h5>
+                        </div>
+                        {/* <div>
                       <h6>Category</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        {product?.category}
+                      {product?.category}
                       </h5>
                     </div> */}
+                      </Col>
+                      <Col lg={4}>
+                        <div>
+                          <h6>Origin</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {product?.originDetails?.origin?.value}
+                          </h5>
+                        </div>
+                        <div>
+                          <h6>Year</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {
+                              product?.yearOfManufacturerDetails
+                                ?.yearOfManufacturer?.value
+                            }
+                          </h5>
+                        </div>
+                      </Col>
+                      <Col lg={4}>
+                        <div>
+                          <h6>Width</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {product?.width}
+                          </h5>
+                        </div>
+                        <div>
+                          <h6>Height</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {product?.height}
+                          </h5>
+                        </div>
+                      </Col>
+                      <Col lg={12}>
+                        <div>
+                          <h6>Description</h6>
+                          <h5
+                            className=" text-dark font-weight-500 "
+                            style={{ width: "90%" }}
+                          >
+                            {product?.description}
+                          </h5>
+                        </div>
+                        <div>
+                          <h6>Features</h6>
+                          <ul className="pl-3">
+                            {product?.features?.map(
+                              (item: string, index: number) => (
+                                <li className="pl-0 ml-0">
+                                  <h5 className=" text-dark font-weight-500 ">
+                                    {item}
+                                  </h5>
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        </div>
+                      </Col>
+                    </Row>
                   </Col>
-                  <Col md={3} xl={2}>
-                    <div>
-                      <h6>Origin</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                        {product?.origin}
-                      </h5>
-                    </div>
-                    <div>
-                      <h6>Year</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                        {product?.yearOfManufacturer}
-                      </h5>
-                    </div>
-                    <div>
-                      <h6>Width</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                        {product?.width}
-                      </h5>
-                    </div>
-                  </Col>
-                  <Col md={3} xl={2}>
-                    <div>
-                      <h6>Height</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                        {product?.height}
-                      </h5>
-                    </div>
-                    <div>
-                      <h6>Rim Size</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                        {product?.size}
-                      </h5>
-                    </div>
-                    <div>
-                      <h6 className="mb-0">Status</h6>
-                      <div
-                        className="d-flex align-items-center"
-                        onClick={() => {
-                          handlestatusChange(
-                            product ? product?._id : "",
-                            !product?.isSuspend
-                          );
-                        }}
-                      >
-                        <PtSwitch
-                          className="mr-2"
-                          on={!product?.isSuspend}
-                          size="sm"
-                          variant="success"
-                        />
-                        <h5 className=" text-dark font-weight-500 ">
-                          {!product?.isSuspend ? "Active" : "Blocked"}
-                        </h5>
-                      </div>
-                    </div>
-                  </Col>
-                  <Col xl={6} className="px-3 mb-n3 ">
-                    <div>
-                      <h6>Images</h6>
-                      <Row>
-                        {product?.imageUrl?.map((img: any, index: number) => (
-                          <Col key={index} className="p-1 p-xl-3">
-                            <div
-                              className="product_image_div"
-                              style={{ cursor: "default" }}
-                            >
-                              <img
-                                src={generateFilePath(img)}
-                                alt="product"
-                                width="110"
-                                height="110"
-                                crossOrigin="anonymous"
-                              />
-                            </div>
-                          </Col>
-                        ))}
-                      </Row>
-                    </div>
+                  <Col xl={6} className="px-3 ">
+                    <Row className="h-100">
+                      <Col>
+                        <div>
+                          <h6>Rim Size</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {product?.size}
+                          </h5>
+                        </div>
+                        <div>
+                          <h6 className="mb-0">Status</h6>
+                          <div
+                            className="d-flex align-items-center"
+                            onClick={() => {
+                              handlestatusChange(
+                                product ? product?._id : "",
+                                !product?.isSuspend
+                              );
+                            }}
+                          >
+                            <PtSwitch
+                              className="mr-2"
+                              on={!product?.isSuspend}
+                              size="sm"
+                              variant="success"
+                            />
+                            <h5 className=" text-dark font-weight-500 ">
+                              {!product?.isSuspend ? "Active" : "Blocked"}
+                            </h5>
+                          </div>
+                        </div>
+                      </Col>
+                      <Col xl={12} className="px-3 mb-n3 mt-auto">
+                        <div>
+                          <h6>Images</h6>
+                          <Row>
+                            {product?.imageUrl?.map(
+                              (img: any, index: number) => (
+                                <Col key={index} className="p-1 p-xl-3">
+                                  <div
+                                    className="product_image_div"
+                                    style={{ cursor: "default" }}
+                                  >
+                                    <img
+                                      src={generateFilePath(img)}
+                                      alt="product"
+                                      width="110"
+                                      height="110"
+                                      crossOrigin="anonymous"
+                                    />
+                                  </div>
+                                </Col>
+                              )
+                            )}
+                          </Row>
+                        </div>
+                      </Col>
+                    </Row>
                   </Col>
                 </Row>
               </Card.Body>
             </Card>
-
-            {/* <div
-              className="tabs"
-              style={{ borderRadius: "5px", overflow: "hidden" }}
-            >
-              <Tabs className="nav-justified">
-                <Tab
-                  eventKey="about"
-                  title="About"
-                >
-                  <p>About</p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitat.
-                  </p>
-                </Tab>
-                <Tab
-                  eventKey="tournaments"
-                  title="Tournaments"
-                >
-                  <div className="mt-2">
-                    <TournamentsList />
-                  </div>
-                </Tab>
-              </Tabs>
-            </div> */}
           </Col>
           <Col lg={12} className="mt-4">
             <Card className="card-modern">
               <Card.Body>
-                <StocksList
-                  productId={productId ? productId : ""}
-                />
+                <StocksList productId={productId ? productId : ""} />
               </Card.Body>
             </Card>
           </Col>
         </Row>
       </div>
-      {/* <ConfirmationPopup
-        // submit={() => handleChangeStatus(organiser?.isActive)}
-        submit={() =>
-          toast("Status Update", {
-            containerId: "default",
-            className: "no-icon notification-success",
-          })
-        }
-        isOpen={isStatusOpen}
-        toggle={() => setStatusOpen(!isStatusOpen)}
-        text={
-          "Are you sure that you want to change the status of this product?"
-        }
-      /> */}
       <EditProduct
         productId={selectedProductId}
         isOpen={isEditOpen}

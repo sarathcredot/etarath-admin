@@ -54,6 +54,8 @@ const AttributePage = () => {
     error,
   } = useGetAllAttributes(!!attribute);
 
+  console.log("AAAAAAAAA = ", attributes);
+
   return (
     <>
       <Breadcrumb
@@ -75,11 +77,20 @@ const AttributePage = () => {
       <Card>
         <Card.Body className="bg-white">
           <AttributesList
+            // attributesData={
+            //   attribute === "origin"
+            //     ? attributes?.origin
+            //     : attribute === "year_of_manufacture"
+            //     ? attributes?.yearOfManufacturer
+            //     : []
+            // }
             attributesData={
-              attribute === "origin"
-                ? attributes?.origin
-                : attribute === "year_of_manufacture"
-                ? attributes?.yearOfManufacturer
+              attributes && attribute
+                ? attribute === "origin"
+                  ? attributes[0]?.origin
+                  : attribute === "year_of_manufacture"
+                  ? attributes[0]?.yearOfManufacturer
+                  : []
                 : []
             }
             isLoading={isLoading}
@@ -89,7 +100,13 @@ const AttributePage = () => {
             page={page}
             limit={limit}
             search={search}
-            type={attribute ? attribute : ""}
+            type={
+              attribute === "origin"
+                ? attribute
+                : attribute === "year_of_manufacture"
+                ? "yearOfManufacturer"
+                : ""
+            }
           />
         </Card.Body>
       </Card>

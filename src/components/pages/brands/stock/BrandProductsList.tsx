@@ -241,12 +241,16 @@ const BrandProductsList = ({ brandId }: { brandId?: string }) => {
                           </Link>
                         </td>
                         <td>
-                          {" "}
-                          <Link to={`/attributes/origin`}>{item?.origin}</Link>
+                          <Link to={`/attributes/origin`}>
+                            {item?.originDetails?.origin?.value}
+                          </Link>
                         </td>
                         <td>
                           <Link to={`/attributes/year_of_manufacture`}>
-                            {item?.yearOfManufacturer}
+                            {
+                              item?.yearOfManufacturerDetails
+                                ?.yearOfManufacturer?.value
+                            }
                           </Link>
                         </td>
 

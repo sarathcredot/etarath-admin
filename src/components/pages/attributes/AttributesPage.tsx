@@ -37,28 +37,6 @@ const AttributesPage = () => {
     return obj;
   }, [page, limit, search]);
 
-  //QUERY
-  // const {
-  //   data: tournaments,
-  //   isLoading: isTournamentsLoading,
-  //   error,
-  // }: any = useGetAllTournaments(queryObj);
-
-  // useEffect(() => {
-  //   if(tournaments && tournaments?.pagination && tournaments?.pagination?.totalPages) {
-  //     setPage(tournaments?.pagination?.page || 1);
-  //     setLimit(tournaments?.pagination?.limit || 10);
-  //   }
-  // },[tournaments])
-
-  // useEffect(() => {
-  //   if (error) {
-  //     toast(error?.response?.data?.message, {
-  //       containerId: "default",
-  //       className: "no-icon notification-danger",
-  //     });
-  //   }
-  // }, [error]);
 
   const attributes = ["origin", "year_of_manufacture"];
 
