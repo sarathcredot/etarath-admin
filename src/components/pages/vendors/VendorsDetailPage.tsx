@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Col, Row, Tabs, Tab, Card, Button } from "react-bootstrap";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Breadcrumb from "src/components/common/breadcrumb";
 import PtSwitch from "src/components/features/elements/switch";
 import { toast } from "react-toastify";
@@ -8,20 +8,27 @@ import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 
 import EditVendor from "./forms/EditVendor";
 import {
+  useGetAgentsByVendorId,
+  useGetOrdersByVendorId,
+  useGetStocksByVendorId,
   useGetVendorById,
   useUpdateVendorStatus,
 } from "src/services/vendor.service";
-import { User } from "src/types/user.types";
+import { User } from "src/types/types";
 import { generateFilePath } from "src/services/url.service";
 import VendorStocksList from "./VendorStocksList";
 import AddBussinessDetails from "./forms/AddBussinessDetails";
 import { useKycVerification } from "src/services/kyc.service";
 import EditBussinessDetails from "./forms/EditBussinessDetails";
+import { formatNumberShort } from "src/utils/formats";
+import SalesExecutivesList from "./SalesExecutivesList";
+import VendorOrdersList from "./VendorOrdersList";
 
 const VendorsDetailPage = () => {
   //IMPORTS
   const [searchParams] = useSearchParams();
   const vendorID = searchParams.get("_id");
+  const navigate = useNavigate();
 
   //STATE
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
@@ -33,23 +40,25 @@ const VendorsDetailPage = () => {
   const [isKycOpen, setKycOpen] = useState<boolean>(false);
   //pagination
   const [page, setPage] = useState<number>(1);
+  const [orderPage, setOrderPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [search, setSearch] = useState<string>("");
+  const [orderSearch, setOrderSearch] = useState<string>("");
 
   //USE MEMO
-  const queryObj = useMemo(() => {
+  const orderQueryObj = useMemo(() => {
     const obj: any = {};
 
-    if (page) {
-      obj.page = page;
+    if (orderPage) {
+      obj.page = orderPage;
     }
 
     if (limit) {
       obj.limit = limit;
     }
 
-    if (search) {
-      obj.search = search;
+    if (orderSearch) {
+      obj.search = orderSearch;
     }
 
     if (vendorID) {
@@ -57,9 +66,21 @@ const VendorsDetailPage = () => {
     }
 
     return obj;
-  }, [page, limit, search]);
+  }, [orderPage, limit, orderSearch, vendorID]);
 
   // QUERIES
+  const { data: stocks, isLoading: stocksLoading } = useGetStocksByVendorId(
+    vendorID ? vendorID : "",
+    !!vendorID
+  );
+  const { data: orders, isLoading: ordersLoading } = useGetOrdersByVendorId(
+    vendorID ? vendorID : "",
+    !!vendorID
+  );
+  const { data: agents, isLoading: agentsLoading } = useGetAgentsByVendorId(
+    vendorID ? vendorID : "",
+    !!vendorID
+  );
   const { data: vendor, isLoading: isVendorLoading } = useGetVendorById(
     vendorID ? vendorID : "",
     !!vendorID
@@ -148,6 +169,127 @@ const VendorsDetailPage = () => {
         ]}
       />
       <div>
+        <Row className="pt-0">
+          <Col lg={3} className="py-3">
+            <Card className={`card-modern   `}>
+              <Card.Body className="py-4 box text-dark">
+                <Row className="align-items-center justify-content-between">
+                  <Col
+                    // sm={4}
+                    className="col-12"
+                  >
+                    <h3
+                      className="text-4-1 my-0 "
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      Total Products
+                    </h3>
+                    <strong className="text-6 ">
+                      {formatNumberShort(stocks?.total || 0)}
+                    </strong>
+                  </Col>
+                  <Col
+                    sm={4}
+                    className="text-center text-sm-right ml-auto  mt-4 mt-sm-0 d-flex justify-content-end"
+                  >
+                    <i className="bx bx-group icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col lg={3} className="py-3">
+            <Card className={`card-modern  `}>
+              <Card.Body className="py-4 box text-dark">
+                <Row className="align-items-center justify-content-between">
+                  <Col
+                    // sm={4}
+                    className="col-12"
+                  >
+                    <h3
+                      className="text-4-1 my-0 "
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      Total Orders
+                    </h3>
+                    <strong className="text-6 ">
+                      {formatNumberShort(orders?.total || 0)}
+                    </strong>
+                  </Col>
+
+                  <Col
+                    sm={4}
+                    className="text-center text-sm-right ml-auto  mt-4 mt-sm-0 d-flex justify-content-end"
+                  >
+                    <i className="bx bx-hourglass icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col lg={3} className="py-3">
+            <Card className={`card-modern  `}>
+              <Card.Body className="py-4 box text-dark">
+                <Row className="align-items-center justify-content-between">
+                  <Col
+                    // sm={4}
+                    className="col-12"
+                  >
+                    <h3
+                      className="text-4-1 my-0 "
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      Completed Orders
+                    </h3>
+                    <strong className="text-6 ">
+                      {formatNumberShort(
+                        orders?.count?.delivered[0]?.total || 0
+                      )}
+                    </strong>
+                  </Col>
+
+                  <Col
+                    sm={4}
+                    className="text-center text-sm-right ml-auto  mt-4 mt-sm-0 d-flex justify-content-end"
+                  >
+                    <i className="bx bx-hourglass icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col lg={3} className="py-3">
+            <Card className={`card-modern `}>
+              <Card.Body className="py-4 box text-dark">
+                <Row className="align-items-center justify-content-between">
+                  <Col
+                    // sm={4}
+                    className="col-12"
+                  >
+                    <h3
+                      className="text-4-1 my-0"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      Pending Orders
+                    </h3>
+                    <strong className="text-6 ">
+                      {formatNumberShort(
+                        orders?.count?.pending[0]?.total +
+                          orders?.count?.in_progress[0]?.total || 0
+                      )}
+                    </strong>
+                  </Col>
+                  <Col
+                    sm={4}
+                    className="text-center text-sm-right ml-auto mt-4 mt-sm-0 d-flex justify-content-end"
+                  >
+                    <i className="bx bx-dollar icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
         <Row>
           <Col
             lg={12}
@@ -228,7 +370,7 @@ const VendorsDetailPage = () => {
                             : "on-hold"
                         } text-dark font-weight-500`}
                       >
-                        {vendor?.isVerified|| "-"}
+                        {vendor?.isVerified}
                       </span>
                     </div>
                     <div>
@@ -330,28 +472,6 @@ const VendorsDetailPage = () => {
                           className="d-flex align-items-center"
                           style={{ gap: 10 }}
                         >
-                          {vendor?.kyc?.kycStatus === "pending" && (
-                            <>
-                              <div
-                                title="Approve KYC"
-                                className="action_btn bg-success"
-                                onClick={() => {
-                                  set_is_kyc_approve_open(true);
-                                }}
-                              >
-                                <i className="fas fa-check text-light"></i>
-                              </div>
-                              <div
-                                title="Reject KYC"
-                                className="action_btn bg-danger"
-                                onClick={() => {
-                                  set_is_kyc_reject_open(true);
-                                }}
-                              >
-                                <i className="fas fa-x-mark text-light"></i>
-                              </div>
-                            </>
-                          )}
                           <div
                             title="Edit KYC"
                             className="action_btn bg-dark"
@@ -487,7 +607,27 @@ const VendorsDetailPage = () => {
             </Tab>
             <Tab eventKey="products" title="Products">
               <VendorStocksList
-                vendorId={vendor && vendor?._id ? vendor?._id : ""}
+                vendorId={vendorID ? vendorID : ""}
+                stocks={stocks}
+                stocksLoading={stocksLoading}
+              />
+            </Tab>
+            <Tab eventKey="orders" title="Orders">
+              <VendorOrdersList
+                vendorId={vendorID ? vendorID : ""}
+                orders={orders}
+                ordersLoading={ordersLoading}
+                page={orderPage}
+                setPage={setOrderPage}
+              />
+            </Tab>
+            <Tab eventKey="agents" title="Sales Executives">
+              <SalesExecutivesList
+                vendorId={vendorID ? vendorID : ""}
+                orders={agents}
+                ordersLoading={agentsLoading}
+                page={orderPage}
+                setPage={setOrderPage}
               />
             </Tab>
           </Tabs>

@@ -52,7 +52,7 @@ const VendorsList = ({
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [isStatusOpen, setStatusOpen] = useState<boolean>(false);
   const [selectedVendor, setSelectedVendor] = useState<any>(null);
-console.log(selectedVendor,"selectedVendor");
+  console.log(selectedVendor, "selectedVendor");
   //MUTATIONS
   const { mutateAsync: updateVendorStatus } = useUpdateVendorStatus();
 
@@ -151,9 +151,8 @@ console.log(selectedVendor,"selectedVendor");
                 <thead>
                   <tr>
                     <th style={{ width: "30px" }}>#</th>
-                    <th style={{ width: "80px" }}>Profile</th>
-
-                    <th>Full Name</th>
+                    <th style={{ width: "80px" }}>Vendor</th>
+                    <th></th>
                     <th>Phone Number</th>
                     <th>Email</th>
                     <th>Verifaction</th>
@@ -185,7 +184,12 @@ console.log(selectedVendor,"selectedVendor");
                     vendors &&
                     vendors?.length > 0 &&
                     vendors?.map((item: any, index: any) => (
-                      <tr>
+                      <tr
+                        key={index}
+                        onClick={() =>
+                          navigate(`/vendors/detail?_id=${item?._id}`)
+                        }
+                      >
                         <td>
                           <Link to={`/vendors/detail?_id=${item?._id}`}>
                             <strong>
@@ -231,9 +235,10 @@ console.log(selectedVendor,"selectedVendor");
                           </div>
                         </td>
 
-                        <td>
+                        <td  onClick={(e) => e.stopPropagation()}>
                           <div
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setStatusOpen(true);
                               setSelectedVendor(item);
                             }}
@@ -246,11 +251,12 @@ console.log(selectedVendor,"selectedVendor");
                             />
                           </div>
                         </td>
-                        <td>
+                        <td onClick={(e) => e.stopPropagation()}>
                           <div className="d-flex align-items-center justify-content-around">
                             <div
                               className="action_btn "
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setSelectedVendor(item);
                                 setEditOpen(true);
                               }}

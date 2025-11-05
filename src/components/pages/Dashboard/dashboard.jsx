@@ -6,14 +6,15 @@ import Revenue from "./Components/Revenue";
 import Subscriptions from "./Components/VendorSubscriptions";
 import Retailers from "./Components/Retailers";
 import SalesExecutives from "./Components/SalesExecutives";
-import {
-  Card,
-  Col,
-  Row,
-} from "react-bootstrap";
+import { Card, Col, Row } from "react-bootstrap";
+import { useGetAllTotalOverview } from "src/services/dashboard.service";
 
 export default function Dashboard() {
   const [TAB, setTAB] = useState(1);
+
+
+  // QUERIES
+  const { data: totalOverviewData } = useGetAllTotalOverview(true);
 
   const sections = [
     {
@@ -83,11 +84,15 @@ export default function Dashboard() {
                   >
                     Total Vendors
                   </h3>
-                  <strong className="text-6 ">148</strong>
+                  <strong className="text-6 ">
+                    {totalOverviewData?.vendor?.total}
+                  </strong>
                 </Col>
                 <Col className=" mt-auto">
                   <div className="d-flex align-items-end ">
-                    <span className="text-color-success mr-1">+121</span>
+                    <span className="text-color-success mr-1">
+                      +{totalOverviewData?.vendor?.thisMonth}
+                    </span>
 
                     <span className="ws-nowrap">This month</span>
                   </div>
@@ -123,11 +128,15 @@ export default function Dashboard() {
                   >
                     Total Retailers
                   </h3>
-                  <strong className="text-6 ">148</strong>
+                  <strong className="text-6 ">
+                    {totalOverviewData?.retailer?.total}
+                  </strong>
                 </Col>
                 <Col className="  mt-auto">
                   <div className="d-flex align-items-end ">
-                    <span className="text-color-success mr-1">+34</span>
+                    <span className="text-color-success mr-1">
+                      +{totalOverviewData?.retailer?.thisMonth}
+                    </span>
 
                     <span>This month</span>
                   </div>
@@ -163,11 +172,15 @@ export default function Dashboard() {
                   >
                     Total Sales Executives
                   </h3>
-                  <strong className="text-6 ">148</strong>
+                  <strong className="text-6 ">
+                    {totalOverviewData?.salesExecutives?.total}
+                  </strong>
                 </Col>
                 <Col className="  mt-auto">
                   <div className="d-flex align-items-end ">
-                    <span className="text-color-success mr-1">+34</span>
+                    <span className="text-color-success mr-1">
+                      +{totalOverviewData?.salesExecutives?.thisMonth}
+                    </span>
 
                     <span>This month</span>
                   </div>
@@ -203,11 +216,11 @@ export default function Dashboard() {
                   >
                     Total Orders
                   </h3>
-                  <strong className="text-6 ">148</strong>
+                  <strong className="text-6 ">{totalOverviewData?.order?.total}</strong>
                 </Col>
                 <Col className="  mt-auto">
                   <div className="d-flex align-items-end ">
-                    <span className="text-color-success mr-1">+34</span>
+                    <span className="text-color-success mr-1">+{totalOverviewData?.order?.thisMonth}</span>
 
                     <span>This month</span>
                   </div>
@@ -229,7 +242,6 @@ export default function Dashboard() {
       <Revenue />
       <Subscriptions />
       <AuctionSubscriptions />
-     
     </>
   );
 }

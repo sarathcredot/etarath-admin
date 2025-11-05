@@ -96,3 +96,22 @@ export const useUpdateRetailerStatus = () => {
     },
   });
 };
+
+// GET ALL RETAILER ORDERS
+
+export const getOrdersByRetailerId = async (retailerId: string) => {
+  if (!retailerId) throw new Error("No retailer id provided");
+  return await axiosAuth.get(`${baseUrl}/retailer/${retailerId}/all-orders`);
+};
+
+export const useGetOrdersByRetailerId = (
+  retailerId: string,
+  enabled: boolean
+) => {
+  return useQuery({
+    queryKey: ["retailer-orders", retailerId],
+    queryFn: () =>
+      getOrdersByRetailerId(retailerId).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};

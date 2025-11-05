@@ -5,26 +5,13 @@ import Breadcrumb from "src/components/common/breadcrumb";
 import PtSwitch from "src/components/features/elements/switch";
 import { toast } from "react-toastify";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
+
+import _, { capitalize } from "lodash";
+import { useGetPlanById } from "src/services/subscription.service";
+import { SubscriptionPlan } from "src/types/types";
 import VendorPlanSubscriptions from "./VendorPlanSubscriptions";
 import EditPlan from "./Popups/EditPlan";
-import _ from "lodash";
-import { VendorPlan } from "./VendorPlans";
-
-const vendorPlan: VendorPlan = {
-  planName: "Executive",
-  description: "Best fit for mid-level vendors to expand operations",
-  price: 49,
-  currency: "AED",
-  frequency: "monthly",
-  status: true,
-  features: [
-    "Lorem ipsum set amet elit sed dotempor enim.",
-    "Lorem ipsum set amet elit.",
-    "Lorem ipsum set amet elit sed.",
-    "Lorem ipsum.",
-    "Lorem ipsum set.",
-  ],
-};
+import { useGetAllPlanOrdersById } from "src/services/subscription-orders";
 
 const VendorPlanDetailPage = () => {
   //IMPORTS
@@ -32,25 +19,24 @@ const VendorPlanDetailPage = () => {
   const planId: any = searchParams.get("_id");
 
   //STATE
-  const [isEditOpen, setEditOpen] = useState<any>(null);
+  const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [isStatusOpen, setStatusOpen] = useState<boolean>(false);
 
-  //DATA
-  // const { data: plan } = useGetPosterPlanById(planId, !!planId);
-  // const { data: analytics } = useGetSubscriptionAnalytics(
-  //   { orderType: ORDER_TYPES.POSTER_PLAN, planId },
-  //   !!planId
-  // );
+  //  QUERIES
+  const { data: plan } = useGetPlanById(planId, !!planId) as {
+    data: SubscriptionPlan;
+  };
+  const { data: planOrders } = useGetAllPlanOrdersById(planId, !!planId);
 
   //MUTATION
-  // const { mutateAsync: updatePlan } = useUpdatePosterPlanById();
+  // const { mutateAsync: updateAuctionPlan } = useUpdateAuctionPlanById();
 
   //HANDLERS
   // const handleChangeStatus = async () => {
   //   try {
-  //     const res = await updatePlan({
-  //       id: plan?._id,
-  //       isActive: !plan?.isActive,
+  //     const res = await updateAuctionPlan({
+  //       id: auctionPlan?._id,
+  //       isActive: !auctionPlan?.isActive,
   //     });
   //     toast(res?.data?.message, {
   //       containerId: "default",
@@ -68,28 +54,30 @@ const VendorPlanDetailPage = () => {
   return (
     <>
       <Breadcrumb
-        current={`${_.capitalize(vendorPlan?.planName.toLowerCase())} Plan`}
+        current={
+          plan ? `${_.capitalize(plan?.plan.toLowerCase())}  Plan` : "Plan"
+        }
         paths={[
           {
             name: "Dashboard",
             url: "/dashboard",
           },
           {
-            name: "Plans",
-            url: "/subscriptions/plans",
+            name: "retailer plans",
+            url: "/subscriptions/retailer-plans",
           },
           {
-            name: `${_.capitalize(
-              vendorPlan?.planName.toLowerCase()
-            )} Vendor Plan`,
-            url: `/subscriptions/vendor-plans/detail?_id=${planId}`,
+            name: plan
+              ? `${_.capitalize(plan?.plan.toLowerCase())}  Plan`
+              : "Plan",
+            url: `/subscriptions/retailer-plans/detail?_id=${planId}`,
           },
         ]}
       />
       <div>
         <Row className="pt-0">
           <Col lg={3} className="py-3">
-            <Card className={`card-modern   `}>
+            <Card className={`card-modern`}>
               <Card.Body className="py-4 box text-dark">
                 <Row className="align-items-center justify-content-between">
                   <Col
@@ -213,7 +201,7 @@ const VendorPlanDetailPage = () => {
                 <div
                   className="action_btn "
                   onClick={() => {
-                    setEditOpen(planId);
+                    setEditOpen(true);
                   }}
                 >
                   <i className="fas fa-pencil-alt"></i>
@@ -225,19 +213,31 @@ const VendorPlanDetailPage = () => {
                     <div>
                       <h6>Name</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        {_.capitalize(vendorPlan?.planName.toLowerCase())}
+                        {_.capitalize(plan?.plan.toLowerCase())}
                       </h5>
                     </div>
                     <div>
                       <h6>Price</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        $ {vendorPlan?.price}
+                        {plan?.price_monthly || 0} AED
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Yearly Off</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {plan?.yearly_off || 0} %
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Trial Period</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {plan?.trial_period || 0} days
                       </h5>
                     </div>
                     <div>
                       <h6>Description</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        {vendorPlan?.description}
+                        {plan?.description}
                       </h5>
                     </div>
                   </Col>
@@ -252,21 +252,21 @@ const VendorPlanDetailPage = () => {
                       >
                         <PtSwitch
                           className="mr-2"
-                          on={vendorPlan?.status}
+                          on={!plan?.isSuspend}
                           size="sm"
                           variant="success"
                         />
                         <h5 className=" text-dark font-weight-500 ">
-                          {vendorPlan?.status ? "Active" : "Inactive"}
+                          {!plan?.isSuspend ? "Active" : "Inactive"}
                         </h5>
                       </div>
                     </div>
                     <div>
                       <h6>Features</h6>
                       <div className=" list-unstyled">
-                        {vendorPlan?.features &&
-                          vendorPlan?.features?.length > 0 &&
-                          vendorPlan?.features?.map((feature: any) => (
+                        {plan?.features &&
+                          plan?.features?.length > 0 &&
+                          plan?.features?.map((feature: string) => (
                             <li className="d-flex align-items-center m-0 p-0">
                               <i className="bx bx-check bg-gray p-1 rounded-circle mr-2"></i>
                               <h5 className="my-1 text-dark font-weight-500 ">
@@ -291,21 +291,23 @@ const VendorPlanDetailPage = () => {
         </Row>
       </div>
       <ConfirmationPopup
+        // submit={() => handleChangeStatus()}
         submit={() =>
           toast("Status change ", {
             containerId: "default",
             className: "no-icon notification-success",
           })
         }
-        // submit={() => handleChangeStatus()}
         isOpen={isStatusOpen}
         toggle={() => setStatusOpen(!isStatusOpen)}
-        text={"Are you sure that you want to change the status of this Plan?"}
+        text={
+          "Are you sure that you want to change the status of this retailer plan ?"
+        }
       />
       <EditPlan
-        id={isEditOpen}
-        isOpen={isEditOpen !== null}
-        toggle={() => setEditOpen(null)}
+        isOpen={isEditOpen}
+        toggle={() => setEditOpen(!isEditOpen)}
+        plan={plan ? plan : null}
       />
     </>
   );

@@ -8,8 +8,6 @@ import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 
 import MediaThumb from "src/components/features/media-thumb";
 import ImgPreview from "src/components/features/elements/ImgPreview";
-import ProductsList, { Product } from "./ProductsList";
-import EditProduct from "./popups/EditProduct";
 import {
   useGetOrdersByProductId,
   useGetProductById,
@@ -17,14 +15,12 @@ import {
   useVerifyProduct,
 } from "src/services/product.service";
 import { generateFilePath } from "src/services/url.service";
-import StocksList from "./stock/StocksList";
-import { capitalCase } from "capital-case";
-import ProductOrdersList from "./ProductOrdersList";
+import { useGetOrderById } from "src/services/order.service";
 
-const ProductsDetailPage = () => {
+const OrderDetailPage = () => {
   //IMPORTS
   const [searchParams] = useSearchParams();
-  const productId = searchParams.get("_id");
+  const orderId = searchParams.get("_id");
 
   //STATE
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
@@ -51,8 +47,8 @@ const ProductsDetailPage = () => {
       obj.search = search;
     }
 
-    if (productId) {
-      obj.organiserId = productId;
+    if (orderId) {
+      obj.orderId = orderId;
     }
 
     return obj;
@@ -64,17 +60,7 @@ const ProductsDetailPage = () => {
     data: product,
     isLoading: productLoading,
     error: productError,
-  } = useGetProductById(productId ? productId : "", !!productId) as {
-    data: Product | undefined;
-    isLoading: boolean;
-    error: unknown;
-  };
-
-  const {
-    data: orders,
-    isLoading: ordersLoading,
-    error: ordersError,
-  } = useGetOrdersByProductId(productId ? productId : "", !!productId);
+  } = useGetOrderById(orderId ? orderId : "", !!orderId);
 
   // MUTATIONS
   const { mutateAsync: updateProductStatus } = useUpdateProductStatus();
@@ -131,19 +117,15 @@ const ProductsDetailPage = () => {
   return (
     <>
       <Breadcrumb
-        current={"Product Details"}
+        current={"Order Details"}
         paths={[
           {
             name: "Dashboard",
             url: "/dashboard",
           },
           {
-            name: "products",
-            url: "/products",
-          },
-          {
-            name: "Product Details",
-            url: `/products/detail?_id=${productId}`,
+            name: "Order Details",
+            url: `/orders/detail?_id=${orderId}`,
           },
         ]}
       />
@@ -156,42 +138,7 @@ const ProductsDetailPage = () => {
             <Card className="card-modern">
               <Card.Header className="d-flex align-items-center justify-content-between">
                 <Card.Title>Details</Card.Title>
-                <div
-                  className="d-flex align-items-end justify-content-end h-100"
-                  style={{ gap: 10 }}
-                >
-                  {product?.isVerified === "pending" && (
-                    <>
-                      <div
-                        title="Approve Product"
-                        className="action_btn bg-success"
-                        onClick={() => {
-                          handleVerifyProduct(product?._id, "approved");
-                        }}
-                      >
-                        <i className="fas fa-check text-light"></i>
-                      </div>
-                      <div
-                        title="Reject Product"
-                        className="action_btn bg-danger"
-                        onClick={() => {
-                          handleVerifyProduct(product?._id, "rejected");
-                        }}
-                      >
-                        <i className="fas fa-x-mark text-light"></i>
-                      </div>
-                    </>
-                  )}
-                  <div
-                    className="action_btn bg-dark"
-                    onClick={() => {
-                      setSelectedProductId(product?._id ? product?._id : "");
-                      setEditOpen(true);
-                    }}
-                  >
-                    <i className="fas fa-pencil-alt text-light"></i>
-                  </div>
-                </div>
+               
               </Card.Header>
               <Card.Body>
                 <Row>
@@ -351,7 +298,7 @@ const ProductsDetailPage = () => {
             </Card>
           </Col>
         </Row>
-        <div
+        {/* <div
           className="tabs"
           style={{ borderRadius: "5px", marginTop: "20px", overflow: "hidden" }}
         >
@@ -369,7 +316,7 @@ const ProductsDetailPage = () => {
               />
             </Tab>
           </Tabs>
-        </div>
+        </div> */}
         {/* <Col lg={12} className="mt-4">
           <Card className="card-modern">
             <Card.Body>
@@ -378,13 +325,8 @@ const ProductsDetailPage = () => {
           </Card>
         </Col> */}
       </div>
-      <EditProduct
-        productId={selectedProductId}
-        isOpen={isEditOpen}
-        toggle={() => setEditOpen(!isEditOpen)}
-      />
     </>
   );
 };
 
-export default ProductsDetailPage;
+export default OrderDetailPage;

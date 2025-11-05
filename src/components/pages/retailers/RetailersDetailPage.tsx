@@ -6,16 +6,19 @@ import PtSwitch from "src/components/features/elements/switch";
 import { toast } from "react-toastify";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 
-import { User } from "src/types/user.types";
+import { User } from "src/types/types";
 import { generateFilePath } from "src/services/url.service";
 import { useKycVerification } from "src/services/kyc.service";
 import EditRetailer from "./forms/EditRetailer";
 import AddBussinessDetails from "../vendors/forms/AddBussinessDetails";
 import EditBussinessDetails from "../vendors/forms/EditBussinessDetails";
 import {
+  useGetOrdersByRetailerId,
   useGetRetailerById,
   useUpdateRetailerStatus,
 } from "src/services/retailer.service";
+import RetailerOrdersList from "./RetailerOrdersList";
+import { formatNumberShort } from "src/utils/formats";
 
 const RetailersDetailPage = () => {
   //IMPORTS
@@ -66,6 +69,10 @@ const RetailersDetailPage = () => {
     data: User;
     isLoading: boolean;
   };
+  const { data: orders, isLoading: ordersLoading } = useGetOrdersByRetailerId(
+    retailerID ? retailerID : "",
+    !!retailerID
+  );
 
   //MUTATIONS
   const { mutateAsync: updateRetailerStatus } = useUpdateRetailerStatus();
@@ -147,6 +154,129 @@ const RetailersDetailPage = () => {
         ]}
       />
       <div>
+        <Row className="pt-0">
+          <Col lg={3} className="py-3">
+            <Card className={`card-modern  `}>
+              <Card.Body className="py-4 box text-dark">
+                <Row className="align-items-center justify-content-between">
+                  <Col
+                    // sm={4}
+                    className="col-12"
+                  >
+                    <h3
+                      className="text-4-1 my-0 "
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      Total Orders
+                    </h3>
+                    <strong className="text-6 ">
+                      {formatNumberShort(orders?.total || 0)}
+                    </strong>
+                  </Col>
+
+                  <Col
+                    sm={4}
+                    className="text-center text-sm-right ml-auto  mt-4 mt-sm-0 d-flex justify-content-end"
+                  >
+                    <i className="bx bx-hourglass icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col lg={3} className="py-3">
+            <Card className={`card-modern  `}>
+              <Card.Body className="py-4 box text-dark">
+                <Row className="align-items-center justify-content-between">
+                  <Col
+                    // sm={4}
+                    className="col-12"
+                  >
+                    <h3
+                      className="text-4-1 my-0 "
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      Completed Orders
+                    </h3>
+                    <strong className="text-6 ">
+                      {formatNumberShort(
+                        orders?.count?.delivered[0]?.total || 0
+                      )}
+                    </strong>
+                  </Col>
+
+                  <Col
+                    sm={4}
+                    className="text-center text-sm-right ml-auto  mt-4 mt-sm-0 d-flex justify-content-end"
+                  >
+                    <i className="bx bx-hourglass icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col lg={3} className="py-3">
+            <Card className={`card-modern `}>
+              <Card.Body className="py-4 box text-dark">
+                <Row className="align-items-center justify-content-between">
+                  <Col
+                    // sm={4}
+                    className="col-12"
+                  >
+                    <h3
+                      className="text-4-1 my-0"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      Pending Orders
+                    </h3>
+                    <strong className="text-6 ">
+                      {formatNumberShort(
+                        orders?.count?.pending[0]?.total +
+                          orders?.count?.in_progress[0]?.total || 0
+                      )}
+                    </strong>
+                  </Col>
+                  <Col
+                    sm={4}
+                    className="text-center text-sm-right ml-auto mt-4 mt-sm-0 d-flex justify-content-end"
+                  >
+                    <i className="bx bx-dollar icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col lg={3} className="py-3">
+            <Card className={`card-modern `}>
+              <Card.Body className="py-4 box text-dark">
+                <Row className="align-items-center justify-content-between">
+                  <Col
+                    // sm={4}
+                    className="col-12"
+                  >
+                    <h3
+                      className="text-4-1 my-0"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      Cancelled Orders
+                    </h3>
+                    <strong className="text-6 ">
+                      {formatNumberShort(
+                        orders?.count?.cancelled[0]?.total || 0
+                      )}
+                    </strong>
+                  </Col>
+                  <Col
+                    sm={4}
+                    className="text-center text-sm-right ml-auto mt-4 mt-sm-0 d-flex justify-content-end"
+                  >
+                    <i className="bx bx-dollar icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
         <Row>
           <Col
             lg={12}
@@ -487,9 +617,13 @@ const RetailersDetailPage = () => {
               </Row>
             </Tab>
             <Tab eventKey="orders" title="Orders">
-              {/* <VendorStocksList
-                retailerId={vendor && vendor?._id ? vendor?._id : ""}
-              /> */}
+              <RetailerOrdersList
+                orders={orders}
+                ordersLoading={ordersLoading}
+                page={page}
+                setPage={setPage}
+                retailerId={retailerID ? retailerID : ""}
+              />
             </Tab>
           </Tabs>
         </div>

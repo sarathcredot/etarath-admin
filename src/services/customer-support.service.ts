@@ -5,13 +5,16 @@ import axiosAuth from "./axios.service";
 const baseUrl = `${url}/admin/support`;
 
 // GET ALL SUPPORT REQUESTS
-export const getAllSupportRequests = () => {
-  return axiosAuth.get(`${baseUrl}/`);
+export const getAllSupportRequests = (role: string | undefined) => {
+  return axiosAuth.get(`${baseUrl}/?role=${role}`);
 };
-export const useGetAllSupportRequests = (enabled: boolean = true) => {
+export const useGetAllSupportRequests = (
+  role: string | undefined,
+  enabled: boolean = true
+) => {
   return useQuery({
-    queryKey: ["customer-support-requests"],
-    queryFn: () => getAllSupportRequests().then((res) => res?.data?.data),
+    queryKey: ["customer-support-requests", role],
+    queryFn: () => getAllSupportRequests(role).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };

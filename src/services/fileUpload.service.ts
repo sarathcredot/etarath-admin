@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { url } from "./url.service";
+import { media_url, url } from "./url.service";
 import axiosAuth from "./axios.service";
 
-const baseUrl = `${url}/upload`;
+const baseUrl = `${media_url}/api/upload`;
 
 export const uploadFile = (formData: any) => {
   return axiosAuth.post(`${baseUrl}/`, formData, {

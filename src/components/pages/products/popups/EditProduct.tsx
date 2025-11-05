@@ -71,7 +71,7 @@ const EditProduct = ({ isOpen, toggle, productId }: Props) => {
 
     onSubmit: (values) => {
       console.log(values, "VALUES");
-      handleAddProduct(values);
+      handleEditProduct(values);
     },
   });
 
@@ -81,7 +81,7 @@ const EditProduct = ({ isOpen, toggle, productId }: Props) => {
   };
 
   //HANDLERS
-  const handleAddProduct = async (values: any) => {
+  const handleEditProduct = async (values: any) => {
     try {
       // Separate files vs already uploaded URLs
       const files = values.imageUrl.filter(

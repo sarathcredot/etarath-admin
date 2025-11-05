@@ -24,18 +24,16 @@ import {
   useGetStocksByVendorId,
 } from "src/services/vendor.service";
 import { errorMsg } from "src/utils/toast";
+import AddStock from "./forms/AddStock";
 
 const VendorStocksList = ({
+  stocks,
+  stocksLoading = false,
   vendorId,
 }: {
-  vendorId?: string;
-  isLoading?: boolean;
-  setPage?: Dispatch<React.SetStateAction<number>>;
-  setLimit?: Dispatch<React.SetStateAction<number>>;
-  setSearch?: Dispatch<React.SetStateAction<any>>;
-  page?: number;
-  limit?: number;
-  search?: string;
+  vendorId: string;
+  stocks: any;
+  stocksLoading: boolean;
 }) => {
   const navigate = useNavigate();
 
@@ -47,12 +45,6 @@ const VendorStocksList = ({
   const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(1);
 
-  // QUERIES
-  const { data: stocks, isLoading: stocksLoading } = useGetStocksByVendorId(
-    vendorId ? vendorId : "",
-    !!vendorId
-  );
-  const { data: vendors, isLoading, error } = useGetAllVendors(isEditOpen);
 
   // MUTATION
   const { mutateAsync: deleteStock } = useDeleteStock();
@@ -64,7 +56,7 @@ const VendorStocksList = ({
       stock: "",
       price: "",
       warrantyPeriod: "",
-      type: "",
+      warranty_type: "",
     },
     validationSchema: StockEditValidationSchema,
 
@@ -108,16 +100,16 @@ const VendorStocksList = ({
           setDeleteOpen(false);
         }
       } else {
-        toast("Tournament ID is missing. Unable to delete the tournament.", {
+        toast("Stock ID is missing. Unable to delete the stock.", {
           containerId: "default",
           className: "no-icon notification-danger",
         });
       }
     } catch (error: any) {
-      console.log("error deleting tournament :", error);
+      console.log("error deleting stock :", error);
       toast(
         error?.response?.data?.message ||
-          "Something went wrong while deleting the tournament.",
+          "Something went wrong while deleting the stock.",
         {
           containerId: "default",
           className: "no-icon notification-danger",
@@ -127,7 +119,7 @@ const VendorStocksList = ({
   };
 
   const totalRecords = stocks?.total || 0;
-  const totalPages = stocks?.pagination?.totalPages || 0;
+  const totalPages = stocks?.totalPages || 0;
 
   useEffect(() => {
     if (isEditOpen && selectedStock) {
@@ -137,7 +129,9 @@ const VendorStocksList = ({
         warrantyPeriod: selectedStock?.warrantyPeriod
           ? selectedStock?.warrantyPeriod.toString()
           : "",
-        type: selectedStock?.type ? selectedStock?.type : "",
+        warranty_type: selectedStock?.warranty_type
+          ? selectedStock?.warranty_type
+          : "",
       });
     }
   }, [isEditOpen, selectedStock]);
@@ -206,6 +200,16 @@ const VendorStocksList = ({
                       </InputGroup>
                     </div>
                   </Col>
+                  <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
+                    <Button
+                      className="font-weight-semibold"
+                      variant="dark"
+                      //   size="md"
+                      onClick={() => setAddOpen(true)}
+                    >
+                      + Add
+                    </Button>
+                  </Col>
                 </Row>
               </div>
               <Form onSubmit={formik.handleSubmit}>
@@ -225,6 +229,7 @@ const VendorStocksList = ({
                       >
                         Product
                       </th>
+                      <th></th>
                       <th>Quantity</th>
                       <th>Sale Price</th>
                       <th>Warranty Period</th>
@@ -247,9 +252,9 @@ const VendorStocksList = ({
                       stocks &&
                       stocks?.result?.length > 0 ? (
                       stocks?.result?.map((item: any, index: number) => (
-                        <tr key={index}>
+                        <tr key={index} onClick={()=>navigate(`/stock/detail?_id=${item?._id}`)}>
                           <td>
-                            <Link to={`/stocks/detail?_id=${index + 1}`}>
+                            <Link to={`/stock/detail?_id=${item?._id}`}>
                               <strong>
                                 {/* {index +
                                   (productsData?.pagination?.page - 1) *
@@ -276,6 +281,13 @@ const VendorStocksList = ({
                                 height="40"
                                 crossOrigin="anonymous"
                               />
+                            </Link>
+                          </td>
+                          <td>
+                            <Link
+                              to={`/products/detail?_id=${item?.product?._id}`}
+                            >
+                              {item?.product?.productName}
                             </Link>
                           </td>
                           {isEditOpen &&
@@ -397,17 +409,17 @@ const VendorStocksList = ({
                                       style={{ color: "#000" }}
                                       //   size="md"
                                       as="select"
-                                      name="type"
-                                      value={formik.values.type}
+                                      name="warranty_type"
+                                      value={formik.values.warranty_type}
                                       onChange={(e) =>
                                         formik.setFieldValue(
-                                          "type",
+                                          "warranty_type",
                                           e.target.value
                                         )
                                       }
                                       isInvalid={
-                                        !!formik.errors.type &&
-                                        formik.touched.type
+                                        !!formik.errors.warranty_type &&
+                                        formik.touched.warranty_type
                                       }
                                     >
                                       <option disabled selected hidden value="">
@@ -416,13 +428,13 @@ const VendorStocksList = ({
                                       {["month", "year"].map(
                                         (item: string, index: number) => (
                                           <option key={index} value={item}>
-                                            {item}
+                                            {capitalize(item)}
                                           </option>
                                         )
                                       )}
                                     </Form.Control>
                                     <Form.Control.Feedback type="invalid">
-                                      {formik.errors.type}
+                                      {formik.errors.warranty_type}
                                     </Form.Control.Feedback>
                                   </Form.Group>
                                 </div>
@@ -430,7 +442,8 @@ const VendorStocksList = ({
                             </td>
                           ) : (
                             <td>
-                              {item?.warrantyPeriod} {item?.type}
+                              {item?.warrantyPeriod}{" "}
+                              {capitalize(item?.warranty_type)}
                             </td>
                           )}
                           {/* <td>
@@ -533,6 +546,11 @@ const VendorStocksList = ({
         isOpen={isDeleteOpen}
         toggle={() => setDeleteOpen(!isDeleteOpen)}
         text={"Are you sure that you want to delete this stock?"}
+      />
+      <AddStock
+        vendorId={vendorId}
+        isOpen={isAddOpen}
+        toggle={() => setAddOpen(!isAddOpen)}
       />
     </>
   );

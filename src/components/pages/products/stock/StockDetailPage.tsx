@@ -218,7 +218,7 @@ const StockDetailPage = () => {
                     </div>
                   </Col>
                   <Col md={3} xl={2}>
-                    <div>
+                    {/* <div>
                       <h6>Verification</h6>
                       <span
                         className={`ecommerce-status ${
@@ -231,7 +231,7 @@ const StockDetailPage = () => {
                       >
                         {stock?.isVerified}
                       </span>
-                    </div>
+                    </div> */}
 
                     <div>
                       <h6 className="mb-0">Status</h6>
@@ -261,7 +261,7 @@ const StockDetailPage = () => {
                   <Card.Title>Product Details</Card.Title>
                 </Card.Header>
                 <Row>
-                  <Col md={6} xl={2}>
+                  <Col md={6} xl={3}>
                     <div>
                       <h6>Product Name</h6>
                       <h5 className=" text-dark font-weight-500 ">
@@ -281,7 +281,7 @@ const StockDetailPage = () => {
                       </h5>
                     </div> */}
                   </Col>
-                  <Col md={3} xl={2}>
+                  {/* <Col md={3} xl={2}>
                     <div>
                       <h6>Origin</h6>
                       <h5 className=" text-dark font-weight-500 ">
@@ -294,14 +294,14 @@ const StockDetailPage = () => {
                         {product?.yearOfManufacturer}
                       </h5>
                     </div>
+                  </Col> */}
+                  <Col md={3} xl={3}>
                     <div>
                       <h6>Width</h6>
                       <h5 className=" text-dark font-weight-500 ">
                         {product?.width}
                       </h5>
                     </div>
-                  </Col>
-                  <Col md={3} xl={2}>
                     <div>
                       <h6>Height</h6>
                       <h5 className=" text-dark font-weight-500 ">

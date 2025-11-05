@@ -10,6 +10,15 @@ import { GiCartwheel, GiCarWheel } from "react-icons/gi";
 import { PiTireLight, PiTireBold } from "react-icons/pi";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { TbBrand4Chan } from "react-icons/tb";
+import { RiCustomerService2Line } from "react-icons/ri";
+import { BsTag } from "react-icons/bs";
+import { FaPersonShelter } from "react-icons/fa6";
+import { MdOutlineDashboardCustomize } from "react-icons/md";
+import { LuShoppingCart } from "react-icons/lu";
+import { MdOutlineSettingsSuggest } from "react-icons/md";
+
+
+
 
 const iconsMap = {
   GiCartwheel,
@@ -17,6 +26,12 @@ const iconsMap = {
   PiTireBold,
   LuLayoutDashboard,
   TbBrand4Chan,
+  RiCustomerService2Line,
+  BsTag,
+  FaPersonShelter,
+  MdOutlineDashboardCustomize,
+  LuShoppingCart,
+  MdOutlineSettingsSuggest
 };
 function Sidebar(props) {
   const location = useLocation();

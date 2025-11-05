@@ -68,6 +68,7 @@ import BlogTags from "src/components/pages/cms/blogs/tags/BlogTags";
 import StockDetailPage from "src/components/pages/products/stock/StockDetailPage";
 import KycsPage from "src/components/pages/kycs/KycsPage";
 import TokenList from "src/components/pages/customer-supports/TokenList";
+import OrderDetailPage from "src/components/pages/orders/OrderDetailPage";
 
 interface RouteProps {
   path: string;
@@ -117,6 +118,12 @@ const adminRoutes: Array<RouteProps> = [
   // Kycs
   { path: "/kycs", exact: true, component: <KycsPage /> },
 
+  // Orders
+  {
+    path: "/orders/detail",
+    component: <OrderDetailPage />,
+  },
+
   // Subscriptions
 
   {
@@ -141,7 +148,7 @@ const adminRoutes: Array<RouteProps> = [
   // { path: "/packages/detail",  component: <PackagesDetailPage /> },
 
   // Customer Supports
-  { path: "/customer-supports", component: <TokenList /> },
+  { path: "/customer-supports/:role", component: <TokenList /> },
 
   // CMS
   { path: "/cms/offers", component: <OffersPage /> },

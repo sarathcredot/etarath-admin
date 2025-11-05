@@ -235,7 +235,7 @@ const EditBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
     }
   }, [userId, kycDetails]);
 
-  const timeFormat = "hh:mm A";
+  const timeFormat = "HH:mm";
   console.log(formikKyc.values, "VALUES");
   console.log(formikKyc.errors, "ERRORS");
   return (
@@ -488,7 +488,7 @@ const EditBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
                   </Form.Label>
 
                   <TimePicker.RangePicker
-                    use12Hours
+                    // use12Hours
                     format={timeFormat}
                     value={
                       formikKyc.values.business_hours

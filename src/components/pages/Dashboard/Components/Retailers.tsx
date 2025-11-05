@@ -4,7 +4,8 @@ import Chart from "react-apexcharts";
 import { Reveal } from "react-awesome-reveal";
 import { Button, Card, Col, Form, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { User } from "src/types/user.types";
+import { useGetAllTopUsersAndOrders } from "src/services/dashboard.service";
+import { User } from "src/types/types";
 import { fadeIn } from "src/utils/data/keyframes";
 const retailers: any[] = [
   {
@@ -80,6 +81,12 @@ const retailers: any[] = [
 ];
 const Retailers = () => {
   const [filter, setFilter] = useState<string>("MONTH");
+
+  // QUERIES
+  const { data: topRetailers } = useGetAllTopUsersAndOrders(
+    "retailer",
+    true
+  );
 
   const getCategories = (filterType: string) => {
     const currentYear = new Date().getFullYear();
@@ -243,19 +250,32 @@ const Retailers = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {retailers &&
-                      retailers?.length &&
-                      retailers?.map((item, index) => (
-                        <tr key={index}>
-                          <td>
-                            <Link to={`/retailers/detail?_id=${item?._id}`}>
-                              {item?.fullName}
-                            </Link>
-                          </td>
-                          {/* <td>{item?.phoneNumber}</td> */}
-                          <td className="text-lg-right">{38}</td>
-                        </tr>
-                      ))}
+                    {topRetailers &&
+                      topRetailers?.length &&
+                      topRetailers?.map(
+                        (
+                          item: {
+                            orderCount: number;
+                            retailer: string;
+                            retailerId: string;
+                          },
+                          index: number
+                        ) => (
+                          <tr key={index}>
+                            <td>
+                              <Link
+                                to={`/retailers/detail?_id=${item?.retailerId}`}
+                              >
+                                {item?.retailer}
+                              </Link>
+                            </td>
+                            {/* <td>{item?.phoneNumber}</td> */}
+                            <td className="text-lg-right">
+                              {item?.orderCount}
+                            </td>
+                          </tr>
+                        )
+                      )}
                   </tbody>
                 </Table>
               </Card.Body>

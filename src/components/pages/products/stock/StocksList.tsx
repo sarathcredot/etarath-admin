@@ -64,7 +64,7 @@ const StocksList = ({
       stock: "",
       price: "",
       warrantyPeriod: "",
-      type: "",
+      warranty_type: "",
     },
     validationSchema: StockEditValidationSchema,
 
@@ -137,7 +137,9 @@ const StocksList = ({
         warrantyPeriod: selectedStock?.warrantyPeriod
           ? selectedStock?.warrantyPeriod.toString()
           : "",
-        type: selectedStock?.type ? selectedStock?.type : "",
+        warranty_type: selectedStock?.warranty_type
+          ? selectedStock?.warranty_type
+          : "",
       });
     }
   }, [isEditOpen, selectedStock]);
@@ -153,7 +155,7 @@ const StocksList = ({
                 <Row className="align-items-lg-center justify-content-end mb-3">
                   <Col>
                     <h5 className="m-0 card-title h5 font-weight-bold">
-                      Vendor Products
+                      Vendors
                     </h5>
                   </Col>
 
@@ -206,16 +208,16 @@ const StocksList = ({
                       </InputGroup>
                     </div>
                   </Col>
-                  {/* <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
+                  <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
                     <Button
                       className="font-weight-semibold"
                       variant="dark"
                       //   size="md"
                       onClick={() => setAddOpen(true)}
                     >
-                      + Add Stock
+                      + Add
                     </Button>
-                  </Col> */}
+                  </Col>
                 </Row>
               </div>
               <Form onSubmit={formik.handleSubmit}>
@@ -260,7 +262,7 @@ const StocksList = ({
                       stocks?.result?.map((item: any, index: number) => (
                         <tr key={index}>
                           <td>
-                            <Link to={`/stocks/detail?_id=${index + 1}`}>
+                            <Link to={`/stock/detail?_id=${index + 1}`}>
                               <strong>
                                 {/* {index +
                                   (productsData?.pagination?.page - 1) *
@@ -335,9 +337,9 @@ const StocksList = ({
                               to={`/vendors/detail?_id=${item?.requestedBy?._id}`}
                             >
                               {item?.requestedBy?.userName}
-                              <br />
-                              {item?.requestedBy?.email}
                             </Link>
+                              <br />
+                              {item?.requestedBy?.phoneNumber}
                           </td>
                           {/* )} */}
                           {isEditOpen &&
@@ -455,17 +457,17 @@ const StocksList = ({
                                       style={{ color: "#000" }}
                                       //   size="md"
                                       as="select"
-                                      name="type"
-                                      value={formik.values.type}
+                                      name="warranty_type"
+                                      value={formik.values.warranty_type}
                                       onChange={(e) =>
                                         formik.setFieldValue(
-                                          "type",
+                                          "warranty_type",
                                           e.target.value
                                         )
                                       }
                                       isInvalid={
-                                        !!formik.errors.type &&
-                                        formik.touched.type
+                                        !!formik.errors.warranty_type &&
+                                        formik.touched.warranty_type
                                       }
                                     >
                                       <option disabled selected hidden value="">
@@ -474,13 +476,13 @@ const StocksList = ({
                                       {["month", "year"].map(
                                         (item: string, index: number) => (
                                           <option key={index} value={item}>
-                                            {item}
+                                            {capitalize(item)}
                                           </option>
                                         )
                                       )}
                                     </Form.Control>
                                     <Form.Control.Feedback type="invalid">
-                                      {formik.errors.type}
+                                      {formik.errors.warranty_type}
                                     </Form.Control.Feedback>
                                   </Form.Group>
                                 </div>
@@ -488,7 +490,8 @@ const StocksList = ({
                             </td>
                           ) : (
                             <td>
-                              {item?.warrantyPeriod} {item?.type}
+                              {item?.warrantyPeriod}{" "}
+                              {capitalize(item?.warranty_type)}
                             </td>
                           )}
                           {/* <td>

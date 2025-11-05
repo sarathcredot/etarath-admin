@@ -9,23 +9,9 @@ import EditAuctionPlan from "./Popups/EditAuctionPlan";
 import RetailerPlanSubscriptions from "./RetailerPlanSubscriptions";
 
 import _, { capitalize } from "lodash";
-import { RetailerPlan } from "./RetailerPlans";
-
-const retailerPlan: RetailerPlan = {
-  planName: "Standard",
-  description: "For small shop owners and retailers",
-  trialDays: 75,
-  price: 49,
-  currency: "AED",
-  frequency: "monthly",
-  status: true,
-  features: [
-    "Lorem ipsum set amet elit sed dotempor enim.",
-    "Lorem ipsum set amet elit.",
-    "Lorem ipsum set amet elit sed.",
-    "Lorem ipsum.",
-  ],
-};
+import { useGetPlanById } from "src/services/subscription.service";
+import { SubscriptionPlan } from "src/types/types";
+import EditPlan from "../vendor-plans/Popups/EditPlan";
 
 const RetailerPlanDetailPage = () => {
   //IMPORTS
@@ -33,18 +19,13 @@ const RetailerPlanDetailPage = () => {
   const planId: any = searchParams.get("_id");
 
   //STATE
-  const [isEditOpen, setEditOpen] = useState<any>(null);
+  const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [isStatusOpen, setStatusOpen] = useState<boolean>(false);
 
-  //DATA
-  // const { data: auctionPlan } = useGetAuctionPlanById(
-  //   planId,
-  //   !!planId
-  // );
-  // const { data: analytics } = useGetSubscriptionAnalytics(
-  //   { orderType: ORDER_TYPES.AUCTION_PLAN, planId: planId },
-  //   !!planId
-  // );
+  //  QUERIES
+  const { data: plan } = useGetPlanById(planId, !!planId) as {
+    data: SubscriptionPlan;
+  };
 
   //MUTATION
   // const { mutateAsync: updateAuctionPlan } = useUpdateAuctionPlanById();
@@ -72,7 +53,9 @@ const RetailerPlanDetailPage = () => {
   return (
     <>
       <Breadcrumb
-        current={`${_.capitalize(retailerPlan?.planName.toLowerCase())}  Plan`}
+        current={
+          plan ? `${_.capitalize(plan?.plan.toLowerCase())}  Plan` : "Plan"
+        }
         paths={[
           {
             name: "Dashboard",
@@ -83,7 +66,9 @@ const RetailerPlanDetailPage = () => {
             url: "/subscriptions/retailer-plans",
           },
           {
-            name: `${_.capitalize(retailerPlan?.planName.toLowerCase())}  Plan`,
+            name: plan
+              ? `${_.capitalize(plan?.plan.toLowerCase())}  Plan`
+              : "Plan",
             url: `/subscriptions/retailer-plans/detail?_id=${planId}`,
           },
         ]}
@@ -215,7 +200,7 @@ const RetailerPlanDetailPage = () => {
                 <div
                   className="action_btn "
                   onClick={() => {
-                    setEditOpen(planId);
+                    setEditOpen(true);
                   }}
                 >
                   <i className="fas fa-pencil-alt"></i>
@@ -227,31 +212,31 @@ const RetailerPlanDetailPage = () => {
                     <div>
                       <h6>Name</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        {retailerPlan?.planName}
+                        {_.capitalize(plan?.plan.toLowerCase())}
                       </h5>
                     </div>
                     <div>
                       <h6>Price</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        {retailerPlan?.price} {retailerPlan?.currency}
+                        {plan?.price_monthly || 0} AED
                       </h5>
                     </div>
                     <div>
-                      <h6>Frequency</h6>
+                      <h6>Yearly Off</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        {capitalize(retailerPlan?.frequency)}
+                        {plan?.yearly_off || 0} %
                       </h5>
                     </div>
                     <div>
-                      <h6>Trial Days</h6>
+                      <h6>Trial Period</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        {retailerPlan?.trialDays} days
+                        {plan?.trial_period || 0} days
                       </h5>
                     </div>
                     <div>
                       <h6>Description</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        {retailerPlan?.description}
+                        {plan?.description}
                       </h5>
                     </div>
                   </Col>
@@ -266,21 +251,21 @@ const RetailerPlanDetailPage = () => {
                       >
                         <PtSwitch
                           className="mr-2"
-                          on={retailerPlan?.status}
+                          on={!plan?.isSuspend}
                           size="sm"
                           variant="success"
                         />
                         <h5 className=" text-dark font-weight-500 ">
-                          {retailerPlan?.status ? "Active" : "Inactive"}
+                          {!plan?.isSuspend ? "Active" : "Inactive"}
                         </h5>
                       </div>
                     </div>
                     <div>
                       <h6>Features</h6>
                       <div className=" list-unstyled">
-                        {retailerPlan?.features &&
-                          retailerPlan?.features?.length > 0 &&
-                          retailerPlan?.features?.map((feature: any) => (
+                        {plan?.features &&
+                          plan?.features?.length > 0 &&
+                          plan?.features?.map((feature: string) => (
                             <li className="d-flex align-items-center m-0 p-0">
                               <i className="bx bx-check bg-gray p-1 rounded-circle mr-2"></i>
                               <h5 className="my-1 text-dark font-weight-500 ">
@@ -318,10 +303,10 @@ const RetailerPlanDetailPage = () => {
           "Are you sure that you want to change the status of this retailer plan ?"
         }
       />
-      <EditAuctionPlan
+      <EditPlan
         isOpen={isEditOpen}
         toggle={() => setEditOpen(!isEditOpen)}
-        id={planId}
+        plan={plan ? plan : null}
       />
     </>
   );

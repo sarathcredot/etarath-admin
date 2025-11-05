@@ -6,7 +6,7 @@
   },
   {
     "name": "Vendors",
-    "icon": "bx bx-group",
+    "icon": "FaPersonShelter",
     "url": "/vendors"
   },
   {
@@ -15,28 +15,19 @@
     "url": "/retailers"
   },
   {
-    "name": "Sales Executives",
-    "icon": "bx bx-group",
-    "url": "/sales-executives"
-  },
-  {
-    "name": "KYC",
-    "icon": "bx bx-group",
-    "url": "/kycs"
-  },
-  {
     "name": "Products",
-    "icon": "PiTireBold",
+    "icon": "LuShoppingCart",
     "url": "/products"
   },
   {
     "name": "Brands",
-    "icon": "TbBrand4Chan",
+    "icon": "MdOutlineDashboardCustomize",
     "url": "/brands"
   },
+
   {
     "name": "Attributes",
-    "icon": "TbBrand4Chan",
+    "icon": "BsTag",
     "url": "#",
     "children": [
       {
@@ -48,12 +39,6 @@
         "url": "/attributes/year_of_manufacture"
       }
     ]
-  },
-
-  {
-    "name": "Customer Supports",
-    "icon": "bx bx-help-circle",
-    "url": "/customer-supports"
   },
   {
     "name": "Subscriptions",
@@ -72,7 +57,7 @@
   },
   {
     "name": "CMS",
-    "icon": "bx bx-package",
+    "icon": "MdOutlineSettingsSuggest",
     "url": "#",
     "children": [
       {
@@ -96,6 +81,21 @@
             "url": "/cms/blogs/tags"
           }
         ]
+      }
+    ]
+  },
+  {
+    "name": "Customer Supports",
+    "icon": "RiCustomerService2Line",
+    "url": "#",
+    "children": [
+      {
+        "name": "Vendor",
+        "url": "/customer-supports/vendor"
+      },
+      {
+        "name": "Retailer",
+        "url": "/customer-supports/retailer"
       }
     ]
   }

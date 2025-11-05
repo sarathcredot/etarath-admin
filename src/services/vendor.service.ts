@@ -103,3 +103,33 @@ export const useGetStocksByVendorId = (vendorId: string, enabled: boolean) => {
     enabled: enabled,
   });
 };
+
+// GET ALL VENDOR ORDERS
+
+export const getOrdersByVendorId = async (vendorId: string) => {
+  if (!vendorId) throw new Error("No vendor id provided");
+  return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/all-orders`);
+};
+
+export const useGetOrdersByVendorId = (vendorId: string, enabled: boolean) => {
+  return useQuery({
+    queryKey: ["vendor-orders", vendorId],
+    queryFn: () => getOrdersByVendorId(vendorId).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};
+
+// GET ALL VENDOR SALES AGENTS
+
+export const getAgentsByVendorId = async (vendorId: string) => {
+  if (!vendorId) throw new Error("No vendor id provided");
+  return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/sales-agents`);
+};
+
+export const useGetAgentsByVendorId = (vendorId: string, enabled: boolean) => {
+  return useQuery({
+    queryKey: ["sales-agents", vendorId],
+    queryFn: () => getAgentsByVendorId(vendorId).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};

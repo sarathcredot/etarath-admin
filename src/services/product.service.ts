@@ -5,14 +5,33 @@ import axiosAuth from "./axios.service";
 const baseUrl = `${url}/admin/product`;
 
 // GET ALL PRODUCTS
-export const getAllProducts = async () => {
-  return await axiosAuth.get(`${baseUrl}/`);
+export const getAllProducts = async (query: {
+  search?: string;
+  status?: string;
+  isSuspend?: string;
+  limit?: number;
+  page?: number;
+}) => {
+  return await axiosAuth.get(`${baseUrl}/`, { params: query });
 };
 
-export const useGetAllProducts = (enabled: boolean = true) => {
+export const useGetAllProducts = ({
+  query,
+  enabled = true,
+}: {
+  enabled?: boolean;
+  query?: {
+    search?: string;
+    status?: string;
+    isSuspend?: string;
+    limit?: number;
+    page?: number;
+  };
+}) => {
   return useQuery({
-    queryKey: ["products"],
-    queryFn: () => getAllProducts().then((res) => res?.data?.data),
+    queryKey: ["products", query],
+    queryFn: () =>
+      getAllProducts(query ? query : {}).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };
@@ -111,3 +130,45 @@ export const useUpdateProductStatus = () => {
   });
 };
 
+// VERIFY REQUESTED PRODUCT
+export const verifyProduct = async ({
+  id,
+  status,
+}: {
+  id: string;
+  status: string;
+}) => {
+  if (!id) throw new Error("Product Id is required");
+  return await axiosAuth.put(`${baseUrl}/${id}/verify-product`, { status });
+};
+
+export const useVerifyProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: verifyProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product"] });
+      queryClient.invalidateQueries({ queryKey: ["products-by-brand-id"] });
+    },
+  });
+};
+
+// GET ALL PRODUCT ORDERS
+
+export const getOrdersByProductId = async (productId: string) => {
+  if (!productId) throw new Error("No product id provided");
+  return await axiosAuth.get(`${baseUrl}/${productId}/all-orders`);
+};
+
+export const useGetOrdersByProductId = (
+  productId: string,
+  enabled: boolean
+) => {
+  return useQuery({
+    queryKey: ["product-orders", productId],
+    queryFn: () =>
+      getOrdersByProductId(productId).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};

@@ -12,7 +12,12 @@ import {
 } from "react-bootstrap";
 import { toast } from "react-toastify";
 import Loader from "src/components/features/loader";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { capitalize } from "lodash";
 import PtSwitch from "src/components/features/elements/switch";
 import Pagination from "src/components/common/Pagination";
@@ -26,7 +31,11 @@ import { useGetAllSupportRequests } from "src/services/customer-support.service"
 import dayjs from "dayjs";
 
 const TokenList = () => {
+  //IMPORTS
+  const { role } = useParams();
+  console.log({ role });
   const navigate = useNavigate();
+
   //STATE
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState<number>(10);
@@ -58,7 +67,7 @@ const TokenList = () => {
     data: requests,
     isLoading: isRequestsLoading,
     error,
-  }: any = useGetAllSupportRequests();
+  }: any = useGetAllSupportRequests(role, !!role);
 
   console.log("requests = ", requests);
 
@@ -151,12 +160,14 @@ const TokenList = () => {
                       <tr>
                         <th style={{ width: "30px" }}>#</th>
                         <th>User</th>
-                        <th>Role</th>
                         <th>Working Mail</th>
                         <th>Contact Number</th>
                         <th>Subject</th>
                         <th>Description</th>
                         <th>Date</th>
+                        <th className="text-center" style={{ width: "80px" }}>
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -187,12 +198,11 @@ const TokenList = () => {
                                 {item?.user?.userName || "-"}
                               </Link>
                             </td>
-                            <td>{item?.user?.role|| "-"}</td>
                             <td>
                               {item?.working_email ? (
                                 <a
                                   href={`mailto:${item.working_email}`}
-                                  className="text-blue-600 hover:underline"
+                                  className="text-red-500 hover:underline"
                                 >
                                   {item.working_email}
                                 </a>
@@ -201,11 +211,35 @@ const TokenList = () => {
                               )}
                             </td>
 
-                            <td>{item?.contact_number|| "-"}</td>
+                            <td>
+                              {item?.contact_number ? (
+                                <a
+                                  href={`tel:${item.contact_number}`}
+                                  className="text-blue-600 hover:underline"
+                                >
+                                  {item.contact_number}
+                                </a>
+                              ) : (
+                                "-"
+                              )}
+                            </td>
                             <td>{capitalize(item?.subject)}</td>
-                            <td>{item?.description|| "-"}</td>
+                            <td>{item?.description || "-"}</td>
                             <td>
                               {dayjs(item?.createdAt).format("DD-MM-YYYY")}
+                            </td>
+                            <td onClick={(e) => e.stopPropagation()}>
+                              <div className="d-flex align-items-center justify-content-around">
+                                <a
+                                  className="action_btn "
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                  }}
+                                  href={`mailto:${item.working_email}`}
+                                >
+                                  <i className="fas fa-envelope"></i>
+                                </a>
+                              </div>
                             </td>
                           </tr>
                         ))

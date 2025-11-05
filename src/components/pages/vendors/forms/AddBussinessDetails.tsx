@@ -195,7 +195,7 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
     }
   };
 
-  const timeFormat = "hh:mm A";
+  const timeFormat = "HH:mm";
 
   console.log(formikKyc.values, "VALUES");
   console.log(formikKyc.errors, "ERRORS");
@@ -449,7 +449,7 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
                   </Form.Label>
 
                   <TimePicker.RangePicker
-                    use12Hours
+                    // use12Hours
                     format={timeFormat}
                     value={
                       formikKyc.values.business_hours
@@ -471,6 +471,7 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
                           timeFormat
                         )} - ${times[1].format(timeFormat)}`;
                         formikKyc.setFieldValue("business_hours", range);
+                        console.log({range})
                       } else {
                         formikKyc.setFieldValue("business_hours", "");
                       }

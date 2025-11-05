@@ -150,9 +150,8 @@ const RetailersList = ({
                 <thead>
                   <tr>
                     <th style={{ width: "30px" }}>#</th>
-                    <th style={{ width: "80px" }}>Profile</th>
-
-                    <th>Full Name</th>
+                    <th style={{ width: "80px" }}>Retailer</th>
+                    <th></th>
                     <th>Phone Number</th>
                     <th>Email</th>
                     <th>Verifaction</th>
@@ -184,7 +183,11 @@ const RetailersList = ({
                     retailers &&
                     retailers?.length > 0 &&
                     retailers?.map((item: any, index: any) => (
-                      <tr>
+                      <tr
+                        onClick={() =>
+                          navigate(`/retailers/detail?_id=${item?._id}`)
+                        }
+                      >
                         <td>
                           <Link to={`/retailers/detail?_id=${item?._id}`}>
                             <strong>
@@ -230,9 +233,10 @@ const RetailersList = ({
                           </div>
                         </td>
 
-                        <td>
+                        <td onClick={(e) => e.stopPropagation()}>
                           <div
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setStatusOpen(true);
                               setSelectedRetailer(item);
                             }}
@@ -245,11 +249,12 @@ const RetailersList = ({
                             />
                           </div>
                         </td>
-                        <td>
+                        <td onClick={(e) => e.stopPropagation()}>
                           <div className="d-flex align-items-center justify-content-around">
                             <div
                               className="action_btn "
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setSelectedRetailer(item);
                                 setEditOpen(true);
                               }}

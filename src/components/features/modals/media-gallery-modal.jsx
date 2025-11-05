@@ -257,7 +257,7 @@ export default function MediaGalleryModal({
                 className="modal-confirm mr-2 "
                 style={{ width: "100px" }}
                 onClick={() => closeModal(true)}
-                variant="primary"
+                variant="dark"
               >
                 Set
               </Button>

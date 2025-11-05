@@ -8,7 +8,9 @@ import {
   Form,
   InputGroup,
   Row,
+  Tab,
   Table,
+  Tabs,
 } from "react-bootstrap";
 import { toast } from "react-toastify";
 import Loader from "src/components/features/loader";
@@ -26,6 +28,7 @@ import {
 } from "src/services/product.service";
 import { generateFilePath } from "src/services/url.service";
 import { Product } from "./ProductsList";
+import { capitalCase } from "capital-case";
 
 const ProductsPage = () => {
   const navigate = useNavigate();
@@ -64,7 +67,7 @@ const ProductsPage = () => {
     data: products,
     isLoading: isProductsLoading,
     error,
-  }: any = useGetAllProducts();
+  }: any = useGetAllProducts({ query: queryObj, enabled: true });
 
   // MUTATIONS
   const { mutateAsync: updateProductStatus } = useUpdateProductStatus();
@@ -141,6 +144,11 @@ const ProductsPage = () => {
           },
         ]}
       />
+      {/* <Tabs className="nav-tabs  nav-justified">
+        <Tab eventKey="approved" title="Approved" className="nav-item"></Tab>
+        <Tab eventKey="pending" title="Pending" className="nav-item"></Tab>
+        <Tab eventKey="rejected" title="Rejected" className="nav-item"></Tab>
+      </Tabs> */}
       <Card>
         <Card.Body className="bg-white">
           <div className="">
@@ -228,12 +236,12 @@ const ProductsPage = () => {
                         >
                           Product
                         </th>
-                        <th>Name</th>
+                        <th></th>
                         <th>Brand</th>
-                        {/* <th>Category</th> */}
                         <th>Origin</th>
                         <th>Year</th>
 
+                        {/* <th>Verification</th> */}
                         <th>Status</th>
                         <th className="text-center" style={{ width: "80px" }}>
                           Actions
@@ -281,7 +289,8 @@ const ProductsPage = () => {
                               </td>
                               <td>
                                 <Link to={`/products/detail?_id=${item?._id}`}>
-                                  {item?.productName}
+                                  {item?.productName} -{" "}
+                                  {`${item?.width}/${item?.height} ${item?.size}`}
                                 </Link>
                               </td>
                               <td>
@@ -299,10 +308,21 @@ const ProductsPage = () => {
                               </td>
                               <td>
                                 <Link to={`/attributes/year_of_manufacture`}>
-                                  {item?.yearOfManufacturerDetails?.yearOfManufacturer?.value}
+                                  {
+                                    item?.yearOfManufacturerDetails
+                                      ?.yearOfManufacturer?.value
+                                  }
                                 </Link>
                               </td>
-
+                              {/* <td>
+                                <div
+                                  className={`ecommerce-status ${item?.isVerified}`}
+                                >
+                                  {item?.isVerified
+                                    ? capitalCase(item?.isVerified)
+                                    : ""}
+                                </div>
+                              </td> */}
                               <td>
                                 <div
                                   className="d-flex align-items-center"
@@ -363,7 +383,7 @@ const ProductsPage = () => {
                   currentPage={page}
                   setCurrentPage={setPage}
                   totalButtonsToShow={3}
-                  totalPages={2}
+                  totalPages={products ? products?.totalPages : 1}
                   style={{ marginTop: "20px" }}
                 />
                 {/* </Card.Body>

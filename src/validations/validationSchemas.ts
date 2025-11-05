@@ -46,13 +46,13 @@ export const StockValidationSchema = Yup.object().shape({
   price: Yup.string().required("Sale Price is required"),
   requestedBy: Yup.string().required("Select vendor"),
   warrantyPeriod: Yup.string().required("Warranty Period is required"),
-  type: Yup.string().required("Type is required"),
+  warranty_type: Yup.string().required("Type is required"),
 });
 export const StockEditValidationSchema = Yup.object().shape({
   stock: Yup.string().required("Quantity is required"),
   price: Yup.string().required("Sale Price is required"),
   warrantyPeriod: Yup.string().required("Warranty Period is required"),
-  type: Yup.string().required("Type is required"),
+  warranty_type: Yup.string().required("Type is required"),
 });
 
 // brand validation schema
@@ -209,4 +209,34 @@ export const VendorEditKycValidationSchema = Yup.object().shape({
   post: Yup.string().required("Post is required"),
   business_hours: Yup.string().required("Business Hours is required"),
   shop_contact_number: Yup.string().required("Shop Contact Number is required"),
+});
+
+export const PlanEditValidationSchema = Yup.object().shape({
+  plan: Yup.string()
+    .trim()
+    .required("Plan name is required"),
+
+  price_monthly: Yup.number()
+    .typeError("Price must be a number")
+    .positive("Price must be greater than zero")
+    .required("Price is required"),
+
+  yearly_off: Yup.number()
+    .typeError("Discount must be a number")
+    .min(0, "Discount can't be negative")
+    .max(100, "Discount can't exceed 100%")
+    .required("Yearly discount is required"),
+
+  trial_period: Yup.number()
+    .typeError("Trial period must be a number")
+    .min(0, "Trial period can't be negative")
+    .required("Trial period is required"),
+
+  features: Yup.array()
+    .of(Yup.string().trim().required("Feature can't be empty"))
+    .min(1, "At least one feature is required"),
+
+  description: Yup.string()
+    .trim()
+    .required("Description is required")
 });

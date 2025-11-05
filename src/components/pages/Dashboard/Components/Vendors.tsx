@@ -4,82 +4,15 @@ import Chart from "react-apexcharts";
 import { Reveal } from "react-awesome-reveal";
 import { Button, Card, Col, Form, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { User } from "src/types/user.types";
+import { useGetAllTopUsersAndOrders } from "src/services/dashboard.service";
+import { User } from "src/types/types";
 import { fadeIn } from "src/utils/data/keyframes";
-const vendors: any[] = [
-  {
-    _id: "65fbdc0c8a3f1e1234567894",
-    fullName: "Rashid Khan",
-    phoneNumber: "97455677889",
-    countryCode: "+974",
-    isVerified: true,
-    role: "organiser",
-    createdAt: "2025-03-20T08:20:00Z",
-    updatedAt: "2025-03-20T08:20:00Z",
-  },
-  {
-    _id: "65fbdc0c8a3f1e1234567895",
-    fullName: "Fatima Noor",
-    phoneNumber: "97455699887",
-    countryCode: "+974",
-    isVerified: true,
-    role: "organiser",
-    createdAt: "2025-03-20T08:25:00Z",
-    updatedAt: "2025-03-20T08:25:00Z",
-  },
-  {
-    _id: "65fbdc0c8a3f1e1234567896",
-    fullName: "Khalid Abdul",
-    phoneNumber: "97455661234",
-    countryCode: "+974",
-    isVerified: false,
-    role: "organiser",
-    createdAt: "2025-03-20T08:30:00Z",
-    updatedAt: "2025-03-20T08:30:00Z",
-  },
-  {
-    _id: "65fbdc0c8a3f1e1234567897",
-    fullName: "Mariam Saeed",
-    phoneNumber: "97455443322",
-    countryCode: "+974",
-    isVerified: true,
-    role: "organiser",
-    createdAt: "2025-03-20T08:35:00Z",
-    updatedAt: "2025-03-20T08:35:00Z",
-  },
-  {
-    _id: "65fbdc0c8a3f1e1234567896",
-    fullName: "Khalid Abdul",
-    phoneNumber: "97455661234",
-    countryCode: "+974",
-    isVerified: false,
-    role: "organiser",
-    createdAt: "2025-03-20T08:30:00Z",
-    updatedAt: "2025-03-20T08:30:00Z",
-  },
-  {
-    _id: "65fbdc0c8a3f1e1234567897",
-    fullName: "Mariam Saeed",
-    phoneNumber: "97455443322",
-    countryCode: "+974",
-    isVerified: true,
-    role: "organiser",
-    createdAt: "2025-03-20T08:35:00Z",
-    updatedAt: "2025-03-20T08:35:00Z",
-  },
-  {
-    _id: "65fbdc0c8a3f1e1234567898",
-    fullName: "Adil Rehman",
-    phoneNumber: "97455887766",
-    countryCode: "+974",
-    isVerified: false,
-    role: "organiser",
-    createdAt: "2025-03-20T08:40:00Z",
-    updatedAt: "2025-03-20T08:40:00Z",
-  },
-];
+
 const Vendors = () => {
   const [filter, setFilter] = useState<string>("MONTH");
+
+  // QUERIES
+  const { data: topVendors } = useGetAllTopUsersAndOrders("vendor");
 
   const getCategories = (filterType: string) => {
     const currentYear = new Date().getFullYear();
@@ -180,7 +113,7 @@ const Vendors = () => {
           },
           {
             name: "Verification Pending Vendors",
-             data: Array.from({ length: 31 }, () =>
+            data: Array.from({ length: 31 }, () =>
               Math.floor(Math.random() * 5)
             ),
           },
@@ -205,7 +138,7 @@ const Vendors = () => {
       },
     },
     dataLabels: { enabled: false },
-    colors: ["#0BBE05",  "#FF0F0F","#FF600F",],
+    colors: ["#0BBE05", "#FF0F0F", "#FF600F"],
   });
 
   const handleFilterChange = (newFilter: string) => {
@@ -244,20 +177,36 @@ const Vendors = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {vendors &&
-                      vendors?.length &&
-                      vendors?.map((item, index) => (
-                        <tr key={index}>
-                          <td>
-                            <Link to={`/vendors/detail?_id=${item?._id}`}>
-                              {item?.fullName}
-                            </Link>
-                          </td>
-                          {/* <td>{item?.phoneNumber}</td> */}
-                          <td className="text-lg-right">{38}</td>
-                          <td className="text-lg-right">{38}</td>
-                        </tr>
-                      ))}
+                    {topVendors &&
+                      topVendors?.length &&
+                      topVendors?.map(
+                        (
+                          item: {
+                            orderCount: number;
+                            stockCount: number;
+                            vendorName: string;
+                            vendorId: string;
+                          },
+                          index: number
+                        ) => (
+                          <tr key={index}>
+                            <td>
+                              <Link
+                                to={`/vendors/detail?_id=${item?.vendorId}`}
+                              >
+                                {item?.vendorName}
+                              </Link>
+                            </td>
+                            {/* <td>{item?.phoneNumber}</td> */}
+                            <td className="text-lg-right">
+                              {item?.stockCount}
+                            </td>
+                            <td className="text-lg-right">
+                              {item?.orderCount}
+                            </td>
+                          </tr>
+                        )
+                      )}
                   </tbody>
                 </Table>
               </Card.Body>

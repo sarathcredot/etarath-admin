@@ -5,6 +5,7 @@ import Chart from "react-apexcharts";
 import { Reveal } from "react-awesome-reveal";
 import { Card, Col, Form, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { useGetAllTopUsersAndOrders } from "src/services/dashboard.service";
 import { fadeIn } from "src/utils/data/keyframes";
 const topTournaments: any[] = [
   {
@@ -116,16 +117,34 @@ const topTournaments: any[] = [
 const Orders = () => {
   const [filter, setFilter] = useState<string>("MONTH");
 
+  // QUERIES
+  const { data: topOrders } = useGetAllTopUsersAndOrders("order");
+
   const getCategories = (filterType: string) => {
     const currentYear = new Date().getFullYear();
 
     switch (filterType) {
       case "YEAR":
         const startYear = 2018;
-        return Array.from({ length: currentYear - startYear + 1 }, (_, i) => (startYear + i).toString());
+        return Array.from({ length: currentYear - startYear + 1 }, (_, i) =>
+          (startYear + i).toString()
+        );
 
       case "MONTH":
-        return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
 
       case "WEEK":
         return ["Week 1", "Week 2", "Week 3", "Week 4"];
@@ -176,11 +195,15 @@ const Orders = () => {
         return [
           {
             name: "Completed Orders",
-            data: Array.from({ length: 31 }, () => Math.floor(Math.random() * 10)),
+            data: Array.from({ length: 31 }, () =>
+              Math.floor(Math.random() * 10)
+            ),
           },
           {
             name: "Pending Orders",
-            data: Array.from({ length: 31 }, () => Math.floor(Math.random() * 5)),
+            data: Array.from({ length: 31 }, () =>
+              Math.floor(Math.random() * 5)
+            ),
           },
         ];
       default:
@@ -220,16 +243,9 @@ const Orders = () => {
   };
   return (
     <>
-      <Reveal
-        keyframes={fadeIn}
-        duration={600}
-        triggerOnce
-      >
+      <Reveal keyframes={fadeIn} duration={600} triggerOnce>
         <Row className="py-3">
-          <Col
-            lg={5}
-            className=" pt-3 "
-          >
+          <Col lg={5} className=" pt-3 ">
             <Card className="card-modern h-100">
               <Card.Header>
                 <Card.Title>Top Orders</Card.Title>
@@ -245,36 +261,32 @@ const Orders = () => {
                       <th>Order ID</th>
                       <th>Retailer</th>
                       <th className="">Status</th>
-                      <th>Amount</th>
+                      <th className="text-right">Amount</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {topTournaments &&
-                      topTournaments?.length &&
-                      topTournaments?.map((item, index) => (
+                    {topOrders &&
+                      topOrders?.length &&
+                      topOrders?.map((item: any, index: number) => (
                         <tr key={index}>
                           <td>
-                            <Link to={`/orders/detail?_id=${item?._id}`}>ORD-273051</Link>
+                            <Link to={`/orders/detail?_id=${item?._id}`}>
+                              {item?.orderId || "-"}
+                            </Link>
                           </td>
                           <td>
-                            <Link to={`/retailers/detail?_id=${item?._id}`}>Retailer Name</Link>
+                            <Link to={`/retailers/detail?_id=${item?.userId}`}>
+                              {item?.retailerDetails?.userName || "-"}
+                            </Link>
                           </td>
                           <td className="">
                             <span
-                              className={`ecommerce-status  ${
-                                item?.status === "COMPLETED"
-                                  ? "completed"
-                                  : item?.status === "ONGOING"
-                                  ? "on-hold"
-                                  : item?.status === "UPCOMING"
-                                  ? ""
-                                  : ""
-                              }`}
+                              className={`ecommerce-status ${item?.status}`}
                             >
                               {capitalize(item?.status)}
                             </span>
                           </td>
-                          <td>1200.99 AED</td>
+                          <td className="text-right">{item?.totalPrice.toFixed(2)} AED</td>
                         </tr>
                       ))}
                   </tbody>
@@ -282,22 +294,18 @@ const Orders = () => {
               </Card.Body>
             </Card>
           </Col>
-          <Col
-            lg={7}
-            className="pt-3"
-          >
+          <Col lg={7} className="pt-3">
             <Card className="card-modern h-100">
               <Card.Header>
                 <Row>
                   <Col>
                     <Card.Title>Orders</Card.Title>
                   </Col>
-                  <Col
-                    lg="auto"
-                    className="mb-2 mb-lg-0 ml-xl-auto pl-xl-1"
-                  >
+                  <Col lg="auto" className="mb-2 mb-lg-0 ml-xl-auto pl-xl-1">
                     <div className="d-flex align-items-lg-center flex-wrap">
-                      <Form.Label className="d-none d-xl-block ws-nowrap mr-3 mb-0">Filter By:</Form.Label>
+                      <Form.Label className="d-none d-xl-block ws-nowrap mr-3 mb-0">
+                        Filter By:
+                      </Form.Label>
                       <Form.Control
                         as="select"
                         className="select-style-1 filter-by w-auto my-1 mr-2"

@@ -5,7 +5,7 @@ import { StockValidationSchema } from "src/validations/validationSchemas";
 import _, { capitalize } from "lodash";
 import { errorMsg } from "src/utils/toast";
 import MediaGalleryModal from "src/components/features/modals/media-gallery-modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetAllProducts } from "src/services/product.service";
 import Select from "react-select";
 import { useGetAllVendors } from "src/services/vendor.service";
@@ -14,15 +14,19 @@ import { useCreateStock } from "src/services/stock.service";
 type Props = {
   isOpen: boolean;
   toggle: () => void;
-  productId: string;
+  vendorId: string;
 };
 
-const AddStock = ({ isOpen, toggle, productId }: Props) => {
+const AddStock = ({ isOpen, toggle, vendorId }: Props) => {
   // STATES
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
 
   //QUERIES
-  
+  const { data: products, isLoading: isProductsLoading }: any =
+    useGetAllProducts({
+      query: { status: "approved", isSuspend: "false" },
+      enabled: isOpen,
+    });
 
   const { data: vendors, isLoading, error } = useGetAllVendors(isOpen);
 
@@ -32,6 +36,7 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
   //FORMINK
   const formik = useFormik({
     initialValues: {
+      productId: "",
       stock: "",
       price: "",
       requestedBy: "",
@@ -49,7 +54,10 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
   //HANDLERS
   const handleAddStock = async (values: any) => {
     try {
-      const res = await createStock({ productId, data: values });
+      const res = await createStock({
+        productId: values.productId,
+        data: values,
+      });
       console.log(res, "= = = RESPONSE  ");
       toast(res?.data?.message, {
         containerId: "default",
@@ -66,6 +74,12 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
   };
 
   console.log(formik.errors, "ERRORS");
+
+  useEffect(() => {
+    if (vendorId) {
+      formik.setFieldValue("requestedBy", vendorId);
+    }
+  }, [isOpen, vendorId]);
 
   return (
     <>
@@ -95,7 +109,7 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
                 ))}
             </Row> */}
             <Row className="px-1 px-md-3  ">
-              {/* <Col lg={12} className="px-2 py-1">
+              <Col lg={12} className="px-2 py-1">
                 <Form.Group>
                   <Form.Label className="col-form-label">
                     Select Product
@@ -103,31 +117,32 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
                   <Select
                     options={products?.result?.map((item: any) => ({
                       value: item?._id,
-                      label: item?.productName ,
+                      label: `${item?.productName} - ${item?.width}/${item?.height} ${item?.size}`,
                     }))}
                     value={products?.result
                       ?.map((item: any) => ({
                         value: item?._id,
-                        label: item?.productName ,
+                        label: `${item?.productName} - ${item?.width}/${item?.height} ${item?.size}`,
                       }))
                       .find(
-                        (opt: any) => opt.value === formik.values.product
+                        (opt: any) => opt.value === formik.values.productId
                       )}
                     onChange={(selected: any) =>
-                      formik.setFieldValue("product", selected?.value || "")
+                      formik.setFieldValue("productId", selected?.value || "")
                     }
                     placeholder="Select Product"
                     isSearchable
                     classNamePrefix="react-select"
+                    autoFocus
                   />
-                  {formik.errors.product && formik.touched.product && (
+                  {formik.errors.productId && formik.touched.productId && (
                     <div className="invalid-feedback d-block">
-                      {formik.errors.product}
+                      {formik.errors.productId}
                     </div>
                   )}
                 </Form.Group>
-              </Col> */}
-              <Col lg={12} className="px-2 py-1">
+              </Col>
+              {/* <Col lg={12} className="px-2 py-1">
                 <Form.Group>
                   <Form.Label className="col-form-label">Vendor</Form.Label>
                   <Select
@@ -156,7 +171,7 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
                     </div>
                   )}
                 </Form.Group>
-              </Col>
+              </Col> */}
               <Col lg={6} className="px-4 py-1  ">
                 <Form.Group as={Row} className="align-items-center">
                   <Form.Label className="col-form-label">Quantity</Form.Label>
@@ -167,7 +182,6 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
                     value={formik.values.stock}
                     onChange={formik.handleChange}
                     isInvalid={!!formik.errors.stock && formik.touched.stock}
-                    autoFocus
                   />
                   <Form.Control.Feedback type="invalid">
                     {formik.errors.stock}

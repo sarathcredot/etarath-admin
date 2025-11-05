@@ -5450,42 +5450,42 @@ ul.nav-main li .nav-children .nav-children .nav-children li a {
 }
 
 .btn-primary {
-  background-color: #08c;
-  border-color: #08c #08c #006699;
+  background-color: #ff600f;
+  border-color: #ff600f #ff600f #c74200;
   color: #fff;
 }
 
 .btn-primary.hover,
 .btn-primary:hover {
-  background-color: #00a2f2;
-  border-color: #00aaff #00aaff #08c;
+  background-color: #c74200;
+  border-color: #c74200 #c74200 #ff600f;
   color: #fff;
 }
 
 .btn-primary.focus,
 .btn-primary:focus {
-  box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.5);
+  box-shadow: 0 0 0 3px #ff600f;
   color: #fff;
 }
 
 .btn-primary.disabled,
 .btn-primary:disabled {
-  background-color: #08c;
-  border-color: #08c #08c #006699;
+  background-color: #ff600f;
+  border-color: #ff600f #ff600f #c74200;
 }
 
 .btn-primary.active,
 .btn-primary:active,
 .show > .btn-primary.dropdown-toggle {
-  background-color: #006fa6;
+  background-color: #c74200;
   background-image: none;
-  border-color: #006699 #006699 #004466;
+  border-color: #c74200 #c74200 #c74200;
 }
 
 .show > .btn-primary.dropdown-toggle {
-  background-color: #006fa6;
+  background-color: #c74200;
   background-image: none;
-  border-color: #006699 #006699 #004466;
+  border-color: #c74200 #c74200 #c74200;
 }
 
 .btn-success {
@@ -8086,6 +8086,7 @@ hr.solid {
 }
 
 .ecommerce-status.completed:before,
+.ecommerce-status.delivered:before,
 .ecommerce-status.approved:before {
   background-color: #2dc210;
 }
@@ -8093,7 +8094,7 @@ hr.solid {
 .ecommerce-status.cancelled:before,
 .ecommerce-status.rejected:before,
 .ecommerce-status.no-active:before {
-  background-color: #d76969;
+  background-color: #FF0F0F;
 }
 
 .ecommerce-status.refunded:before {
@@ -18801,7 +18802,7 @@ html.modern .userbox .profile-picture.profile-picture-as-text {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #08c;
+  background: #ff600f;
   color: #fff;
   font-weight: 600;
   width: 40px;

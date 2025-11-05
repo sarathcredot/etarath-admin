@@ -34,3 +34,17 @@ export type User = {
     kycStatus: string;
   };
 };
+
+export interface SubscriptionPlan {
+  _id: string;
+  plan: string; // e.g. "standard" | "executive" | "corporate"
+  role: "vendor" | "retailer" | string;
+  price_monthly: number;
+  yearly_off: number; // percentage off for yearly plans
+  trial_period: number; // trial period in days
+  features: string[]; // feature list
+  description: string;
+  isSuspend: boolean;
+  createdAt: string;
+  updatedAt: string;
+}

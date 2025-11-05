@@ -24,6 +24,7 @@ export type Product = {
   imageUrl: string[];
   origin: string;
   description: string;
+  createdBY: string;
   features: string[];
   originDetails: {
     origin: {
@@ -40,7 +41,13 @@ export type Product = {
       status: boolean;
     };
   };
+  created: {
+    _id: string;
+    userName: string;
+    role: string;
+  };
   isSuspend: boolean;
+  isVerified: string;
 };
 
 const ProductsList = ({

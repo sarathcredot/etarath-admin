@@ -10,6 +10,11 @@ import EditPlan from "./Popups/EditPlan";
 import Loader from "src/components/features/loader";
 import _, { capitalize } from "lodash";
 import { errorMsg } from "src/utils/toast";
+import {
+  useGetAllPlansByRole,
+  useUpdatePlanStatus,
+} from "src/services/subscription.service";
+import { SubscriptionPlan } from "src/types/types";
 
 export type VendorPlan = {
   planName: string;
@@ -24,45 +29,50 @@ export type VendorPlan = {
 const VendorPlans = ({ header = false }) => {
   //STATES
   const [isAddOpen, setAddOpen] = useState<boolean>(false);
-  const [isEditOpen, setEditOpen] = useState<any>(null);
-  const [isDeleteOpen, setDeleteOpen] = useState<any>(null);
-  const [plan, setPlan] = useState<any>(null);
+  const [isEditOpen, setEditOpen] = useState<boolean>(false);
+  const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [isStatusOpen, setStatusOpen] = useState<boolean>(false);
+  const [plan, setPlan] = useState<SubscriptionPlan | null>(null);
 
-  //DATA
-  // const { data: plans, isLoading } = useGetAllPosterPlans({});
+  // QUERIES
+  const { data: plans, isLoading } = useGetAllPlansByRole("vendor") as {
+    data: SubscriptionPlan[];
+    isLoading: boolean;
+  };
 
   //MUTATION
-  // const { mutateAsync: updatePlan } = useUpdatePosterPlanById();
+  const { mutateAsync: updatePlanStatus } = useUpdatePlanStatus();
   // const { mutateAsync: deletePlan } = useDeletePosterPlan();
 
   //HANDLERS
-  const handleDeletePlan = async (id: string) => {
-    try {
-      // const res = await deletePlan(id);
-      // toast(res?.data?.message, {
-      //   containerId: "default",
-      //   className: "no-icon notification-success",
-      // });
-      setDeleteOpen(null);
-    } catch (error) {
-      toast(_.capitalize(errorMsg(error).toLowerCase()), {
-        containerId: "default",
-        className: "no-icon notification-danger",
-      });
-    }
-  };
+  // const handleDeletePlan = async (id: string) => {
+  //   try {
+  //     const res = await deletePlan(id);
+  //     toast(res?.data?.message, {
+  //       containerId: "default",
+  //       className: "no-icon notification-success",
+  //     });
+  //     setDeleteOpen(false);
+  //   } catch (error) {
+  //     toast(_.capitalize(errorMsg(error).toLowerCase()), {
+  //       containerId: "default",
+  //       className: "no-icon notification-danger",
+  //     });
+  //   }
+  // };
 
   const handleChangeStatus = async () => {
     try {
-      // const res = await updatePlan({
-      //   id: plan?._id,
-      //   isActive: !plan?.isActive,
-      // });
-      // toast(res?.data?.message, {
-      //   containerId: "default",
-      //   className: "no-icon notification-success",
-      // });
+      const res = await updatePlanStatus({
+        id: plan?._id || "",
+        status: !plan?.isSuspend,
+      });
+      toast(res?.data?.message, {
+        containerId: "default",
+        className: "no-icon notification-success",
+      });
       setPlan(null);
+      setStatusOpen(!isStatusOpen);
     } catch (error) {
       toast(_.capitalize(errorMsg(error).toLowerCase()), {
         containerId: "default",
@@ -70,40 +80,6 @@ const VendorPlans = ({ header = false }) => {
       });
     }
   };
-
-  const vendorPlans: VendorPlan[] = [
-    {
-      planName: "Executive",
-      description: "Best fit for mid-level vendors to expand operations",
-      price: 49,
-      currency: "AED",
-      frequency: "monthly",
-      status: true,
-      features: [
-        "Lorem ipsum set amet elit sed dotempor enim.",
-        "Lorem ipsum set amet elit.",
-        "Lorem ipsum set amet elit sed.",
-        "Lorem ipsum.",
-        "Lorem ipsum set.",
-      ],
-    },
-    {
-      planName: "Corporate",
-      description:
-        "Designed for large-scale vendors with high-volume requirements",
-      price: 99,
-      currency: "AED",
-      frequency: "monthly",
-      status: true,
-      features: [
-        "Lorem ipsum set amet elit sed dotempor enim.",
-        "Lorem ipsum set amet elit.",
-        "Lorem ipsum set amet elit sed.",
-        "Lorem ipsum.",
-        "Lorem ipsum set.",
-      ],
-    },
-  ];
 
   return (
     <>
@@ -210,7 +186,8 @@ const VendorPlans = ({ header = false }) => {
 
                         <th>Plan</th>
                         <th>Price</th>
-                        <th>Frequency</th>
+                        <th>Trial Period</th>
+                        <th>Yearly Off</th>
                         <th>Status</th>
                         <th className="text-center" style={{ width: "80px" }}>
                           Actions
@@ -218,14 +195,14 @@ const VendorPlans = ({ header = false }) => {
                       </tr>
                     </thead>
                     <tbody style={{ borderBottom: "1px solid #dee2e6" }}>
-                      {false && (
+                      {isLoading && (
                         <tr>
                           <td colSpan={9}>
                             <Loader />
                           </td>
                         </tr>
                       )}
-                      {false && vendorPlans && vendorPlans.length === 0 && (
+                      {!isLoading && plans && plans.length === 0 && (
                         <tr>
                           <td
                             colSpan={9}
@@ -236,25 +213,25 @@ const VendorPlans = ({ header = false }) => {
                         </tr>
                       )}
                       {true &&
-                        vendorPlans &&
-                        vendorPlans?.length > 0 &&
-                        vendorPlans?.map((item: VendorPlan, index: number) => (
-                          <tr>
+                        plans &&
+                        plans?.length > 0 &&
+                        plans?.map((item: SubscriptionPlan, index: number) => (
+                          <tr key={index}>
                             <td>
                               <Link
-                                to={`/subscriptions/vendor-plans/detail?_id=${index}`}
+                                to={`/subscriptions/vendor-plans/detail?_id=${item?._id}`}
                               >
                                 <strong>{index + 1}</strong>
                               </Link>
                             </td>
                             <td>
                               <Link
-                                to={`/subscriptions/vendor-plans/detail?_id=${index}`}
+                                to={`/subscriptions/vendor-plans/detail?_id=${item?._id}`}
                               >
-                                {_.capitalize(item?.planName.toLowerCase())}
+                                {_.capitalize(item?.plan.toLowerCase())}
                               </Link>
                             </td>
-                            <td>{item?.price} AED</td>
+                            <td>{item?.price_monthly} AED</td>
                             {/* <td>
                               {item?.features
                                 .slice(0, 3)
@@ -267,16 +244,18 @@ const VendorPlans = ({ header = false }) => {
                                 </li>
                               )}
                             </td> */}
-                            <td>{capitalize(item?.frequency)}</td>
+                            <td>{item?.trial_period} Days</td>
+                            <td>{item?.yearly_off} %</td>
                             <td>
                               <div
                                 onClick={() => {
                                   setPlan(item);
+                                  setStatusOpen(true);
                                 }}
                               >
                                 <PtSwitch
                                   className="mr-1"
-                                  on={item?.status}
+                                  on={!item?.isSuspend}
                                   size="sm"
                                   variant="success"
                                 />
@@ -287,19 +266,21 @@ const VendorPlans = ({ header = false }) => {
                                 <div
                                   className="action_btn"
                                   onClick={() => {
-                                    setEditOpen(index);
+                                    setPlan(item);
+                                    setEditOpen(true);
                                   }}
                                 >
                                   <i className="fas fa-pencil-alt"></i>
                                 </div>
-                                <div
+                                {/* <div
                                   className="action_btn"
                                   onClick={() => {
-                                    setDeleteOpen(index);
+                                    setPlan(item);
+                                    setDeleteOpen(true);
                                   }}
                                 >
                                   <i className="far fa-trash-alt"></i>
-                                </div>
+                                </div> */}
                               </div>
                             </td>
                           </tr>
@@ -312,23 +293,26 @@ const VendorPlans = ({ header = false }) => {
           </Col>
         </Row>
       </div>
-      <ConfirmationPopup
-        submit={() => handleDeletePlan(isDeleteOpen)}
-        isOpen={isDeleteOpen !== null}
-        toggle={() => setDeleteOpen(null)}
+      {/* <ConfirmationPopup
+        submit={() => handleDeletePlan(plan?._id)}
+        isOpen={isDeleteOpen}
+        toggle={() => setDeleteOpen(!isDeleteOpen)}
         text={"Are you sure that you want to delete this plan?"}
-      />
+      /> */}
       <ConfirmationPopup
         submit={() => handleChangeStatus()}
-        isOpen={plan !== null}
-        toggle={() => setPlan(null)}
+        isOpen={isStatusOpen}
+        toggle={() => {
+          setPlan(null);
+          setStatusOpen(!isStatusOpen);
+        }}
         text={"Are you sure that you want to change the status of this plan?"}
       />
       <AddPlan isOpen={isAddOpen} toggle={() => setAddOpen(!isAddOpen)} />
       <EditPlan
-        isOpen={isEditOpen !== null}
-        toggle={() => setEditOpen(null)}
-        id={isEditOpen}
+        isOpen={isEditOpen}
+        toggle={() => setEditOpen(!isEditOpen)}
+        plan={plan?plan:null}
       />
     </>
   );

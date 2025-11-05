@@ -106,7 +106,7 @@ export const useUpdateStock = () => {
 // DELETE A PRODUCT
 export const deleteStock = async (id: string) => {
   if (!id) throw new Error("Stock Id is required");
-  return await axiosAuth.delete(`${baseUrl}/${id}`);
+  return await axiosAuth.delete(`${baseUrl}/product-stock/${id}`);
 };
 
 export const useDeleteStock = () => {
