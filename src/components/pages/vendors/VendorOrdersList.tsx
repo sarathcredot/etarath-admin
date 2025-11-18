@@ -13,7 +13,7 @@ import { StockEditValidationSchema } from "src/validations/validationSchemas";
 import { useFormik } from "formik";
 import { useGetAllVendors } from "src/services/vendor.service";
 import { errorMsg } from "src/utils/toast";
-import AddStock from "./forms/AddStock";
+import AddStock from "./popups/AddStock";
 import dayjs from "dayjs";
 import { formatNumberShort } from "src/utils/formats";
 

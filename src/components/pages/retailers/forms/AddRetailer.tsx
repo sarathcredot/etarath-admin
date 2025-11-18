@@ -9,7 +9,7 @@ import { VendorValidationSchema } from "src/validations/validationSchemas";
 import _ from "lodash";
 import { useUploadFile } from "src/services/fileUpload.service";
 import { generateFilePath } from "src/services/url.service";
-import AddBussinessDetails from "../../vendors/forms/AddBussinessDetails";
+import AddBussinessDetails from "../../vendors/popups/AddBussinessDetails";
 import { useAddRetailer } from "src/services/retailer.service";
 
 type Props = {

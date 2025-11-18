@@ -212,9 +212,7 @@ export const VendorEditKycValidationSchema = Yup.object().shape({
 });
 
 export const PlanEditValidationSchema = Yup.object().shape({
-  plan: Yup.string()
-    .trim()
-    .required("Plan name is required"),
+  plan: Yup.string().trim().required("Plan name is required"),
 
   price_monthly: Yup.number()
     .typeError("Price must be a number")
@@ -236,7 +234,23 @@ export const PlanEditValidationSchema = Yup.object().shape({
     .of(Yup.string().trim().required("Feature can't be empty"))
     .min(1, "At least one feature is required"),
 
-  description: Yup.string()
-    .trim()
-    .required("Description is required")
+  description: Yup.string().trim().required("Description is required"),
+});
+
+export const VendorProfileValidationSchema = Yup.object({
+  business_name: Yup.string().required("Required"),
+  phoneNumber: Yup.string().required("Required"),
+  email: Yup.string().email("Invalid email").required("Required"),
+  location: Yup.string().required("Required"),
+  tradeLicenseNumber: Yup.string().required("Required"),
+  documents: Yup.object().shape({
+    tradeLicense: Yup.mixed().required(
+      "Upload Trade License/ Business Registration"
+    ),
+  }),
+  business_address: Yup.string().required("Required"),
+  post: Yup.string().required("Required"),
+  business_hours: Yup.string().required("Required"),
+  shop_photo_logo: Yup.mixed().required("Upload Shop Photo"),
+  subscription_plan: Yup.string().required("Required"),
 });

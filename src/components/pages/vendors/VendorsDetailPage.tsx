@@ -6,7 +6,7 @@ import PtSwitch from "src/components/features/elements/switch";
 import { toast } from "react-toastify";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 
-import EditVendor from "./forms/EditVendor";
+import EditVendor from "./popups/EditVendor";
 import {
   useGetAgentsByVendorId,
   useGetOrdersByVendorId,
@@ -17,9 +17,9 @@ import {
 import { User } from "src/types/types";
 import { generateFilePath } from "src/services/url.service";
 import VendorStocksList from "./VendorStocksList";
-import AddBussinessDetails from "./forms/AddBussinessDetails";
+import AddBussinessDetails from "./popups/AddBussinessDetails";
 import { useKycVerification } from "src/services/kyc.service";
-import EditBussinessDetails from "./forms/EditBussinessDetails";
+import EditBussinessDetails from "./popups/EditBussinessDetails";
 import { formatNumberShort } from "src/utils/formats";
 import SalesExecutivesList from "./SalesExecutivesList";
 import VendorOrdersList from "./VendorOrdersList";

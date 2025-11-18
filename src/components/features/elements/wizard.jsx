@@ -47,7 +47,7 @@ export function WizardNav ( props ) {
         container && document.getElementById( container ) && ReactDOM.render( content, document.getElementById( container ) );
     }, [ curPage ] )
 
-    return !container ? content : '';
+    return container ? null : content;
 }
 
 WizardNav.displayName = "WizardNav";
@@ -73,11 +73,14 @@ export function WizardPager ( props ) {
         </ul>
     )
 
-    useEffect( () => {
-        container && document.getElementById( container ) && ReactDOM.render( content, document.getElementById( container ) );
-    }, [ current ] )
+     useEffect(() => {
+    if (container) {
+      const el = document.getElementById(container);
+      if (el) ReactDOM.render(content, el);
+    }
+  }, [current]);
 
-    return !container ? content : '';
+  return !container ? content : null; // <-- FIXED
 }
 
 /* Wizard Tab */

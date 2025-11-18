@@ -4,13 +4,9 @@ import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 import MediaGalleryModal from "src/components/features/modals/media-gallery-modal";
 import { errorMsg } from "src/utils/toast";
-import {
-  VendorKycValidationSchema,
-} from "src/validations/validationSchemas";
+import { VendorKycValidationSchema } from "src/validations/validationSchemas";
 import _ from "lodash";
-import {
-  useUploadFile,
-} from "src/services/fileUpload.service";
+import { useUploadFile } from "src/services/fileUpload.service";
 import { useCreateVendorKyc } from "src/services/vendor-kyc.service";
 import { TimePicker } from "antd";
 import dayjs from "dayjs";
@@ -471,7 +467,7 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
                           timeFormat
                         )} - ${times[1].format(timeFormat)}`;
                         formikKyc.setFieldValue("business_hours", range);
-                        console.log({range})
+                        console.log({ range });
                       } else {
                         formikKyc.setFieldValue("business_hours", "");
                       }

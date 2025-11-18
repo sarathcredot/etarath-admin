@@ -247,6 +247,129 @@ function Sidebar(props) {
 
 export default withRouter(Sidebar);
 
+
+
+// side bar all options
+
+// [
+//   {
+//     "name": "Dashboard",
+//     "icon": "LuLayoutDashboard",
+//     "url": "/dashboard"
+//   },
+//   {
+//     "name": "Vendors",
+//     "icon": "FaPersonShelter",
+//     "url": "/vendors"
+//   },
+//   {
+//     "name": "Retailers",
+//     "icon": "bx bx-group",
+//     "url": "/retailers"
+//   },
+//   {
+//     "name": "Products",
+//     "icon": "LuShoppingCart",
+//     "url": "/products"
+//   },
+//   {
+//     "name": "Brands",
+//     "icon": "MdOutlineDashboardCustomize",
+//     "url": "/brands"
+//   },
+
+//   {
+//     "name": "Attributes",
+//     "icon": "BsTag",
+//     "url": "#",
+//     "children": [
+//       {
+//         "name": "Origin",
+//         "url": "/attributes/origin"
+//       },
+//       {
+//         "name": "Year",
+//         "url": "/attributes/year_of_manufacture"
+//       }
+//     ]
+//   },
+//   {
+//     "name": "Subscriptions",
+//     "icon": "bx bx-package",
+//     "url": "#",
+//     "children": [
+//       {
+//         "name": "Vendor Plans",
+//         "url": "/subscriptions/vendor-plans"
+//       },
+//       {
+//         "name": "Retailer Plans",
+//         "url": "/subscriptions/retailer-plans"
+//       }
+//     ]
+//   },
+//   {
+//     "name": "CMS",
+//     "icon": "MdOutlineSettingsSuggest",
+//     "url": "#",
+//     "children": [
+//       {
+//         "name": "Offers",
+//         "url": "/cms/offers"
+//       },
+//       {
+//         "name": "Blogs",
+//         "url": "#",
+//         "children": [
+//           {
+//             "name": "All Blogs",
+//             "url": "/cms/blogs"
+//           },
+//           {
+//             "name": "Categories",
+//             "url": "/cms/blogs/categories"
+//           },
+//           {
+//             "name": "Tags",
+//             "url": "/cms/blogs/tags"
+//           }
+//         ]
+//       }
+//     ]
+//   },
+//   {
+//     "name": "Customer Supports",
+//     "icon": "RiCustomerService2Line",
+//     "url": "#",
+//     "children": [
+//       {
+//         "name": "Vendor",
+//         "url": "/customer-supports/vendor"
+//       },
+//       {
+//         "name": "Retailer",
+//         "url": "/customer-supports/retailer"
+//       }
+//     ]
+//   }
+// ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // side bar child items json file
 
 // {

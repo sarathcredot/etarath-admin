@@ -30,7 +30,8 @@ function SignIn(props) {
                     containerId: "default",
                     className: "no-icon notification-success",
                   });
-                navigate("/dashboard");
+                // navigate("/dashboard");
+                navigate("/vendors");
             } else {
                 toast(res?.data?.message, {
                     containerId: "default",

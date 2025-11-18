@@ -10,8 +10,8 @@ import { User } from "src/types/types";
 import { generateFilePath } from "src/services/url.service";
 import { useKycVerification } from "src/services/kyc.service";
 import EditRetailer from "./forms/EditRetailer";
-import AddBussinessDetails from "../vendors/forms/AddBussinessDetails";
-import EditBussinessDetails from "../vendors/forms/EditBussinessDetails";
+import AddBussinessDetails from "../vendors/popups/AddBussinessDetails";
+import EditBussinessDetails from "../vendors/popups/EditBussinessDetails";
 import {
   useGetOrdersByRetailerId,
   useGetRetailerById,

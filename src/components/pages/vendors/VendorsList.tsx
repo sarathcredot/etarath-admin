@@ -15,10 +15,10 @@ import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 import { toast } from "react-toastify";
 import Loader from "src/components/features/loader";
 import { debounce } from "lodash";
-import AddVendor from "./forms/AddVendor";
-import AddBussinessDetails from "./forms/AddBussinessDetails";
+import AddVendor from "./popups/AddVendor";
+import AddBussinessDetails from "./popups/AddBussinessDetails";
 import { generateFilePath } from "src/services/url.service";
-import EditVendor from "./forms/EditVendor";
+import EditVendor from "./popups/EditVendor";
 import { useUpdateVendorStatus } from "src/services/vendor.service";
 
 type Props = {
@@ -134,7 +134,10 @@ const VendorsList = ({
                       variant="dark"
                       style={{ background: "#000" }}
                       // onClick={() => navigate("/vendors/add-vendor")}
-                      onClick={() => setAddOpen(true)}
+                      onClick={() => {
+                        // setAddOpen(true);
+                        navigate("/vendors/add-vendor");
+                      }}
                     >
                       + Add Vendor
                     </Button>
@@ -235,7 +238,7 @@ const VendorsList = ({
                           </div>
                         </td>
 
-                        <td  onClick={(e) => e.stopPropagation()}>
+                        <td onClick={(e) => e.stopPropagation()}>
                           <div
                             onClick={(e) => {
                               e.stopPropagation();

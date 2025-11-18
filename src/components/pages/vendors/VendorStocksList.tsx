@@ -24,7 +24,7 @@ import {
   useGetStocksByVendorId,
 } from "src/services/vendor.service";
 import { errorMsg } from "src/utils/toast";
-import AddStock from "./forms/AddStock";
+import AddStock from "./popups/AddStock";
 
 const VendorStocksList = ({
   stocks,

@@ -69,6 +69,7 @@ import StockDetailPage from "src/components/pages/products/stock/StockDetailPage
 import KycsPage from "src/components/pages/kycs/KycsPage";
 import TokenList from "src/components/pages/customer-supports/TokenList";
 import OrderDetailPage from "src/components/pages/orders/OrderDetailPage";
+import AddVendorPage from "src/components/pages/vendors/forms/add-vendor/AddVendorPage";
 
 interface RouteProps {
   path: string;
@@ -79,11 +80,12 @@ interface RouteProps {
 const adminRoutes: Array<RouteProps> = [
   // Dashboard
   { path: "/", exact: true, component: <Navigate to="/dashboard" /> },
-  { path: "/dashboard", exact: true, component: <Dashboard /> },
+  // { path: "/dashboard", exact: true, component: <Dashboard /> },
 
   // Vendors
   { path: "/vendors", exact: true, component: <VendorsPage /> },
   { path: "/vendors/detail", component: <VendorsDetailPage /> },
+  { path: "/vendors/add-vendor", component: <AddVendorPage /> },
 
   // Retailers
   { path: "/retailers", exact: true, component: <RetailersPage /> },
