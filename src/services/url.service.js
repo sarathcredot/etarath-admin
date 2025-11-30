@@ -14,7 +14,7 @@ export const frontendUrl = process.env.REACT_APP_FRONTEND_URL
       return fileName;
     }
   
-    if (fileName.startsWith("http")) {
+    if (fileName.startsWith("http")||fileName.startsWith("https")) {
       return fileName;
     }
   

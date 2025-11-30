@@ -470,7 +470,7 @@ export default function Header() {
             <span className="profile-picture profile-picture-as-text">A</span>
             <div className="profile-info profile-info-no-role">
               <span className="name">
-                Hi, <strong className="font-weight-semibold">Admin</strong>
+                <strong className="font-weight-semibold">Admin</strong>
               </span>
             </div>
             <i className="fas fa-chevron-down text-color-dark"></i>

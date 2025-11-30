@@ -131,7 +131,14 @@ const ProductsDetailPage = () => {
   return (
     <>
       <Breadcrumb
-        current={"Product Details"}
+        current={
+          product?.productName
+            ? `${product?.productName} -
+                              ${product?.width}${
+                product?.height ? `/${product?.height}` : ""
+              } R${product?.size}`
+            : "Product Details"
+        }
         paths={[
           {
             name: "Dashboard",
@@ -142,7 +149,12 @@ const ProductsDetailPage = () => {
             url: "/products",
           },
           {
-            name: "Product Details",
+            name: product?.productName
+              ? `${product?.productName} -
+                              ${product?.width}${
+                  product?.height ? `/${product?.height}` : ""
+                } R${product?.size}`
+              : "Product Details",
             url: `/products/detail?_id=${productId}`,
           },
         ]}
@@ -210,12 +222,6 @@ const ProductsDetailPage = () => {
                             {product?.brand?.name}
                           </h5>
                         </div>
-                        {/* <div>
-                      <h6>Category</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                      {product?.category}
-                      </h5>
-                    </div> */}
                       </Col>
                       <Col lg={4}>
                         <div>
@@ -236,15 +242,15 @@ const ProductsDetailPage = () => {
                       </Col>
                       <Col lg={4}>
                         <div>
-                          <h6>Width</h6>
+                          <h6>Category</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {product?.width}
+                            {product?.category}
                           </h5>
                         </div>
                         <div>
-                          <h6>Height</h6>
+                          <h6>Width</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {product?.height}
+                            {product?.width}
                           </h5>
                         </div>
                       </Col>
@@ -278,12 +284,22 @@ const ProductsDetailPage = () => {
                   <Col xl={6} className="px-3 ">
                     <Row className="h-100">
                       <Col>
+                        {product?.height && (
+                          <div>
+                            <h6>Height</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {product?.height}
+                            </h5>
+                          </div>
+                        )}
                         <div>
                           <h6>Rim Size</h6>
                           <h5 className=" text-dark font-weight-500 ">
                             {product?.size}
                           </h5>
                         </div>
+                      </Col>
+                      <Col>
                         <div>
                           <h6 className="mb-0">Status</h6>
                           <div
@@ -307,18 +323,6 @@ const ProductsDetailPage = () => {
                           </div>
                         </div>
                       </Col>
-                      {/* <Col>
-                        <div>
-                          <h6>Verification</h6>
-                          <div
-                            className={`ecommerce-status ${product?.isVerified}`}
-                          >
-                            {product?.isVerified
-                              ? capitalCase(product?.isVerified)
-                              : ""}
-                          </div>
-                        </div>
-                      </Col> */}
                       <Col xl={12} className="px-3 mb-n3 mt-auto">
                         <div>
                           <h6>Images</h6>
@@ -335,7 +339,7 @@ const ProductsDetailPage = () => {
                                       alt="product"
                                       width="110"
                                       height="110"
-                                      crossOrigin="anonymous"
+                                      // crossOrigin="anonymous"/
                                     />
                                   </div>
                                 </Col>
@@ -359,7 +363,7 @@ const ProductsDetailPage = () => {
             <Tab eventKey="vendors" title="Vendors">
               <StocksList productId={productId ? productId : ""} />
             </Tab>
-            <Tab eventKey="orders" title="Orders">
+            {/* <Tab eventKey="orders" title="Orders">
               <ProductOrdersList
                 orders={orders}
                 ordersLoading={ordersLoading}
@@ -367,7 +371,7 @@ const ProductsDetailPage = () => {
                 setPage={setPage}
                 productId={productId ? productId : ""}
               />
-            </Tab>
+            </Tab> */}
           </Tabs>
         </div>
         {/* <Col lg={12} className="mt-4">

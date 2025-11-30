@@ -123,7 +123,7 @@ const EditBrand = ({ isOpen, toggle, brandId }: Props) => {
                           alt="brand logo"
                           width="150"
                           // height="150"
-                          crossOrigin="anonymous"
+                          // crossOrigin="anonymous"
                         />
                         <div
                           onClick={() => setIsUploadOpen(true)}
@@ -179,7 +179,7 @@ const EditBrand = ({ isOpen, toggle, brandId }: Props) => {
                           alt="brand logo"
                           width="150"
                           height="150"
-                          crossOrigin="anonymous"
+                          // crossOrigin="anonymous"
                         />
                         <div
                           onClick={() => setIsUploadOpen2(true)}

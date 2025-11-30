@@ -22,7 +22,6 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
 
   //QUERIES
-  
 
   const { data: vendors, isLoading, error } = useGetAllVendors(isOpen);
 
@@ -32,8 +31,9 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
   //FORMINK
   const formik = useFormik({
     initialValues: {
-      stock: "",
-      price: "",
+      // stock: "",
+      price_normal_customer: "",
+      price_loyal_customer: "",
       requestedBy: "",
       warrantyPeriod: "",
       warranty_type: "",
@@ -72,7 +72,7 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
       <Modal show={isOpen} onHide={toggle} centered={true} size="lg">
         <Modal.Header>
           {/* <Modal.Title>Are you sure?</Modal.Title> */}
-          <h3 className="my-2">Add Product</h3>
+          <h3 className="my-2">Add Vendor</h3>
         </Modal.Header>
         <Form onSubmit={formik.handleSubmit}>
           <Modal.Body>
@@ -87,7 +87,7 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
                           alt="product"
                           width="100"
                           height="100"
-                          crossOrigin="anonymous"
+                          // crossOrigin="anonymous"
                         />
                       </div>
                     </div>
@@ -133,12 +133,18 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
                   <Select
                     options={vendors?.map((item: any) => ({
                       value: item?._id,
-                      label: item?.userName || item?.email,
+                      label:
+                        item?.kycDetails?.business_name ||
+                        item?.userName ||
+                        item?.email,
                     }))}
                     value={vendors
                       ?.map((item: any) => ({
                         value: item?._id,
-                        label: item?.userName || item?.email,
+                        label:
+                          item?.kycDetails?.business_name ||
+                          item?.userName ||
+                          item?.email,
                       }))
                       .find(
                         (opt: any) => opt.value === formik.values.requestedBy
@@ -157,7 +163,7 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
                   )}
                 </Form.Group>
               </Col>
-              <Col lg={6} className="px-4 py-1  ">
+              {/* <Col lg={6} className="px-4 py-1  ">
                 <Form.Group as={Row} className="align-items-center">
                   <Form.Label className="col-form-label">Quantity</Form.Label>
                   <Form.Control
@@ -173,20 +179,42 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
                     {formik.errors.stock}
                   </Form.Control.Feedback>
                 </Form.Group>
+              </Col> */}
+              <Col lg={6} className="px-4 py-1  ">
+                <Form.Group as={Row} className="align-items-center">
+                  <Form.Label className="col-form-label">General Sale Price</Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="price for normal customers"
+                    name="price_normal_customer"
+                    value={formik.values.price_normal_customer}
+                    onChange={formik.handleChange}
+                    isInvalid={
+                      !!formik.errors.price_normal_customer &&
+                      formik.touched.price_normal_customer
+                    }
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.price_normal_customer}
+                  </Form.Control.Feedback>
+                </Form.Group>
               </Col>
               <Col lg={6} className="px-4 py-1  ">
                 <Form.Group as={Row} className="align-items-center">
-                  <Form.Label className="col-form-label">Sale Price</Form.Label>
+                  <Form.Label className="col-form-label">Loyal Customer Price</Form.Label>
                   <Form.Control
                     type="number"
-                    placeholder="Enter sale price"
-                    name="price"
-                    value={formik.values.price}
+                    placeholder="price for loyal customers"
+                    name="price_loyal_customer"
+                    value={formik.values.price_loyal_customer}
                     onChange={formik.handleChange}
-                    isInvalid={!!formik.errors.price && formik.touched.price}
+                    isInvalid={
+                      !!formik.errors.price_loyal_customer &&
+                      formik.touched.price_loyal_customer
+                    }
                   />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.price}
+                    {formik.errors.price_loyal_customer}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>

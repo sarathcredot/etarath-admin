@@ -15,9 +15,9 @@ import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 import { toast } from "react-toastify";
 import Loader from "src/components/features/loader";
 import { debounce } from "lodash";
-import AddRetailer from "./forms/AddRetailer";
+import AddRetailer from "./popups/AddRetailer";
 import { generateFilePath } from "src/services/url.service";
-import EditRetailer from "./forms/EditRetailer";
+import EditRetailer from "./popups/EditRetailer";
 import { useUpdateRetailerStatus } from "src/services/retailer.service";
 
 type Props = {
@@ -132,8 +132,8 @@ const RetailersList = ({
                       className="font-weight-semibold px-3"
                       variant="dark"
                       style={{ background: "#000" }}
-                      // onClick={() => navigate("/retailers/add-retailer")}
-                      onClick={() => setAddOpen(true)}
+                      onClick={() => navigate("/retailers/add-retailer")}
+                      // onClick={() => setAddOpen(true)}
                     >
                       + Add Retailer
                     </Button>
@@ -214,7 +214,7 @@ const RetailersList = ({
                               alt="profile"
                               width="50"
                               height="50"
-                              crossOrigin="anonymous"
+                              // crossOrigin="anonymous"
                             />
                           </Link>
                         </td>
@@ -228,6 +228,7 @@ const RetailersList = ({
                         <td>
                           <div
                             className={`ecommerce-status ${item?.isVerified}`}
+                            style={{ textTransform: "capitalize" }}
                           >
                             {item?.isVerified}
                           </div>
@@ -255,12 +256,21 @@ const RetailersList = ({
                               className="action_btn "
                               onClick={(e) => {
                                 e.stopPropagation();
+                                navigate(`/retailers/detail?_id=${item?._id}`);
+                              }}
+                            >
+                              <i className="far fa-eye"></i>
+                            </div>
+                            {/* <div
+                              className="action_btn "
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setSelectedRetailer(item);
                                 setEditOpen(true);
                               }}
                             >
                               <i className="fas fa-pencil-alt"></i>
-                            </div>
+                            </div> */}
                             {/* <div
                               className="action_btn"
                               onClick={() => {

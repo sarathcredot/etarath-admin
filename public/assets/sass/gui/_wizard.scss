@@ -221,8 +221,8 @@ html.dark {
 
 				a {
 					span {
-						background: $color-primary;
-						border-color: $color-primary;
+						background: #FF600F;
+						border-color: #FF600F;
 						color: #FFF;
 					}
 				}
@@ -234,8 +234,8 @@ html.dark {
 				a {
 					span {
 						background: #FFF;
-						color: $color-primary;
-						border-color: $color-primary;
+						color: #FF600F;
+						border-color: #FF600F;
 					}
 				}
 			}
@@ -343,7 +343,7 @@ html.dark {
 					}
 
 					&:before {
-						background: $color-primary;
+						background: #FF600F;
 						left: 0;
 					}
 
@@ -360,7 +360,7 @@ html.dark {
 						margin-left: -100%;
 
 						&:after {
-							background: $color-primary;
+							background: #FF600F;
 						}
 					}
 

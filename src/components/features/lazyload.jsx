@@ -13,7 +13,7 @@ export default function PtLazyLoad ( { width, height, ...props } ) {
                     paddingTop: 100 * height / width + "%"
                 }
             } }
-            crossOrigin="anonymous"
+            // crossOrigin="anonymous"
         />
     )
 }

@@ -231,7 +231,7 @@ const BrandProductsList = ({ brandId }: { brandId?: string }) => {
                               alt="product"
                               width="40"
                               height="40"
-                              crossOrigin="anonymous"
+                              // crossOrigin="anonymous"
                             />
                           </Link>
                         </td>

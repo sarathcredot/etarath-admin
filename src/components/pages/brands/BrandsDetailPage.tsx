@@ -190,7 +190,7 @@ const BrandsDetailPage = () => {
                           alt="brand"
                           width="110"
                           height="110"
-                          crossOrigin="anonymous"
+                          // crossOrigin="anonymous"
                         />
                       </div>
                     </div>
@@ -211,7 +211,7 @@ const BrandsDetailPage = () => {
                             alt="brand"
                             width="110"
                             height="110"
-                            crossOrigin="anonymous"
+                            // crossOrigin="anonymous"
                           />
                         </div>
                       </div>

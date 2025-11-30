@@ -67,7 +67,7 @@ export function WizardPager ( props ) {
                     <Button href="#next" variant="default" onClick={ onNext }>Next <i className="fas fa-angle-right"></i></Button>
                 </li>
                 : <li className="finish float-right">
-                    <Button href="#finish" variant="default" onClick={ onFinish }>Finish</Button>
+                    <Button href="#finish" variant="default" style={{background:"#FF600F",color:"#fff"}}  onClick={ onFinish }>Finish</Button>
                 </li>
             }
         </ul>
@@ -129,13 +129,16 @@ export default function Wizard ( props ) {
         return temp.join( " " );
     }
 
-    function nextPage ( e ) {
+    async function nextPage ( e ) {
         e.preventDefault();
-        if ( checkPageValidation( curPage ) ) {
-            setCurPage( curPage + 1 );
-        } else {
-            setValidated( true );
-        }
+        // if ( checkPageValidation( curPage ) ) {
+        //     setCurPage( curPage + 1 );
+        // } else {
+        //     setValidated( true );
+        // }
+         const ok = await checkPageFormikValidation(curPage);
+        if (ok) setCurPage(curPage + 1);
+        // else setValidated(true);
     }
 
     function prevPage ( e ) {
@@ -143,29 +146,52 @@ export default function Wizard ( props ) {
         curPage > 0 && setCurPage( curPage - 1 );
     }
 
-    function goToPage ( index ) {
-        if ( index < curPage ) {
-            setCurPage( index );
-        } else {
-            if ( checkPageValidation( curPage ) ) {
-                checkPageValidation( index - 1 ) && setCurPage( index );
-            } else {
-                validated || setValidated( true );
-            }
-        }
+    async function goToPage ( index ) {
+        // if ( index < curPage ) {
+        //     setCurPage( index );
+        // } else {
+        //     if ( checkPageValidation( curPage ) ) {
+        //         checkPageValidation( index - 1 ) && setCurPage( index );
+        //     } else {
+        //         validated || setValidated( true );
+        //     }
+        // }
+         if (index < curPage) {
+        setCurPage(index);
+    } else {
+        const ok = await checkPageFormikValidation(curPage);
+        if (ok) setCurPage(index);
+        // else setValidated(true);
+    }
     }
 
-    function finish ( e ) {
+    async function finish ( e ) {
         e.preventDefault();
-        if ( checkPageValidation( curPage ) ) {
-            onFinish && onFinish();
-        } else {
-            validated || setValidated( true );
-        }
+        // if ( checkPageValidation( curPage ) ) {
+        //     onFinish && onFinish();
+        // } else {
+        //     validated || setValidated( true );
+        // }
+         const ok = await checkPageFormikValidation(curPage);
+    if (ok && onFinish) onFinish();
+    // else setValidated(true);
     }
 
-    function checkPageValidation ( page ) {
-        return !formRef.current.querySelectorAll( ".tab-pane" )[ page ].querySelector( ":invalid" );
+    async function checkPageFormikValidation ( page ) {
+        // return !formRef.current.querySelectorAll( ".tab-pane" )[ page ].querySelector( ":invalid" );
+         const formik = props.validators?.[page];
+    if (!formik) return true; // fallback if no formik passed
+
+    const errors = await formik.validateForm();
+    formik.setTouched(
+        Object.keys(formik.initialValues).reduce((acc, key) => {
+            acc[key] = true;
+            return acc;
+        }, {})
+    );
+    console.log({errors})
+
+    return Object.keys(errors).length === 0;
     }
 
     return (

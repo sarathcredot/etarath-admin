@@ -282,7 +282,7 @@ const OrderDetailPage = () => {
                                       alt="product"
                                       width="110"
                                       height="110"
-                                      crossOrigin="anonymous"
+                                      // crossOrigin="anonymous"
                                     />
                                   </div>
                                 </Col>

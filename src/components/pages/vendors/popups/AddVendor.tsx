@@ -118,7 +118,7 @@ const AddVendor = ({ isOpen, toggle }: Props) => {
                         width={"100%"}
                         height={"100%"}
                         style={{ objectFit: "cover" }}
-                        crossOrigin="anonymous"
+                        // crossOrigin="anonymous"
                       />
                       <div
                         onClick={() => setIsUploadOpen(true)}

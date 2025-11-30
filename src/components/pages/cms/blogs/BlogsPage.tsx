@@ -222,7 +222,7 @@ const BlogsPage = () => {
                                   alt="product"
                                   width="100"
                                   height="50"
-                                  crossOrigin="anonymous"
+                                  // crossOrigin="anonymous"
                                 />
                               </div>
                             </td>

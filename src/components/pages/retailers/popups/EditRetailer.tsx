@@ -1,30 +1,35 @@
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 import MediaGalleryModal from "src/components/features/modals/media-gallery-modal";
 import { useCreateBrand } from "src/services/brand.service";
 import { errorMsg } from "src/utils/toast";
-import { VendorValidationSchema } from "src/validations/validationSchemas";
+import { EditVendorValidationSchema } from "src/validations/validationSchemas";
 import _ from "lodash";
 import { useUploadFile } from "src/services/fileUpload.service";
+
 import { generateFilePath } from "src/services/url.service";
-import AddBussinessDetails from "../../vendors/popups/AddBussinessDetails";
-import { useAddRetailer } from "src/services/retailer.service";
+import {
+  useGetRetailerById,
+  useUpdateRetailer,
+} from "src/services/retailer.service";
 
 type Props = {
   isOpen: boolean;
   toggle: () => void;
+  retailerId: string;
 };
 
-const AddRetailer = ({ isOpen, toggle }: Props) => {
+const EditRetailer = ({ isOpen, toggle, retailerId }: Props) => {
   // STATES
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
-  const [isKycOpen, setKycOpen] = useState<boolean>(false);
-  const [retailerId, setRetailerId] = useState<string>("");
+
+  // QUERIES
+  const { data: retailer } = useGetRetailerById(retailerId, !!retailerId);
 
   // MUTATIONS
-  const { mutateAsync: createRetailer } = useAddRetailer();
+  const { mutateAsync: updateRetailer } = useUpdateRetailer();
   const { mutateAsync: uploadFile } = useUploadFile();
 
   //FORMINK
@@ -34,20 +39,20 @@ const AddRetailer = ({ isOpen, toggle }: Props) => {
       email: "",
       phoneNumber: "",
       eidNo: "",
-      eidFile: "" as any,
+      eidFile: "",
       imgUrl: "" as any,
       role: "retailer",
     },
-    validationSchema: VendorValidationSchema,
+    validationSchema: EditVendorValidationSchema,
 
     onSubmit: (values) => {
       console.log(values, "VALUES");
-      handleAddRetailer(values);
+      handleEditRetailer(values);
     },
   });
 
   //HANDLERS
-  const handleAddRetailer = async (values: any) => {
+  const handleEditRetailer = async (values: any) => {
     try {
       if (typeof values?.imgUrl !== "string") {
         let formData = new FormData();
@@ -62,18 +67,13 @@ const AddRetailer = ({ isOpen, toggle }: Props) => {
         values.eidFile = response.data.data;
       }
 
-      const res = await createRetailer(values);
-      console.log(res, "= = Retailer RES");
-      if (res.status === 200) {
-        setRetailerId(res?.data?.data?._id);
-        toast(res?.data?.message, {
-          containerId: "default",
-          className: "no-icon notification-success",
-        });
-        formik.resetForm();
-        toggle();
-        setKycOpen(true);
-      }
+      const res = await updateRetailer({ id: retailer?._id, data: values });
+      toast(res?.data?.message, {
+        containerId: "default",
+        className: "no-icon notification-success",
+      });
+      formik.resetForm();
+      toggle();
     } catch (error: any) {
       toast(_.capitalize(errorMsg(error).toLowerCase()), {
         containerId: "default",
@@ -82,14 +82,28 @@ const AddRetailer = ({ isOpen, toggle }: Props) => {
     }
   };
 
-  console.log(formik.values, "VALUES");
+  useEffect(() => {
+    if (retailer) {
+      formik.setValues({
+        ...formik.values,
+        userName: retailer?.userName,
+        email: retailer?.email,
+        phoneNumber: retailer?.phoneNumber,
+        // password: retailer?.password,
+        eidNo: retailer?.eidNo,
+        eidFile: retailer?.eidFile,
+        imgUrl: retailer?.imgUrl || "",
+      });
+    }
+  }, [retailer, retailerId]);
+
   console.log(formik.errors, "ERRORS");
   return (
     <>
       <Modal show={isOpen} onHide={toggle} centered={true} size="xl">
         <Modal.Header>
           {/* <Modal.Title>Are you sure?</Modal.Title> */}
-          <h3 className="my-2">Add Retailer</h3>
+          <h3 className="my-2">Edit Retailer</h3>
         </Modal.Header>
         <Form onSubmit={formik.handleSubmit}>
           <Modal.Body>
@@ -108,11 +122,11 @@ const AddRetailer = ({ isOpen, toggle }: Props) => {
                             ? formik.values.imgUrl.copy_link
                             : URL.createObjectURL(formik.values.imgUrl?.file)
                         }
-                        alt="profile"
+                        alt="brand logo"
                         width={"100%"}
                         height={"100%"}
                         style={{ objectFit: "cover" }}
-                        crossOrigin="anonymous"
+                        // crossOrigin="anonymous"
                       />
                       <div
                         onClick={() => setIsUploadOpen(true)}
@@ -126,7 +140,7 @@ const AddRetailer = ({ isOpen, toggle }: Props) => {
               ) : (
                 <Col lg={3} className="px-2 py-1 ">
                   <div>
-                    Profile
+                    Logo
                     <div
                       className="user_image_div mt-1"
                       onClick={() => setIsUploadOpen(true)}
@@ -212,15 +226,25 @@ const AddRetailer = ({ isOpen, toggle }: Props) => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              <Col lg={6} className="px-4 py-1  ">
+              <Col lg={6} className="px-4 py-1">
                 <Form.Group as={Row} className="align-items-center">
-                  <Form.Label className="col-form-label">
-                    Upload EID{" "}
-                  </Form.Label>
+                  {/* If EID already uploaded, show link/preview */}
+                  {typeof formik.values.eidFile === "string" &&
+                  formik.values.eidFile ? (
+                    <Form.Label className="col-form-label">
+                      Upload EID
+                    </Form.Label>
+                  ) : (
+                    <Form.Label className="col-form-label">
+                      Upload EID
+                    </Form.Label>
+                  )}
+
+                  {/* File input for new upload */}
                   <Form.Control
                     type="file"
-                    placeholder="Upload EID Document"
                     name="eidFile"
+                    placeholder="Upload EID Document"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       if (e.currentTarget?.files && e.currentTarget?.files[0]) {
                         formik.setFieldValue(
@@ -270,14 +294,8 @@ const AddRetailer = ({ isOpen, toggle }: Props) => {
         objectFit="contain"
         chooseOne={true}
       />
-
-      <AddBussinessDetails
-        isOpen={isKycOpen}
-        toggle={() => setKycOpen(!isKycOpen)}
-        userId={retailerId}
-      />
     </>
   );
 };
 
-export default AddRetailer;
+export default EditRetailer;

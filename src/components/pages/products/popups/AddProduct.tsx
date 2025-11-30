@@ -13,6 +13,7 @@ import { useGetAllAttributes } from "src/services/attribute.service";
 import { useCreateProduct } from "src/services/product.service";
 import { useUploadMultiFile } from "src/services/fileUpload.service";
 import { generateFilePath } from "src/services/url.service";
+import { useGetAllCategories } from "src/services/product-category.service";
 
 type Props = {
   isOpen: boolean;
@@ -31,6 +32,11 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
     isLoading: brandsLoading,
     error: brandsError,
   } = useGetAllBrands(isOpen);
+  const {
+    data: categories,
+    isLoading: categoriesLoading,
+    error: categoriesError,
+  } = useGetAllCategories(isOpen);
 
   const {
     data: attributes,
@@ -47,6 +53,7 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
     initialValues: {
       productName: "",
       brand: "",
+      category: "",
       mrp: "",
       origin: "",
       yearOfManufacturer: "",
@@ -148,7 +155,7 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
                               alt="product"
                               width="150"
                               height="150"
-                              crossOrigin="anonymous"
+                              // crossOrigin="anonymous"
                             />
                             <div
                               onClick={() => handleEditImage(index)}
@@ -165,7 +172,7 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
               ) : (
                 <Col lg={12} className="px-2 py-1  ">
                   <div>
-                    images
+                    Product Images
                     <div
                       className={`product_image_div mt-1 ${
                         formik.touched.imageUrl && formik.errors.imageUrl
@@ -175,7 +182,7 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
                       onClick={() => setIsUploadOpen(true)}
                     >
                       <Button variant="dark" className="my-5">
-                        Upload 4 Product Images
+                        Upload  Product Images (4)
                       </Button>
                     </div>
                   </div>
@@ -208,54 +215,100 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              <Col lg={4} className="px-4 py-1 ">
-                <Form.Group as={Row} className="align-items-center">
-                  <Form.Label className="col-form-label">Width</Form.Label>
-                  <Form.Control
-                    type="number"
-                    placeholder="Enter tyre width"
-                    name="width"
-                    value={formik.values.width}
-                    onChange={formik.handleChange}
-                    isInvalid={!!formik.errors.width && formik.touched.width}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.width}
-                  </Form.Control.Feedback>
-                </Form.Group>
+              <Col lg={12}>
+                <Row>
+                  <Col className="px-2 py-1 ">
+                    <Form.Group className="align-items-center">
+                      <Form.Label className="col-form-label">
+                        Category
+                      </Form.Label>
+                      <Form.Control
+                        style={{ color: "#000" }}
+                        //   size="md"
+                        as="select"
+                        name="category"
+                        value={formik.values.category}
+                        onChange={formik.handleChange}
+                        isInvalid={
+                          !!formik.errors.category && formik.touched.category
+                        }
+                      >
+                        <option disabled selected hidden value="">
+                          Select Category
+                        </option>
+                        {categories?.map((item: any, index: number) => (
+                          <option key={index} value={item?.categoryName}>
+                            {item?.categoryName}
+                          </option>
+                        ))}
+                      </Form.Control>
+                      <Form.Control.Feedback type="invalid">
+                        {formik.errors.category}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+                  <Col className="px-4 py-1 ">
+                    <Form.Group as={Row} className="align-items-center">
+                      <Form.Label className="col-form-label">Width</Form.Label>
+                      <Form.Control
+                        type="number"
+                        placeholder="Enter tyre width"
+                        name="width"
+                        value={formik.values.width}
+                        onChange={formik.handleChange}
+                        isInvalid={
+                          !!formik.errors.width && formik.touched.width
+                        }
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {formik.errors.width}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+                  {formik.values?.category === "Tubes" ||
+                  formik.values?.category === "Agriculture" ? null : (
+                    <Col className="px-4 py-1 ">
+                      <Form.Group as={Row} className="align-items-center">
+                        <Form.Label className="col-form-label">
+                          Height
+                        </Form.Label>
+                        <Form.Control
+                          type="number"
+                          placeholder="Enter tyre height"
+                          name="height"
+                          value={formik.values.height}
+                          onChange={formik.handleChange}
+                          isInvalid={
+                            !!formik.errors.height && formik.touched.height
+                          }
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {formik.errors.height}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
+                  )}
+                  <Col className="px-4 py-1 ">
+                    <Form.Group as={Row} className="align-items-center">
+                      <Form.Label className="col-form-label">
+                        Rim Size
+                      </Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter tyre rim size"
+                        name="size"
+                        value={formik.values.size}
+                        onChange={formik.handleChange}
+                        isInvalid={!!formik.errors.size && formik.touched.size}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {formik.errors.size}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+                </Row>
               </Col>
-              <Col lg={4} className="px-4 py-1 ">
-                <Form.Group as={Row} className="align-items-center">
-                  <Form.Label className="col-form-label">Height</Form.Label>
-                  <Form.Control
-                    type="number"
-                    placeholder="Enter tyre height"
-                    name="height"
-                    value={formik.values.height}
-                    onChange={formik.handleChange}
-                    isInvalid={!!formik.errors.height && formik.touched.height}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.height}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-              <Col lg={4} className="px-4 py-1 ">
-                <Form.Group as={Row} className="align-items-center">
-                  <Form.Label className="col-form-label">Rim Size</Form.Label>
-                  <Form.Control
-                    type="number"
-                    placeholder="Enter tyre rim size"
-                    name="size"
-                    value={formik.values.size}
-                    onChange={formik.handleChange}
-                    isInvalid={!!formik.errors.size && formik.touched.size}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.size}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
+
               <Col lg={6} className=" px-2 py-1 ">
                 <Form.Group className="align-items-center">
                   <Form.Label className="col-form-label">Brand</Form.Label>

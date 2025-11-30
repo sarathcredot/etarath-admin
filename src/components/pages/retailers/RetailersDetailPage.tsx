@@ -9,7 +9,7 @@ import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 import { User } from "src/types/types";
 import { generateFilePath } from "src/services/url.service";
 import { useKycVerification } from "src/services/kyc.service";
-import EditRetailer from "./forms/EditRetailer";
+import EditRetailer from "./popups/EditRetailer";
 import AddBussinessDetails from "../vendors/popups/AddBussinessDetails";
 import EditBussinessDetails from "../vendors/popups/EditBussinessDetails";
 import {
@@ -137,7 +137,7 @@ const RetailersDetailPage = () => {
   return (
     <>
       <Breadcrumb
-        current={"Retailer Detail"}
+        current={retailer?.userName ? retailer?.userName : "Retailer Detail"}
         paths={[
           {
             name: "Dashboard",
@@ -148,13 +148,13 @@ const RetailersDetailPage = () => {
             url: "/retailers",
           },
           {
-            name: "retailer detail",
+            name: retailer?.userName ? retailer?.userName : "retailer detail",
             url: `/retailers/detail?_id=${retailerID}`,
           },
         ]}
       />
       <div>
-        <Row className="pt-0">
+        {/* <Row className="pt-0">
           <Col lg={3} className="py-3">
             <Card className={`card-modern  `}>
               <Card.Body className="py-4 box text-dark">
@@ -276,7 +276,7 @@ const RetailersDetailPage = () => {
               </Card.Body>
             </Card>
           </Col>
-        </Row>
+        </Row> */}
         <Row>
           <Col
             lg={12}
@@ -356,6 +356,7 @@ const RetailersDetailPage = () => {
                             ? "failed"
                             : "on-hold"
                         } text-dark font-weight-500`}
+                        style={{ textTransform: "capitalize" }}
                       >
                         {retailer?.isVerified}
                       </span>
@@ -390,7 +391,7 @@ const RetailersDetailPage = () => {
           style={{ borderRadius: "5px", marginTop: "20px", overflow: "hidden" }}
         >
           <Tabs className="nav-justified">
-            <Tab eventKey="kyc" title="Bussiness Details">
+            <Tab eventKey="kyc" title="Business Details">
               <Row>
                 {retailer?.kyc && (
                   <Col lg={4}>
@@ -453,7 +454,7 @@ const RetailersDetailPage = () => {
                     style={{ border: "2px solid #ddd " }}
                   >
                     <Card.Header className="d-flex align-items-center justify-content-between">
-                      <Card.Title>Bussiness Details</Card.Title>
+                      <Card.Title>Business Details</Card.Title>
                       {retailer?.kyc ? (
                         <div
                           className="d-flex align-items-center"
@@ -498,7 +499,7 @@ const RetailersDetailPage = () => {
                           //   size="md"
                           onClick={() => setKycOpen(true)}
                         >
-                          + Add Bussiness Details
+                          + Add Business Details
                         </Button>
                       )}
                     </Card.Header>
@@ -512,7 +513,7 @@ const RetailersDetailPage = () => {
                             </h5>
                           </div>
                           <div>
-                            <h6>Bussiness Type</h6>
+                            <h6>Business Type</h6>
                             <h5 className=" text-dark font-weight-500 ">
                               {retailer?.kyc?.business_type || "-"}
                             </h5>
@@ -586,7 +587,7 @@ const RetailersDetailPage = () => {
                         </Col>
                         <Col>
                           <div>
-                            <h6>Bussiness Hours</h6>
+                            <h6>Business Hours</h6>
                             <h5 className=" text-dark font-weight-500 ">
                               {retailer?.kyc?.business_hours || "-"}
                             </h5>
@@ -602,6 +603,7 @@ const RetailersDetailPage = () => {
                                     ? "failed"
                                     : "on-hold"
                                 } text-dark font-weight-500`}
+                                style={{ textTransform: "capitalize" }}
                               >
                                 {retailer?.kyc?.kycStatus}
                               </span>
@@ -616,7 +618,7 @@ const RetailersDetailPage = () => {
                 </Col>
               </Row>
             </Tab>
-            <Tab eventKey="orders" title="Orders">
+            {/* <Tab eventKey="orders" title="Orders">
               <RetailerOrdersList
                 orders={orders}
                 ordersLoading={ordersLoading}
@@ -624,7 +626,7 @@ const RetailersDetailPage = () => {
                 setPage={setPage}
                 retailerId={retailerID ? retailerID : ""}
               />
-            </Tab>
+            </Tab> */}
           </Tabs>
         </div>
       </div>

@@ -101,7 +101,7 @@ const AddStock = ({ isOpen, toggle, vendorId }: Props) => {
                           alt="product"
                           width="100"
                           height="100"
-                          crossOrigin="anonymous"
+                          // crossOrigin="anonymous"
                         />
                       </div>
                     </div>

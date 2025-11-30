@@ -11,10 +11,8 @@ import {
 import { Link } from "react-router-dom";
 import Pagination from "src/components/common/Pagination";
 import PtSwitch from "src/components/features/elements/switch";
-import { User } from "src/types/types";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 import { toast } from "react-toastify";
-import { ORDER_TYPES } from "src/common/constant.common";
 
 import { errorMsg } from "src/utils/toast";
 import _ from "lodash";

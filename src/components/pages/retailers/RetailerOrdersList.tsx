@@ -254,7 +254,7 @@ const RetailerOrdersList = ({
                                 alt="product"
                                 width="40"
                                 height="40"
-                                crossOrigin="anonymous"
+                                // crossOrigin="anonymous"
                               />
                             </Link>
                           </td>

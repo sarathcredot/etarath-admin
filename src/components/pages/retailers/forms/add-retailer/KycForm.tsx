@@ -1,10 +1,8 @@
 import { TimePicker } from "antd";
 import dayjs from "dayjs";
-import { useState } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import Select from "react-select";
-import MediaGalleryModal from "src/components/features/modals/media-gallery-modal";
-import { generateFilePath } from "src/services/url.service";
+import { BUSSINESS_TYPES } from "src/components/pages/vendors/popups/AddBussinessDetails";
 
 const locations = [
   { value: "AFG", label: "AFG" },
@@ -92,165 +90,96 @@ const locations = [
   { value: "ZWE", label: "ZWE" },
 ];
 const timeFormat = "HH:mm";
-export default function ProfileForm({ formik }: any) {
-  const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
-
+export default function KycForm({ formik }: any) {
   return (
     <Row className="px-1 px-md-3">
-      <Col
-        lg={12}
-        className="px-2 py-1 "
-        style={{ display: "flex", alignItems: "center", gap: 10 }}
-      >
-        <Row className="px-2 ">
-          {formik.values.vendor_logo ? (
-            <Col className="px-2 py-1 ">
-              <div>
-                Logo
-                <div className="user_image_div mt-2" style={{ width: "190px" }}>
-                  <img
-                    // src={generateFilePath(img)}
-                    src={
-                      typeof formik.values.vendor_logo === "string"
-                        ? generateFilePath(formik.values.vendor_logo)
-                        : formik.values.vendor_logo.copy_link
-                        ? formik.values.vendor_logo.copy_link
-                        : URL.createObjectURL(formik.values.vendor_logo?.file)
-                    }
-                    alt="profile"
-                    width={"100%"}
-                    height={"100%"}
-                    style={{ objectFit: "cover" }}
-                    // crossOrigin="anonymous"
-                  />
-                  <div
-                    onClick={() => setIsUploadOpen(true)}
-                    className="edit_div"
-                  >
-                    <i className="bx bxs-edit fa "></i>
-                  </div>
-                </div>
-              </div>
-            </Col>
-          ) : (
-            <Col className="px-2 py-1 ">
-              <div>
-                Logo
-                <div
-                  className="user_image_div mt-2"
-                  style={{ width: "190px" }}
-                  onClick={() => setIsUploadOpen(true)}
-                >
-                  <Button variant="dark" className="my-5">
-                    Upload Logo
-                  </Button>
-                </div>
-              </div>
-              {formik.touched.vendor_logo && formik.errors.vendor_logo && (
-                <div className="text-danger small mt-1 px-2">
-                  {formik.errors.vendor_logo}
-                </div>
-              )}
-            </Col>
-          )}
-        </Row>
-        <Row className="mx-0 w-100">
-          <Col lg={12} className="px-2 py-1">
-            <Form.Group>
-              <Form.Label className="col-form-label">Business Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="business_name"
-                placeholder=" Business Name"
-                value={formik.values.business_name}
-                onChange={formik.handleChange}
-                isInvalid={
-                  formik.touched.business_name && !!formik.errors.business_name
-                }
-              />
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.business_name}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Col>
-          <Col lg={12} className=" px-2 py-1">
-            <Form.Group>
-              <Form.Label className="col-form-label">Phone Number</Form.Label>
-              <Form.Control
-                type="number"
-                name="phoneNumber"
-                placeholder=" Phone Number"
-                value={formik.values.phoneNumber}
-                onChange={formik.handleChange}
-                isInvalid={
-                  formik.touched.phoneNumber && !!formik.errors.phoneNumber
-                }
-              />
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.phoneNumber}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Col>
-          <Col lg={12} className=" px-2 py-1">
-            <Form.Group>
-              <Form.Label className="col-form-label">Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                isInvalid={formik.touched.email && !!formik.errors.email}
-              />
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.email}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Col>
-        </Row>
-      </Col>
-
-      <Col lg={6} className="px-2 py-1  ">
-        {/* <Form.Group as={Row} className="align-items-center">
-          <Form.Label className="col-form-label">
-            Shop Location
-          </Form.Label>
+      <Col lg={6} className="px-4 py-1">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">Shop Name</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Enter Shop Location"
-            name="location"
-            value={formik.values.location}
+            placeholder="Shop Name"
+            name="shop_name"
+            value={formik.values.shop_name}
             onChange={formik.handleChange}
-            isInvalid={
-              !!formik.errors.location &&
-              formik.touched.location
-            }
+            isInvalid={!!formik.errors.shop_name && formik.touched.shop_name}
           />
           <Form.Control.Feedback type="invalid">
-            {formik.errors.location}
+            {formik.errors.shop_name}
           </Form.Control.Feedback>
-        </Form.Group> */}
+        </Form.Group>
+      </Col>
+      <Col lg={6} className="px-2 py-1">
+        <Form.Group className="align-items-center">
+          <Form.Label className="col-form-label">Business type</Form.Label>
+          <Form.Control
+            style={{ color: "#000" }}
+            //   size="md"
+            as="select"
+            name="business_type"
+            value={formik.values.business_type}
+            onChange={(e) =>
+              formik.setFieldValue("business_type", e.target.value)
+            }
+            isInvalid={
+              !!formik.errors.business_type && formik.touched.business_type
+            }
+          >
+            <option disabled selected hidden value="">
+              Select Business Type
+            </option>
+            {BUSSINESS_TYPES.map((item: string, index: number) => (
+              <option key={index} value={item}>
+                {item}
+              </option>
+            ))}
+          </Form.Control>
+          <Form.Control.Feedback type="invalid">
+            {formik.errors.business_type}
+          </Form.Control.Feedback>
+        </Form.Group>
+      </Col>
+      <Col lg={6} className="px-2 py-1  ">
+        {/* <Form.Group as={Row} className="align-items-center">
+              <Form.Label className="col-form-label">
+                Shop Location
+              </Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Shop Location"
+                name="shop_location"
+                value={formik.values.shop_location}
+                onChange={formik.handleChange}
+                isInvalid={
+                  !!formik.errors.shop_location &&
+                  formik.touched.shop_location
+                }
+              />
+              <Form.Control.Feedback type="invalid">
+                {formik.errors.shop_location}
+              </Form.Control.Feedback>
+            </Form.Group> */}
         <Form.Label className="col-form-label">Shop Location</Form.Label>
         <Select
-          name="location"
+          name="shop_location"
           options={locations}
           placeholder="Select Shop Location"
           value={locations.filter((opt) =>
-            formik.values.location.includes(opt.value)
+            formik.values.shop_location.includes(opt.value)
           )}
           onChange={(selected) => {
-            formik.setFieldValue("location", (selected as any).value);
+            formik.setFieldValue("shop_location", (selected as any).value);
           }}
-          onBlur={() => formik.setFieldTouched("location", true)}
+          onBlur={() => formik.setFieldTouched("shop_location", true)}
           classNamePrefix={
-            formik.touched.location && formik.errors.location
+            formik.touched.shop_location && formik.errors.shop_location
               ? "is-invalid"
               : ""
           }
         />
-        {formik.touched.location && formik.errors.location && (
+        {formik.touched.shop_location && formik.errors.shop_location && (
           <div className="text-danger mt-1" style={{ fontSize: "11px" }}>
-            {formik.errors.location}
+            {formik.errors.shop_location}
           </div>
         )}
       </Col>
@@ -261,7 +190,7 @@ export default function ProfileForm({ formik }: any) {
           </Form.Label>
           <Form.Control
             type="text"
-            placeholder="Enter Trade License/ Business Registration Number"
+            placeholder="Trade License/ Business Registration Number"
             name="tradeLicenseNumber"
             value={formik.values.tradeLicenseNumber}
             onChange={formik.handleChange}
@@ -275,7 +204,7 @@ export default function ProfileForm({ formik }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
-      <Col lg={6} className="px-4 py-1  ">
+      <Col lg={12} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">
             Upload Trade License/ Business Registration
@@ -304,35 +233,50 @@ export default function ProfileForm({ formik }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
-      <Col lg={6} className="px-2 py-1">
-        <Form.Group>
-          <Form.Label className="col-form-label">Business Address</Form.Label>
+      <Col lg={4} className="px-4 pb-1  ">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">Shop Address</Form.Label>
           <Form.Control
             type="text"
-            name="business_address"
-            placeholder=" Business Address"
-            value={formik.values.business_address}
+            placeholder="Shop Address"
+            name="shop_address"
+            value={formik.values.shop_address}
             onChange={formik.handleChange}
             isInvalid={
-              formik.touched.business_address &&
-              !!formik.errors.business_address
+              !!formik.errors.shop_address && formik.touched.shop_address
             }
           />
           <Form.Control.Feedback type="invalid">
-            {formik.errors.business_address}
+            {formik.errors.shop_address}
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
-      <Col lg={6} className="px-2 py-1">
-        <Form.Group>
+      <Col lg={4} className="px-4 pb-1  ">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">City</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="City"
+            name="city"
+            value={formik.values.city}
+            onChange={formik.handleChange}
+            isInvalid={!!formik.errors.city && formik.touched.city}
+          />
+          <Form.Control.Feedback type="invalid">
+            {formik.errors.city}
+          </Form.Control.Feedback>
+        </Form.Group>
+      </Col>
+      <Col lg={4} className="px-4 pb-1  ">
+        <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">Post</Form.Label>
           <Form.Control
             type="text"
+            placeholder="Post"
             name="post"
-            placeholder=" Post"
             value={formik.values.post}
             onChange={formik.handleChange}
-            isInvalid={formik.touched.post && !!formik.errors.post}
+            isInvalid={!!formik.errors.post && formik.touched.post}
           />
           <Form.Control.Feedback type="invalid">
             {formik.errors.post}
@@ -387,6 +331,58 @@ export default function ProfileForm({ formik }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
+      {/* <Col lg={6} className="px-4 pb-1  ">
+                      <Form.Group as={Row} className="align-items-center">
+                        <Form.Label className="col-form-label">
+                          Business Hours
+                        </Form.Label>
+                        <Form.Control
+                          as="select"
+                          name="business_hours"
+                          value={formik.values.business_hours}
+                          onChange={formik.handleChange}
+                          isInvalid={
+                            !!formik.errors.business_hours &&
+                            formik.touched.business_hours
+                          }
+                        >
+                          <option value="">Select Hour</option>
+                          {Array.from({ length: 24 }, (_, i) => i + 1).map((hour) => (
+                            <option
+                              key={hour}
+                              value={`${hour.toString().padStart(2, "0")}:00`}
+                            >
+                              {hour.toString().padStart(2, "0")}:00
+                            </option>
+                          ))}
+                        </Form.Control>
+                        <Form.Control.Feedback type="invalid">
+                          {formik.errors.business_hours}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col> */}
+
+      <Col lg={6} className="px-4 pb-1  ">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">
+            Shop Contact Number
+          </Form.Label>
+          <Form.Control
+            type="number"
+            placeholder="Shop Contact Number"
+            name="shop_contact_number"
+            value={formik.values.shop_contact_number}
+            onChange={formik.handleChange}
+            isInvalid={
+              !!formik.errors.shop_contact_number &&
+              formik.touched.shop_contact_number
+            }
+          />
+          <Form.Control.Feedback type="invalid">
+            {formik.errors.shop_contact_number}
+          </Form.Control.Feedback>
+        </Form.Group>
+      </Col>
       <Col lg={12} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">
@@ -415,17 +411,6 @@ export default function ProfileForm({ formik }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
-      <MediaGalleryModal
-        isOpen={isUploadOpen}
-        onClose={(files: any) => {
-          if (files.length > 0) {
-            formik.setFieldValue("vendor_logo", files[0]);
-          }
-          setIsUploadOpen(!isUploadOpen);
-        }}
-        objectFit="contain"
-        chooseOne={true}
-      />
     </Row>
   );
 }

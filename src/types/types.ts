@@ -3,6 +3,8 @@ export type User = {
   userName: string;
   email: string;
   phoneNumber: string;
+  designation: string;
+  language: [string];
   role: string;
   imgUrl: string;
   password: string;
@@ -19,18 +21,24 @@ export type User = {
     _id: string;
     createdBy: string;
     shop_name: string;
+    business_name: string;
+    email: string;
     business_type: string;
     shop_location: string;
+    location: string;
     tradeLicenseNumber: string;
     documents: {
       tradeLicense: string;
     };
     shop_address: string;
+    business_address: string;
     city: string;
     post: string;
     business_hours: string;
     shop_contact_number: string;
+    phoneNumber: string;
     shop_photo_logo: string;
+    vendor_logo: string;
     kycStatus: string;
   };
 };

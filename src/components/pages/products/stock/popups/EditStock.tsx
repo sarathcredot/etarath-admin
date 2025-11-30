@@ -170,7 +170,7 @@ const EditStock = ({ isOpen, toggle, productId }: Props) => {
                               alt="product"
                               width="150"
                               height="150"
-                              crossOrigin="anonymous"
+                              // crossOrigin="anonymous"
                             />
                             <div
                               onClick={() => handleEditImage(index)}

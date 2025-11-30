@@ -152,7 +152,11 @@ const VendorsDetailPage = () => {
   return (
     <>
       <Breadcrumb
-        current={"Vendor Detail"}
+        current={
+          vendor?.kyc?.business_name
+            ? vendor?.kyc?.business_name
+            : "Vendor Detail"
+        }
         paths={[
           {
             name: "Dashboard",
@@ -169,7 +173,7 @@ const VendorsDetailPage = () => {
         ]}
       />
       <div>
-        <Row className="pt-0">
+        {/* <Row className="pt-0">
           <Col lg={3} className="py-3">
             <Card className={`card-modern   `}>
               <Card.Body className="py-4 box text-dark">
@@ -289,9 +293,206 @@ const VendorsDetailPage = () => {
               </Card.Body>
             </Card>
           </Col>
+        </Row> */}
+        <Row>
+          {vendor?.kyc && (
+            <Col lg={4} className="">
+              <Card className="card-modern" style={{ height: "100%" }}>
+                {/* <Card.Header className="d-flex align-items-center justify-content-end"></Card.Header> */}
+                <Card.Body
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Row>
+                    <Col className="text-center">
+                      <div>
+                        <div>
+                          <img
+                            src={generateFilePath(vendor?.kyc?.vendor_logo)}
+                            width={150}
+                            height={150}
+                            alt="profile"
+                            style={{
+                              borderRadius: "50%",
+                              marginBottom: 20,
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <h6>Business Name</h6>
+                        <h5 className=" text-dark font-weight-500 ">
+                          {vendor?.kyc?.business_name}
+                        </h5>
+                      </div>
+                      <div
+                        className="d-flex justify-content-center text-center"
+                        style={{ gap: 20 }}
+                      >
+                        <div className="text-center w-100 ">
+                          <h6>Phone Number</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {vendor?.kyc?.phoneNumber}
+                          </h5>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+          <Col>
+            <Card className="card-modern">
+              <Card.Header className="d-flex align-items-center justify-content-between">
+                <Card.Title>Profile Details</Card.Title>
+                {vendor?.kyc ? (
+                  <div
+                    className="d-flex align-items-center"
+                    style={{ gap: 10 }}
+                  >
+                    <div
+                      title="Edit KYC"
+                      className="action_btn bg-dark"
+                      onClick={() => {
+                        setKycEditOpen(true);
+                      }}
+                    >
+                      <i className="fas fa-pencil-alt text-light"></i>
+                    </div>
+                  </div>
+                ) : (
+                  <Button
+                    className="font-weight-semibold"
+                    variant="dark"
+                    //   size="md"
+                    onClick={() => setKycOpen(true)}
+                  >
+                    + Add Profile
+                  </Button>
+                )}
+              </Card.Header>
+              <Card.Body>
+                <Row>
+                  <Col>
+                    <div>
+                      <h6>Business Name</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {vendor?.kyc?.business_name || "-"}
+                      </h5>
+                    </div>
+                    {/* <div>
+                            <h6>Business Type</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {vendor?.kyc?.business_type || "-"}
+                            </h5>
+                          </div> */}
+                    <div>
+                      <h6>Shop Contact Number</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {vendor?.kyc?.phoneNumber || "-"}
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Email</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {vendor?.kyc?.email || "-"}
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Trade License Number</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {vendor?.kyc?.tradeLicenseNumber || "-"}
+                      </h5>
+                    </div>
+                    {vendor?.kyc && (
+                      <div className="mt-3">
+                        <Button
+                          variant="dark"
+                          onClick={() =>
+                            showFile(vendor?.kyc?.documents?.tradeLicense)
+                          }
+                        >
+                          {/* <i className="fas fa-arrow-up-from-bracket"></i> */}
+                          Trade License
+                        </Button>
+                      </div>
+                    )}
+                  </Col>
+                  <Col>
+                    <div>
+                      <h6>Business Address</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {vendor?.kyc?.business_address || "-"}
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Shop Location</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {vendor?.kyc?.location || "-"}
+                      </h5>
+                    </div>
+                    {/* <div>
+                            <h6>City</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {vendor?.kyc?.city || "-"}
+                            </h5>
+                          </div> */}
+                    <div>
+                      <h6>Post</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {vendor?.kyc?.post || "-"}
+                      </h5>
+                    </div>
+                    {vendor?.kyc && (
+                      <div className="mt-3">
+                        <Button
+                          variant="dark"
+                          onClick={() => showFile(vendor?.kyc?.shop_photo_logo)}
+                        >
+                          {/* <i className="fas fa-arrow-up-from-bracket"></i> */}
+                          Shop Photo
+                        </Button>
+                      </div>
+                    )}
+                  </Col>
+                  <Col>
+                    <div>
+                      <h6>Business Hours</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {vendor?.kyc?.business_hours || "-"}
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Verification Status</h6>
+                      {vendor?.kyc ? (
+                        <span
+                          className={`ecommerce-status ${
+                            vendor?.kyc?.kycStatus === "approved"
+                              ? "completed"
+                              : vendor?.kyc?.kycStatus === "rejected"
+                              ? "failed"
+                              : "on-hold"
+                          } text-dark font-weight-500`}
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {vendor?.kyc?.kycStatus}
+                        </span>
+                      ) : (
+                        "-"
+                      )}
+                    </div>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
         </Row>
         <Row>
-          <Col
+          {/* <Col
             lg={12}
             // className="mt-5"
           >
@@ -311,10 +512,10 @@ const VendorsDetailPage = () => {
                 <Row>
                   <Col>
                     <div>
-                      <h6>Profile</h6>
+                      <h6>Logo</h6>
                       <div>
                         <img
-                          src={generateFilePath(vendor?.imgUrl)}
+                          src={generateFilePath(vendor?.kyc?.vendor_logo)}
                           width={100}
                           height={100}
                           alt="profile"
@@ -343,9 +544,9 @@ const VendorsDetailPage = () => {
                   </Col>
                   <Col>
                     <div>
-                      <h6>EID No</h6>
+                      <h6>Business Address</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        {vendor?.eidNo || "-"}
+                        {vendor?.kyc?.business_address || "-"}
                       </h5>
                     </div>
                     {vendor?.eidFile && (
@@ -354,7 +555,6 @@ const VendorsDetailPage = () => {
                           variant="dark"
                           onClick={() => showFile(vendor?.eidFile)}
                         >
-                          {/* <i className="fas fa-arrow-up-from-bracket"></i> */}
                           EID Document
                         </Button>
                       </div>
@@ -369,6 +569,7 @@ const VendorsDetailPage = () => {
                             ? "failed"
                             : "on-hold"
                         } text-dark font-weight-500`}
+                         style={{ textTransform: "capitalize" }}
                       >
                         {vendor?.isVerified}
                       </span>
@@ -396,212 +597,99 @@ const VendorsDetailPage = () => {
                 </Row>
               </Card.Body>
             </Card>
-          </Col>
+          </Col> */}
         </Row>
         <div
           className="tabs"
           style={{ borderRadius: "5px", marginTop: "20px", overflow: "hidden" }}
         >
           <Tabs className="nav-justified">
-            <Tab eventKey="kyc" title="Bussiness Details">
-              <Row>
-                {vendor?.kyc && (
-                  <Col lg={4}>
-                    <Card
-                      className="card-modern"
-                      style={{ border: "2px solid #ddd ", height: "100%" }}
-                    >
-                      {/* <Card.Header className="d-flex align-items-center justify-content-end"></Card.Header> */}
-                      <Card.Body
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <Row>
-                          <Col className="text-center">
-                            <div>
-                              <div>
-                                <img
-                                  src={generateFilePath(
-                                    vendor?.kyc?.shop_photo_logo
-                                  )}
-                                  width={150}
-                                  height={150}
-                                  alt="profile"
-                                  style={{
-                                    borderRadius: "50%",
-                                    marginBottom: 20,
-                                  }}
-                                />
-                              </div>
-                            </div>
-                            <div>
-                              <h6>Shop Name</h6>
-                              <h5 className=" text-dark font-weight-500 ">
-                                {vendor?.kyc?.shop_name}
-                              </h5>
-                            </div>
-                            <div
-                              className="d-flex justify-content-center text-center"
-                              style={{ gap: 20 }}
-                            >
-                              <div className="text-center w-100 ">
-                                <h6>Shop Contact Number</h6>
-                                <h5 className=" text-dark font-weight-500 ">
-                                  {vendor?.kyc?.shop_contact_number}
-                                </h5>
-                              </div>
-                            </div>
-                          </Col>
-                        </Row>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                )}
+            <Tab eventKey="kyc" title="Contact Details">
+              <Row className="">
                 <Col>
-                  <Card
+                  {/* <Card
                     className="card-modern"
                     style={{ border: "2px solid #ddd " }}
                   >
-                    <Card.Header className="d-flex align-items-center justify-content-between">
-                      <Card.Title>Bussiness Details</Card.Title>
-                      {vendor?.kyc ? (
+                    <Card.Header className="d-flex align-items-center justify-content-between"> */}
+                  {/* <Card.Title>Business Details</Card.Title> */}
+                  <div className="d-flex align-items-center justify-content-between mb-3">
+                    <h5 className="m-0 card-title h5 font-weight-bold">
+                      Contact Details
+                    </h5>
+                    {vendor?.kyc ? (
+                      <div
+                        className="d-flex align-items-center"
+                        style={{ gap: 10 }}
+                      >
                         <div
-                          className="d-flex align-items-center"
-                          style={{ gap: 10 }}
+                          title="Edit KYC"
+                          className="action_btn bg-dark"
+                          onClick={() => {
+                            setKycEditOpen(true);
+                          }}
                         >
-                          <div
-                            title="Edit KYC"
-                            className="action_btn bg-dark"
-                            onClick={() => {
-                              setKycEditOpen(true);
-                            }}
-                          >
-                            <i className="fas fa-pencil-alt text-light"></i>
-                          </div>
+                          <i className="fas fa-pencil-alt text-light"></i>
                         </div>
-                      ) : (
-                        <Button
-                          className="font-weight-semibold"
-                          variant="dark"
-                          //   size="md"
-                          onClick={() => setKycOpen(true)}
-                        >
-                          + Add Bussiness Details
-                        </Button>
-                      )}
-                    </Card.Header>
-                    <Card.Body>
-                      <Row>
-                        <Col>
-                          <div>
-                            <h6>Shop Name</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {vendor?.kyc?.shop_name || "-"}
-                            </h5>
-                          </div>
-                          <div>
-                            <h6>Bussiness Type</h6>
+                      </div>
+                    ) : (
+                      <Button
+                        className="font-weight-semibold"
+                        variant="dark"
+                        //   size="md"
+                        onClick={() => setKycOpen(true)}
+                      >
+                        + Add Contact Details
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* </Card.Header> */}
+                  {/* <Card.Body> */}
+                  <Row>
+                    <Col>
+                      <div>
+                        <h6>Contact Person Name</h6>
+                        <h5 className=" text-dark font-weight-500 ">
+                          {vendor?.userName || "-"}
+                        </h5>
+                      </div>
+                      {/* <div>
+                            <h6>Business Type</h6>
                             <h5 className=" text-dark font-weight-500 ">
                               {vendor?.kyc?.business_type || "-"}
                             </h5>
-                          </div>
-                          <div>
-                            <h6>Shop Contact Number</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {vendor?.kyc?.shop_contact_number || "-"}
-                            </h5>
-                          </div>
-                          <div>
-                            <h6>Trade License Number</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {vendor?.kyc?.tradeLicenseNumber || "-"}
-                            </h5>
-                          </div>
-                          {vendor?.kyc && (
-                            <div className="mt-3">
-                              <Button
-                                variant="dark"
-                                onClick={() =>
-                                  showFile(vendor?.kyc?.documents?.tradeLicense)
-                                }
-                              >
-                                {/* <i className="fas fa-arrow-up-from-bracket"></i> */}
-                                Trade License
-                              </Button>
-                            </div>
-                          )}
-                        </Col>
-                        <Col>
-                          <div>
-                            <h6>Shop Address</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {vendor?.kyc?.shop_address || "-"}
-                            </h5>
-                          </div>
-                          <div>
-                            <h6>Shop Location</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {vendor?.kyc?.shop_location || "-"}
-                            </h5>
-                          </div>
-                          <div>
-                            <h6>City</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {vendor?.kyc?.city || "-"}
-                            </h5>
-                          </div>
-                          <div>
-                            <h6>Post</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {vendor?.kyc?.post || "-"}
-                            </h5>
-                          </div>
-                          {vendor?.kyc && (
-                            <div className="mt-3">
-                              <Button
-                                variant="dark"
-                                onClick={() =>
-                                  showFile(vendor?.kyc?.shop_photo_logo)
-                                }
-                              >
-                                {/* <i className="fas fa-arrow-up-from-bracket"></i> */}
-                                Shop Photo
-                              </Button>
-                            </div>
-                          )}
-                        </Col>
-                        <Col>
-                          <div>
-                            <h6>Bussiness Hours</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {vendor?.kyc?.business_hours || "-"}
-                            </h5>
-                          </div>
-                          <div>
-                            <h6>Verification Status</h6>
-                            {vendor?.kyc ? (
-                              <span
-                                className={`ecommerce-status ${
-                                  vendor?.kyc?.kycStatus === "approved"
-                                    ? "completed"
-                                    : vendor?.kyc?.kycStatus === "rejected"
-                                    ? "failed"
-                                    : "on-hold"
-                                } text-dark font-weight-500`}
-                              >
-                                {vendor?.kyc?.kycStatus}
-                              </span>
-                            ) : (
-                              "-"
-                            )}
-                          </div>
-                        </Col>
-                      </Row>
-                    </Card.Body>
-                  </Card>
+                          </div> */}
+                      <div>
+                        <h6>Contact Person Phone Number</h6>
+                        <h5 className=" text-dark font-weight-500 ">
+                          {vendor?.phoneNumber || "-"}
+                        </h5>
+                      </div>
+                      <div>
+                        <h6>Contact Person Email</h6>
+                        <h5 className=" text-dark font-weight-500 ">
+                          {vendor?.email || "-"}
+                        </h5>
+                      </div>
+                      <div>
+                        <h6>Designation</h6>
+                        <h5 className=" text-dark font-weight-500 ">
+                          {vendor?.designation || "-"}
+                        </h5>
+                      </div>
+                      <div>
+                        <h6>Preferred Language for Communication</h6>
+                        <h5 className=" text-dark font-weight-500 ">
+                          {vendor?.language?.length > 0
+                            ? vendor.language.join(", ")
+                            : "-"}
+                        </h5>
+                      </div>
+                    </Col>
+                  </Row>
+                  {/* </Card.Body> */}
+                  {/* </Card> */}
                 </Col>
               </Row>
             </Tab>
@@ -612,7 +700,7 @@ const VendorsDetailPage = () => {
                 stocksLoading={stocksLoading}
               />
             </Tab>
-            <Tab eventKey="orders" title="Orders">
+            {/* <Tab eventKey="orders" title="Orders">
               <VendorOrdersList
                 vendorId={vendorID ? vendorID : ""}
                 orders={orders}
@@ -620,8 +708,8 @@ const VendorsDetailPage = () => {
                 page={orderPage}
                 setPage={setOrderPage}
               />
-            </Tab>
-            <Tab eventKey="agents" title="Sales Executives">
+            </Tab> */}
+            {/* <Tab eventKey="agents" title="Sales Executives">
               <SalesExecutivesList
                 vendorId={vendorID ? vendorID : ""}
                 orders={agents}
@@ -629,7 +717,7 @@ const VendorsDetailPage = () => {
                 page={orderPage}
                 setPage={setOrderPage}
               />
-            </Tab>
+            </Tab> */}
           </Tabs>
         </div>
       </div>

@@ -172,7 +172,7 @@ const KycsList = ({
                               alt="profile"
                               width="50"
                               height="50"
-                              crossOrigin="anonymous"
+                              // crossOrigin="anonymous"
                             />
                           </Link>
                         </td> */}

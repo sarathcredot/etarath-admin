@@ -283,14 +283,16 @@ const ProductsPage = () => {
                                     alt="product"
                                     width="40"
                                     height="40"
-                                    crossOrigin="anonymous"
+                                    // crossOrigin="anonymous"
                                   />
                                 </Link>
                               </td>
                               <td>
                                 <Link to={`/products/detail?_id=${item?._id}`}>
                                   {item?.productName} -{" "}
-                                  {`${item?.width}/${item?.height} ${item?.size}`}
+                                  {`${item?.width}${
+                                    item?.height ? `/${item.height}` : ""
+                                  } R${item?.size}`}
                                 </Link>
                               </td>
                               <td>

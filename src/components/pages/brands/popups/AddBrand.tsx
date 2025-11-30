@@ -104,7 +104,7 @@ const AddBrand = ({ isOpen, toggle }: Props) => {
                           alt="brand logo"
                           width="150"
                           // height="150"
-                          crossOrigin="anonymous"
+                          // crossOrigin="anonymous"
                         />
                         <div
                           onClick={() => setIsUploadOpen(true)}
@@ -157,7 +157,7 @@ const AddBrand = ({ isOpen, toggle }: Props) => {
                           alt="brand logo"
                           width="150"
                           height="150"
-                          crossOrigin="anonymous"
+                          // crossOrigin="anonymous"
                         />
                         <div
                           onClick={() => setIsUploadOpen2(true)}

@@ -269,7 +269,7 @@ const BrandsList = ({
                               src={generateFilePath(item?.imageUrl)}
                               // src={"/assets/images/brands/CEAT.svg"}
                               alt="logo"
-                              crossOrigin="anonymous"
+                              // crossOrigin="anonymous"
                             />
                           </Link>
                         </td>

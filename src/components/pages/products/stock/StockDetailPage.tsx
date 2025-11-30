@@ -198,16 +198,16 @@ const StockDetailPage = () => {
                     </div>
                   </Col>
                   <Col lg={3}>
-                    <div>
+                    {/* <div>
                       <h6>Available Stock</h6>
                       <h5 className=" text-dark font-weight-500 ">
                         {stock?.stock}
                       </h5>
-                    </div>
+                    </div> */}
                     <div>
-                      <h6>Price </h6>
+                      <h6>Sale Price </h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        {stock?.price} AED
+                        {stock?.price_normal_customer} AED
                       </h5>
                     </div>
                     <div>
@@ -274,12 +274,12 @@ const StockDetailPage = () => {
                         {product?.brand?.name}
                       </h5>
                     </div>
-                    {/* <div>
+                    <div>
                       <h6>Category</h6>
                       <h5 className=" text-dark font-weight-500 ">
                         {product?.category}
                       </h5>
-                    </div> */}
+                    </div>
                   </Col>
                   {/* <Col md={3} xl={2}>
                     <div>
@@ -302,12 +302,14 @@ const StockDetailPage = () => {
                         {product?.width}
                       </h5>
                     </div>
-                    <div>
-                      <h6>Height</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                        {product?.height}
-                      </h5>
-                    </div>
+                    {product?.height && (
+                      <div>
+                        <h6>Height</h6>
+                        <h5 className=" text-dark font-weight-500 ">
+                          {product?.height}
+                        </h5>
+                      </div>
+                    )}
                     <div>
                       <h6>Rim Size</h6>
                       <h5 className=" text-dark font-weight-500 ">
@@ -352,7 +354,7 @@ const StockDetailPage = () => {
                                 alt="product"
                                 width="110"
                                 height="110"
-                                crossOrigin="anonymous"
+                                // crossOrigin="anonymous"
                               />
                             </div>
                           </Col>
@@ -364,15 +366,15 @@ const StockDetailPage = () => {
               </Card.Body>
             </Card>
           </Col>
-          <Col lg={12} className="mt-4">
+          {/* <Col lg={12} className="mt-4">
             <Card className="card-modern">
               <Card.Body>
-                {/* <StocksList
+                <StocksList
                   productId={productId ? productId : ""}
-                /> */}
+                />
               </Card.Body>
             </Card>
-          </Col>
+          </Col> */}
         </Row>
       </div>
       {/* <ConfirmationPopup

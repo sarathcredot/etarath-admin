@@ -18,7 +18,7 @@ type Props = {
   userId: string;
 };
 
-const BUSSINESS_TYPES = [
+export const BUSSINESS_TYPES = [
   "TIRE TRADING",
   "TIRE WHOLESALER",
   "TIRE RETAILER",
@@ -199,7 +199,7 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
     <>
       <Modal show={isOpen} onHide={toggle} centered={true} size="xl">
         <Modal.Header>
-          <h3 className="my-2">Add Bussiness Details</h3>
+          <h3 className="my-2">Add Business Details</h3>
         </Modal.Header>
         <Form onSubmit={formikKyc.handleSubmit}>
           <Modal.Body>
@@ -226,11 +226,11 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
               <Col lg={6} className="px-4 py-1  ">
                 {/* <Form.Group as={Row} className="align-items-center">
                   <Form.Label className="col-form-label">
-                    Bussiness Type
+                    Business Type
                   </Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter Bussiness Type"
+                    placeholder="Enter Business Type"
                     name="business_type"
                     value={formikKyc.values.business_type}
                     onChange={formikKyc.handleChange}
@@ -245,7 +245,7 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
                 </Form.Group> */}
                 <Form.Group className="align-items-center">
                   <Form.Label className="col-form-label">
-                    Bussiness type
+                    Business type
                   </Form.Label>
                   <Form.Control
                     style={{ color: "#000" }}
@@ -262,7 +262,7 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
                     }
                   >
                     <option disabled selected hidden value="">
-                      Select Bussiness Type
+                      Select Business Type
                     </option>
                     {BUSSINESS_TYPES.map((item: string, index: number) => (
                       <option key={index} value={item}>
@@ -492,7 +492,7 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
               {/* <Col lg={6} className="px-4 pb-1  ">
                 <Form.Group as={Row} className="align-items-center">
                   <Form.Label className="col-form-label">
-                    Bussiness Hours
+                    Business Hours
                   </Form.Label>
                   <Form.Control
                     as="select"

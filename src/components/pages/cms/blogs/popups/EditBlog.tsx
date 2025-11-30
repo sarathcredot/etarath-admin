@@ -182,7 +182,7 @@ const EditBlog = ({ isOpen, toggle, blogId }: Props) => {
                         width={"100%"}
                         height={"100%"}
                         style={{ objectFit: "fill" }}
-                        crossOrigin="anonymous"
+                        // crossOrigin="anonymous"
                       />
                       <div
                         onClick={() => setIsUploadOpen(true)}

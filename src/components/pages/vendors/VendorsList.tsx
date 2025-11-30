@@ -214,25 +214,29 @@ const VendorsList = ({
                           >
                             <img
                               className="mr-1"
-                              // src={generateFilePath(item?.images[0])}
-                              src={generateFilePath(item?.imgUrl)}
+                              src={generateFilePath(
+                                item?.kycDetails?.vendor_logo
+                              )}
                               alt="profile"
                               width="50"
                               height="50"
-                              crossOrigin="anonymous"
+                              // crossOrigin="anonymous"
                             />
                           </Link>
                         </td>
                         <td>
                           <Link to={`/vendors/detail?_id=${item?._id}`}>
-                            {item?.userName}
+                            {item?.kycDetails?.business_name || item?.userName}
                           </Link>
                         </td>
-                        <td>{item?.phoneNumber}</td>
-                        <td>{item?.email}</td>
+                        <td>
+                          {item?.kycDetails?.phoneNumber || item?.phoneNumber}
+                        </td>
+                        <td>{item?.kycDetails?.email || item?.email}</td>
                         <td>
                           <div
                             className={`ecommerce-status ${item?.isVerified}`}
+                            style={{ textTransform: "capitalize" }}
                           >
                             {item?.isVerified}
                           </div>
@@ -260,12 +264,21 @@ const VendorsList = ({
                               className="action_btn "
                               onClick={(e) => {
                                 e.stopPropagation();
+                                navigate(`/vendors/detail?_id=${item?._id}`);
+                              }}
+                            >
+                              <i className="far fa-eye"></i>
+                            </div>
+                            {/* <div
+                              className="action_btn "
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setSelectedVendor(item);
                                 setEditOpen(true);
                               }}
                             >
                               <i className="fas fa-pencil-alt"></i>
-                            </div>
+                            </div> */}
                             {/* <div
                               className="action_btn"
                               onClick={() => {

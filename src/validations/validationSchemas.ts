@@ -15,7 +15,7 @@ export const ProductValidationSchema = Yup.object().shape({
     .required("Product name is required")
     .max(100, "Product name cannot exceed 100 characters"),
   brand: Yup.string().required("Brand is required"),
-  // category: Yup.string().required("Category is required"),
+  category: Yup.string().required("Category is required"),
   origin: Yup.string().required("Origin is required"),
   yearOfManufacturer: Yup.string().required("Year is required"),
   width: Yup.number()
@@ -23,13 +23,10 @@ export const ProductValidationSchema = Yup.object().shape({
     .typeError("Width must be a number")
     .positive("Width must be a positive number"),
   height: Yup.number()
-    .required("Height is required")
     .typeError("Height must be a number")
-    .positive("Height must be a positive number"),
-  size: Yup.number()
-    .required("Rim Size is required")
-    .typeError("Rim Size must be a number")
-    .positive("Rim Size must be a positive number"),
+    .positive("Height must be a positive number")
+    .optional(),
+  size: Yup.string().required("Rim Size is required"),
   imageUrl: Yup.array()
     .of(Yup.mixed().required("Image is required"))
     .min(4, "4 images required")
@@ -42,15 +39,15 @@ export const ProductValidationSchema = Yup.object().shape({
 });
 // stock validation schema
 export const StockValidationSchema = Yup.object().shape({
-  stock: Yup.string().required("Quantity is required"),
-  price: Yup.string().required("Sale Price is required"),
+  // stock: Yup.string().required("Quantity is required"),
+  price_normal_customer: Yup.string().required("Sale Price is required"),
   requestedBy: Yup.string().required("Select vendor"),
   warrantyPeriod: Yup.string().required("Warranty Period is required"),
   warranty_type: Yup.string().required("Type is required"),
 });
 export const StockEditValidationSchema = Yup.object().shape({
-  stock: Yup.string().required("Quantity is required"),
-  price: Yup.string().required("Sale Price is required"),
+  // stock: Yup.string().required("Quantity is required"),
+  price_normal_customer: Yup.string().required("Sale Price is required"),
   warrantyPeriod: Yup.string().required("Warranty Period is required"),
   warranty_type: Yup.string().required("Type is required"),
 });
@@ -70,10 +67,9 @@ export const VendorValidationSchema = Yup.object().shape({
   email: Yup.string()
     .required("Email is required")
     .email("Enter a valid email address"),
-  phoneNumber: Yup.string()
-    .required("Contact Number is required")
-    .min(10, "Only 10 digits required")
-    .max(10, "Only 10 digits allowed"),
+  phoneNumber: Yup.string().required("Phone Number is required"),
+  // .min(8, "Only 10 digits required")
+  // .max(10, "Only 10 digits allowed"),
   eidNo: Yup.string()
     .required("EID Number is required")
     .matches(
@@ -180,7 +176,7 @@ export const BlogTagValidationSchema = Yup.object().shape({
 
 export const VendorKycValidationSchema = Yup.object().shape({
   shop_name: Yup.string().required("Shop Name is required"),
-  business_type: Yup.string().required("Bussiness Type is required"),
+  business_type: Yup.string().required("Business Type is required"),
   shop_location: Yup.string().required("Shop Location is required"),
   tradeLicenseNumber: Yup.string().required(
     "Enter Trade License/ Business Registration Number "
@@ -199,7 +195,7 @@ export const VendorKycValidationSchema = Yup.object().shape({
 });
 export const VendorEditKycValidationSchema = Yup.object().shape({
   shop_name: Yup.string().required("Shop Name is required"),
-  business_type: Yup.string().required("Bussiness Type is required"),
+  business_type: Yup.string().required("Business Type is required"),
   shop_location: Yup.string().required("Shop Location is required"),
   tradeLicenseNumber: Yup.string().required(
     "Enter Trade License/ Business Registration Number "
@@ -251,6 +247,27 @@ export const VendorProfileValidationSchema = Yup.object({
   business_address: Yup.string().required("Required"),
   post: Yup.string().required("Required"),
   business_hours: Yup.string().required("Required"),
+  vendor_logo: Yup.mixed().required("Upload Logo"),
   shop_photo_logo: Yup.mixed().required("Upload Shop Photo"),
-  subscription_plan: Yup.string().required("Required"),
+  // subscription_plan: Yup.string().required("Required"),
+});
+export const VendorContactValidationSchema = Yup.object({
+  userName: Yup.string().required("Required"),
+  designation: Yup.string().required("Required"),
+  phoneNumber: Yup.string().required("Required"),
+  email: Yup.string().email("Invalid email").required("Required"),
+  // language: Yup.array().min(1, "Select at least one language").required("Required"),
+});
+export const VendorPreferenceValidationSchema = Yup.object({
+  brands: Yup.array().min(1, "Select at least one brand").required("Required"),
+  // authorised_brands: Yup.array()
+  //   .min(1, "Select at least one authorised brand")
+  //   .required("Required"),
+  // averageMonthlyVolume: Yup.string().required("Required"),
+  paymentMethod: Yup.string().required("Required"),
+  // typeOfTyers: Yup.mixed().required("Select tyre types"),
+});
+export const VendorSubscriptionValidationSchema = Yup.object({
+  planId: Yup.string().required("Required"),
+  durationType: Yup.string().required("Required"),
 });

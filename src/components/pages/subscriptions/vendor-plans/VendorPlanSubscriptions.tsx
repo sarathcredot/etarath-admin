@@ -9,7 +9,6 @@ import { format } from "date-fns";
 import _ from "lodash";
 import { errorMsg } from "src/utils/toast";
 import Loader from "src/components/features/loader";
-import { ORDER_TYPES } from "src/common/constant.common";
 
 const VendorPlanSubscriptions = ({ header = false, planId }: any) => {
   // STATES

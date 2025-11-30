@@ -19,3 +19,20 @@ export const useGetAllPlanOrdersById = (
     enabled: enabled,
   });
 };
+
+
+// PURCHASE A SUBSCRIPTION PLAN
+export const purchasePlan = async (data: any) => {
+  return await axiosAuth.put(`${baseUrl}/purchase-plan`,data);
+};
+
+export const usePurchasePlan = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: purchasePlan,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["vendor"] });
+      queryClient.invalidateQueries({ queryKey: ["vendors"] });
+    },
+  });
+};

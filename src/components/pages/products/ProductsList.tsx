@@ -15,7 +15,7 @@ import { Brand } from "../brands/BrandsList";
 export type Product = {
   _id: string;
   productName: string;
-  // category: string;
+  category: string;
   brand: Brand;
   width: number;
   height: number;
@@ -263,7 +263,7 @@ const ProductsList = ({
                                 alt="product"
                                 width="40"
                                 height="40"
-                                crossOrigin="anonymous"
+                                // crossOrigin="anonymous"
                               />
                             </div>
                           </td>

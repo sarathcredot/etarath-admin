@@ -45,7 +45,6 @@ const VendorStocksList = ({
   const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(1);
 
-
   // MUTATION
   const { mutateAsync: deleteStock } = useDeleteStock();
   const { mutateAsync: updateStock } = useUpdateStock();
@@ -53,8 +52,9 @@ const VendorStocksList = ({
   //FORMINK
   const formik = useFormik({
     initialValues: {
-      stock: "",
-      price: "",
+      // stock: "",
+      price_normal_customer: "",
+      price_loyal_customer: "",
       warrantyPeriod: "",
       warranty_type: "",
     },
@@ -124,8 +124,13 @@ const VendorStocksList = ({
   useEffect(() => {
     if (isEditOpen && selectedStock) {
       formik.setValues({
-        stock: selectedStock?.stock ? selectedStock?.stock.toString() : "",
-        price: selectedStock?.price ? selectedStock?.price.toString() : "",
+        // stock: selectedStock?.stock ? selectedStock?.stock.toString() : "",
+        price_normal_customer: selectedStock?.price_normal_customer
+          ? selectedStock?.price_normal_customer.toString()
+          : "",
+        price_loyal_customer: selectedStock?.price_loyal_customer
+          ? selectedStock?.price_loyal_customer.toString()
+          : "",
         warrantyPeriod: selectedStock?.warrantyPeriod
           ? selectedStock?.warrantyPeriod.toString()
           : "",
@@ -200,7 +205,7 @@ const VendorStocksList = ({
                       </InputGroup>
                     </div>
                   </Col>
-                  <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
+                  {/* <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
                     <Button
                       className="font-weight-semibold"
                       variant="dark"
@@ -209,7 +214,7 @@ const VendorStocksList = ({
                     >
                       + Add
                     </Button>
-                  </Col>
+                  </Col> */}
                 </Row>
               </div>
               <Form onSubmit={formik.handleSubmit}>
@@ -230,8 +235,9 @@ const VendorStocksList = ({
                         Product
                       </th>
                       <th></th>
-                      <th>Quantity</th>
-                      <th>Sale Price</th>
+                      {/* <th>Quantity</th> */}
+                      <th>General Sale Price</th>
+                      <th>Loyal Customer Price</th>
                       <th>Warranty Period</th>
                       {/* <th>Verification </th> */}
 
@@ -252,7 +258,13 @@ const VendorStocksList = ({
                       stocks &&
                       stocks?.result?.length > 0 ? (
                       stocks?.result?.map((item: any, index: number) => (
-                        <tr key={index} onClick={()=>navigate(`/stock/detail?_id=${item?._id}`)}>
+                        <tr
+                          key={index}
+                          onClick={() =>
+                            !isEditOpen &&
+                            navigate(`/stock/detail?_id=${item?._id}`)
+                          }
+                        >
                           <td>
                             <Link to={`/stock/detail?_id=${item?._id}`}>
                               <strong>
@@ -268,6 +280,7 @@ const VendorStocksList = ({
                             <Link
                               style={{ width: "50px", height: "50px" }}
                               className="d-flex align-items-center justify-content-center"
+                              onClick={(e) => e.stopPropagation()}
                               to={`/products/detail?_id=${item?.product?._id}`}
                             >
                               <img
@@ -279,18 +292,24 @@ const VendorStocksList = ({
                                 alt="product"
                                 width="40"
                                 height="40"
-                                crossOrigin="anonymous"
+                                // crossOrigin="anonymous"
                               />
                             </Link>
                           </td>
                           <td>
                             <Link
+                              onClick={(e) => e.stopPropagation()}
                               to={`/products/detail?_id=${item?.product?._id}`}
                             >
-                              {item?.product?.productName}
+                              {item?.product?.productName}-{" "}
+                              {`${item?.product?.width}${
+                                item?.product?.height
+                                  ? `/${item.product?.height}`
+                                  : ""
+                              } R${item?.product?.size}`}
                             </Link>
                           </td>
-                          {isEditOpen &&
+                          {/* {isEditOpen &&
                           selectedStock &&
                           selectedStock?._id === item?._id ? (
                             <td>
@@ -341,11 +360,11 @@ const VendorStocksList = ({
                                 {item?.stock}
                               </Link>
                             </td>
-                          )}
+                          )} */}
                           {isEditOpen &&
                           selectedStock &&
                           selectedStock?._id === item?._id ? (
-                            <td>
+                            <td onClick={(e) => e.stopPropagation()}>
                               <div style={{ width: "90%" }}>
                                 <Form.Group
                                   as={Row}
@@ -354,27 +373,57 @@ const VendorStocksList = ({
                                   <Form.Control
                                     type="number"
                                     placeholder="Enter sale price"
-                                    name="price"
-                                    value={formik.values.price}
+                                    name="price_normal_customer"
+                                    value={formik.values.price_normal_customer}
                                     onChange={formik.handleChange}
                                     isInvalid={
-                                      !!formik.errors.price &&
-                                      formik.touched.price
+                                      !!formik.errors.price_normal_customer &&
+                                      formik.touched.price_normal_customer
                                     }
                                   />
                                   <Form.Control.Feedback type="invalid">
-                                    {formik.errors.price}
+                                    {formik.errors.price_normal_customer}
                                   </Form.Control.Feedback>
                                 </Form.Group>
                               </div>
                             </td>
                           ) : (
-                            <td>{item?.price} AED</td>
+                            <td>{item?.price_normal_customer} AED</td>
                           )}
                           {isEditOpen &&
                           selectedStock &&
                           selectedStock?._id === item?._id ? (
-                            <td>
+                            <td onClick={(e) => e.stopPropagation()}>
+                              <div style={{ width: "90%" }}>
+                                <Form.Group
+                                  as={Row}
+                                  className="align-items-center"
+                                >
+                                  <Form.Control
+                                    type="number"
+                                    placeholder="price for loyal customers"
+                                    name="price_loyal_customer"
+                                    value={formik.values.price_loyal_customer}
+                                    onChange={formik.handleChange}
+                                    isInvalid={
+                                      !!formik.errors.price_loyal_customer &&
+                                      formik.touched.price_loyal_customer
+                                    }
+                                    step="any"
+                                  />
+                                  <Form.Control.Feedback type="invalid">
+                                    {formik.errors.price_loyal_customer}
+                                  </Form.Control.Feedback>
+                                </Form.Group>
+                              </div>
+                            </td>
+                          ) : (
+                            <td>{item?.price_loyal_customer} AED</td>
+                          )}
+                          {isEditOpen &&
+                          selectedStock &&
+                          selectedStock?._id === item?._id ? (
+                            <td onClick={(e) => e.stopPropagation()}>
                               <div
                                 style={{
                                   width: "100%",
@@ -454,7 +503,7 @@ const VendorStocksList = ({
                             </div>
                           </td> */}
 
-                          <td>
+                          <td onClick={(e) => e.stopPropagation()}>
                             <div
                               className="d-flex align-items-center"
                               // onClick={() => {
@@ -469,7 +518,7 @@ const VendorStocksList = ({
                               />
                             </div>
                           </td>
-                          <td>
+                          <td onClick={(e) => e.stopPropagation()}>
                             <div className="d-flex align-items-center justify-content-around">
                               {isEditOpen &&
                               selectedStock &&

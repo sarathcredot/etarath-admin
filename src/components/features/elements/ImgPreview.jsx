@@ -14,7 +14,7 @@ const ImgPreview = ({ file,objectFit="fill" }) => {
             width={"100%"}
             height={"100%"}
             style={{ minHeight: "100%", minWidth: "100%", objectFit: objectFit }}
-            crossOrigin="anonymous"
+            // crossOrigin="anonymous"
           />
         </div>
       </div>

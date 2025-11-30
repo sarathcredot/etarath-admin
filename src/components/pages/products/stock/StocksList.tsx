@@ -61,8 +61,9 @@ const StocksList = ({
   //FORMINK
   const formik = useFormik({
     initialValues: {
-      stock: "",
-      price: "",
+      // stock: "",
+      price_normal_customer: "",
+      price_loyal_customer: "",
       warrantyPeriod: "",
       warranty_type: "",
     },
@@ -132,8 +133,13 @@ const StocksList = ({
   useEffect(() => {
     if (isEditOpen && selectedStock) {
       formik.setValues({
-        stock: selectedStock?.stock ? selectedStock?.stock.toString() : "",
-        price: selectedStock?.price ? selectedStock?.price.toString() : "",
+        // stock: selectedStock?.stock ? selectedStock?.stock.toString() : "",
+        price_normal_customer: selectedStock?.price_normal_customer
+          ? selectedStock?.price_normal_customer.toString()
+          : "",
+        price_loyal_customer: selectedStock?.price_loyal_customer
+          ? selectedStock?.price_loyal_customer.toString()
+          : "",
         warrantyPeriod: selectedStock?.warrantyPeriod
           ? selectedStock?.warrantyPeriod.toString()
           : "",
@@ -143,6 +149,8 @@ const StocksList = ({
       });
     }
   }, [isEditOpen, selectedStock]);
+
+  console.log("stock edit formik = ", formik.values);
   return (
     <>
       <div className="">
@@ -235,11 +243,12 @@ const StocksList = ({
                         // className="text-center"
                         style={{ width: "80px" }}
                       >
-                        Product
+                        Vendor
                       </th>
-                      <th>Vendor</th>
-                      <th>Quantity</th>
-                      <th>Sale Price</th>
+                      <th></th>
+                      {/* <th>Quantity</th> */}
+                      <th>General Sale Price</th>
+                      <th>Loyal Customer Price</th>
                       <th>Warranty Period</th>
                       {/* <th>Verification </th> */}
 
@@ -281,13 +290,13 @@ const StocksList = ({
                               <img
                                 className="mr-1"
                                 src={generateFilePath(
-                                  item?.product?.imageUrl[0]
+                                  item?.kycDetails?.vendor_logo
                                 )}
                                 // src={item?.imageUrl[0]}
                                 alt="product"
                                 width="40"
                                 height="40"
-                                crossOrigin="anonymous"
+                                // crossOrigin="anonymous"
                               />
                             </Link>
                           </td>
@@ -336,13 +345,13 @@ const StocksList = ({
                             <Link
                               to={`/vendors/detail?_id=${item?.requestedBy?._id}`}
                             >
-                              {item?.requestedBy?.userName}
+                              {item?.kycDetails?.business_name}
                             </Link>
-                              <br />
-                              {item?.requestedBy?.phoneNumber}
+                            <br />
+                            {item?.kycDetails?.phoneNumber}
                           </td>
                           {/* )} */}
-                          {isEditOpen &&
+                          {/* {isEditOpen &&
                           selectedStock &&
                           selectedStock?._id === item?._id ? (
                             <td>
@@ -389,6 +398,36 @@ const StocksList = ({
                             </td>
                           ) : (
                             <td>{item?.stock}</td>
+                          )} */}
+                          {isEditOpen &&
+                          selectedStock &&
+                          selectedStock?._id === item?._id ? (
+                            <td>
+                              <div style={{ width: "90%" }}>
+                                <Form.Group
+                                  as={Row}
+                                  className="align-items-center"
+                                >
+                                  <Form.Control
+                                    type="number"
+                                    placeholder="price for normal customers"
+                                    name="price_normal_customer"
+                                    value={formik.values.price_normal_customer}
+                                    onChange={formik.handleChange}
+                                    isInvalid={
+                                      !!formik.errors.price_normal_customer &&
+                                      formik.touched.price_normal_customer
+                                    }
+                                    step="any"
+                                  />
+                                  <Form.Control.Feedback type="invalid">
+                                    {formik.errors.price_normal_customer}
+                                  </Form.Control.Feedback>
+                                </Form.Group>
+                              </div>
+                            </td>
+                          ) : (
+                            <td>{item?.price_normal_customer} AED</td>
                           )}
                           {isEditOpen &&
                           selectedStock &&
@@ -401,23 +440,24 @@ const StocksList = ({
                                 >
                                   <Form.Control
                                     type="number"
-                                    placeholder="Enter sale price"
-                                    name="price"
-                                    value={formik.values.price}
+                                    placeholder="price for loyal customers"
+                                    name="price_loyal_customer"
+                                    value={formik.values.price_loyal_customer}
                                     onChange={formik.handleChange}
                                     isInvalid={
-                                      !!formik.errors.price &&
-                                      formik.touched.price
+                                      !!formik.errors.price_loyal_customer &&
+                                      formik.touched.price_loyal_customer
                                     }
+                                    step="any"
                                   />
                                   <Form.Control.Feedback type="invalid">
-                                    {formik.errors.price}
+                                    {formik.errors.price_loyal_customer}
                                   </Form.Control.Feedback>
                                 </Form.Group>
                               </div>
                             </td>
                           ) : (
-                            <td>{item?.price} AED</td>
+                            <td>{item?.price_loyal_customer} AED</td>
                           )}
                           {isEditOpen &&
                           selectedStock &&

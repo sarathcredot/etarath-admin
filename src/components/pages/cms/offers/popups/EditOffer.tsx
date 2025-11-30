@@ -103,7 +103,7 @@ const EditOffer = ({ isOpen, toggle, offerId }: Props) => {
                         }
                         alt="offer"
                         style={{ objectFit: "fill" }}
-                        crossOrigin="anonymous"
+                        // crossOrigin="anonymous"
                       />
                       <div
                         onClick={() => setIsUploadOpen(true)}

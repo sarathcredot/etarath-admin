@@ -14344,8 +14344,8 @@ html.ie11 .scroll-to-top {
   background: #fff;
   border-left-color: #eee;
   border-right-color: #eee;
-  border-top: 3px solid #08c;
-  color: #08c;
+  border-top: 3px solid #FF600F;
+  color: #FF600F;
 }
 
 .nav-tabs .nav-item.active,
@@ -14354,8 +14354,8 @@ html.ie11 .scroll-to-top {
   background: #fff;
   border-left-color: #eee;
   border-right-color: #eee;
-  border-top: 3px solid #08c;
-  color: #08c;
+  border-top: 3px solid #FF600F;
+  color: #FF600F;
 }
 
 .tab-content {
@@ -16626,7 +16626,7 @@ ul.simple-bullet-list li.orange:before {
 }
 
 .wizard-tabs ul > li.active .badge {
-  background-color: #08c;
+  background-color: #FF600F;
 }
 
 .wizard-tabs ul > li.disabled > a,
@@ -16725,7 +16725,7 @@ html.dark .wizard-progress .steps-progress .progress-indicator,
 html .wizard-progress .steps-progress .progress-indicator {
   height: 100%;
   width: 0;
-  background: #08c;
+  background: #FF600F;
   transition: width 0.2s ease-in;
 }
 
@@ -16796,16 +16796,16 @@ html .wizard-progress .wizard-steps li a span {
 
 html.dark .wizard-progress .wizard-steps li.completed a span,
 html .wizard-progress .wizard-steps li.completed a span {
-  background: #08c;
-  border-color: #08c;
+  background: #FF600F;
+  border-color: #FF600F;
   color: #fff;
 }
 
 html.dark .wizard-progress .wizard-steps li.active a span,
 html .wizard-progress .wizard-steps li.active a span {
   background: #fff;
-  color: #08c;
-  border-color: #08c;
+  color: #FF600F;
+  border-color: #FF600F;
 }
 
 html.dark .wizard-progress .wizard-steps li.completed.active a span,
@@ -16911,7 +16911,7 @@ html .wizard-progress.wizard-progress-lg ul li a span {
 
   html.dark .wizard-progress .wizard-steps li:before,
   html .wizard-progress .wizard-steps li:before {
-    background: #08c;
+    background: #FF600F;
     left: 0;
   }
 
@@ -16933,7 +16933,7 @@ html .wizard-progress.wizard-progress-lg ul li a span {
 
   html.dark .wizard-progress .wizard-steps li.completed:after,
   html .wizard-progress .wizard-steps li.completed:after {
-    background: #08c;
+    background: #FF600F;
   }
 
   html.dark .wizard-progress .wizard-steps li.completed.active,
