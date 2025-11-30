@@ -187,7 +187,7 @@ const BrandProductsList = ({ brandId }: { brandId?: string }) => {
                     >
                       Product
                     </th>
-                    <th>Name</th>
+                    <th></th>
                     <th>Origin</th>
                     <th>Year</th>
 
@@ -237,7 +237,10 @@ const BrandProductsList = ({ brandId }: { brandId?: string }) => {
                         </td>
                         <td>
                           <Link to={`/products/detail?_id=${item?._id}`}>
-                            {item?.productName}
+                            {item?.productName} -{" "}
+                                  {`${item?.width}${
+                                    item?.height ? `/${item.height}` : ""
+                                  } R${item?.size}`}
                           </Link>
                         </td>
                         <td>
