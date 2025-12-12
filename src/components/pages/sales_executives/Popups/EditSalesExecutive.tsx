@@ -123,7 +123,7 @@ const EditSalesExecutive = ({ isOpen, toggle, organiserId }: Props) => {
                 <Button
                   variant="dark"
                   type="submit"
-                  style={{ background: "#000" }}
+                  // style={{ background: "#000" }}
                 >
                   Confirm
                 </Button>

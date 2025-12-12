@@ -56,7 +56,7 @@ export const StockEditValidationSchema = Yup.object().shape({
 export const BrandValidationSchema = Yup.object().shape({
   name: Yup.string().required("Brand name is required"),
   imageUrl: Yup.mixed().required("Primary logo is required"),
-  imageUrl2: Yup.mixed().required("Alternate logo is required"),
+  // imageUrl2: Yup.mixed().required("Alternate logo is required"),
   priority: Yup.string().required("Brand priority is required"),
 });
 
@@ -239,6 +239,8 @@ export const VendorProfileValidationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Required"),
   location: Yup.string().required("Required"),
   tradeLicenseNumber: Yup.string().required("Required"),
+  tradeLicenseRegistrationDate: Yup.string().required("Required"),
+  tradeLicenseExpiryDate: Yup.string().required("Required"),
   documents: Yup.object().shape({
     tradeLicense: Yup.mixed().required(
       "Upload Trade License/ Business Registration"

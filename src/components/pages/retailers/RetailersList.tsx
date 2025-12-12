@@ -102,7 +102,7 @@ const RetailersList = ({
           <Col>
             <div className="datatables-header-footer-wrapper">
               <div className="datatable-header">
-                <Row className="align-items-lg-center justify-content-end mb-3">
+                <Row className="align-items-lg-center justify-content-between mb-3">
                   {header && (
                     <Col>
                       <h5 className="m-0 card-title h5 font-weight-bold">
@@ -111,13 +111,13 @@ const RetailersList = ({
                     </Col>
                   )}
 
-                  <Col className="col-auto pl-lg-1">
+                  <Col className="col-auto pl-lg-2">
                     <div className="search search-style-1 mx-lg-auto w-auto">
                       <InputGroup>
                         <Form.Control
                           type="text"
                           className="search-term"
-                          placeholder="Search by Name"
+                          placeholder="Search Retailer"
                           style={{ width: "250px" }}
                           onChange={(e: any) =>
                             debouncedHandleSearch(e.target.value)
@@ -131,7 +131,7 @@ const RetailersList = ({
                     <Button
                       className="font-weight-semibold px-3"
                       variant="dark"
-                      style={{ background: "#000" }}
+                      // style={{ background: "#000" }}
                       onClick={() => navigate("/retailers/add-retailer")}
                       // onClick={() => setAddOpen(true)}
                     >
@@ -287,7 +287,7 @@ const RetailersList = ({
                 </tbody>
               </Table>
             </div>
-            {totalPages > 1 && !search && (
+            {/* {totalPages > 1 && !search && (
               <Pagination
                 currentPage={page}
                 setCurrentPage={setPage}
@@ -295,7 +295,7 @@ const RetailersList = ({
                 totalPages={totalPages}
                 style={{ marginTop: "20px" }}
               />
-            )}
+            )} */}
           </Col>
         </Row>
       </div>

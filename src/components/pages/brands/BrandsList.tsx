@@ -335,13 +335,13 @@ const BrandsList = ({
                 </tbody>
               </Table>
             </div>
-            <Pagination
+            {/* <Pagination
               currentPage={page}
               setCurrentPage={setPage}
               totalButtonsToShow={3}
               totalPages={totalPages}
               style={{ marginTop: "20px" }}
-            />
+            /> */}
             {/* </Card.Body>
             </Card> */}
           </Col>

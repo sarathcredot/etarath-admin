@@ -1166,9 +1166,13 @@
 .bx-cart:before {
   content: "\ea06";
 }
+.bx-shapes:before {
+  content: "\ea06";
+}
 .bx-cart-alt:before {
   content: "\ea07";
 }
+
 .bx-cast:before {
   content: "\ea08";
 }

@@ -54,6 +54,8 @@ export default function AddVendorPage() {
       email: "",
       location: "",
       tradeLicenseNumber: "",
+      tradeLicenseRegistrationDate: "",
+      tradeLicenseExpiryDate: "",
       documents: {
         tradeLicense: "" as any,
       },
@@ -162,6 +164,7 @@ export default function AddVendorPage() {
           await profileFormik.submitForm();
         }
       } catch (error: any) {
+        console.log('error = ',error)
         toast.dismiss();
         toast(_.capitalize(errorMsg(error).toLowerCase()), {
           containerId: "default",
@@ -320,7 +323,7 @@ export default function AddVendorPage() {
           className="form-horizontal"
           showProgress={true}
           progressSize="lg"
-          // validators={[profileFormik, contactFormik, preferenceFormik,subscriptionFormik]}
+          validators={[profileFormik, contactFormik, preferenceFormik,subscriptionFormik]}
           onFinish={handleWizardFinish}
         >
           {/* ------------------------- */}

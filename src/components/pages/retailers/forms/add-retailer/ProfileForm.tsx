@@ -140,8 +140,26 @@ export default function ProfileForm({ formik }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
-
       <Col lg={6} className="px-4 py-1  ">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">EID Expiry Date</Form.Label>
+          <Form.Control
+            type="date"
+            placeholder="EID Expiry Date"
+            name="eidExpiryDate"
+            value={formik.values.eidExpiryDate}
+            onChange={formik.handleChange}
+            isInvalid={
+              !!formik.errors.eidExpiryDate && formik.touched.eidExpiryDate
+            }
+          />
+          <Form.Control.Feedback type="invalid">
+            {formik.errors.eidExpiryDate}
+          </Form.Control.Feedback>
+        </Form.Group>
+      </Col>
+
+      <Col lg={12} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">Upload EID</Form.Label>
           <Form.Control

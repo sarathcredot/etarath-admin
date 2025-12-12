@@ -1,7 +1,7 @@
 [
   {
     "name": "Vendors",
-    "icon": "FaPersonShelter",
+    "icon": "bx bx-group",
     "url": "/vendors"
   },
   {
@@ -11,18 +11,18 @@
   },
   {
     "name": "Products",
-    "icon": "LuShoppingCart",
+    "icon": "bx bx-cart",
     "url": "/products"
   },
   {
     "name": "Brands",
-    "icon": "MdOutlineDashboardCustomize",
+    "icon": "bx bx-grid-alt",
     "url": "/brands"
   },
 
   {
     "name": "Attributes",
-    "icon": "BsTag",
+    "icon": "bx bx-tag",
     "url": "#",
     "children": [
       {

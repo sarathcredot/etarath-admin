@@ -43,7 +43,7 @@ const ConfirmationPopup = ({ isOpen, toggle,submit,text }: Props) => {
                 <Button
                   variant="dark"
                   onClick={submit}
-                  style={{background:"#000"}}
+                  // style={{background:"#000"}}
                   >
                   Confirm
                 </Button>

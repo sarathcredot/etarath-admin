@@ -158,7 +158,7 @@ const ProductsPage = () => {
                 {/* <Card.Body> */}
                 <div className="datatables-header-footer-wrapper">
                   <div className="datatable-header">
-                    <Row className="align-items-lg-center justify-content-end mb-3">
+                    <Row className="align-items-lg-center justify-content-between mb-3">
                       {/* <Col
                         lg="auto"
                         className="mb-2 mb-lg-0 ml-xl-auto pl-xl-1"
@@ -184,7 +184,7 @@ const ProductsPage = () => {
                           </Button>
                         </div>
                       </Col> */}
-                      <Col className="col-auto pl-lg-1">
+                      <Col className="col-auto pl-lg-2">
                         <div className="search search-style-1 mx-lg-auto w-auto">
                           <InputGroup>
                             <Form.Control

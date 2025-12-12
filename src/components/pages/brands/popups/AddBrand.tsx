@@ -31,7 +31,7 @@ const AddBrand = ({ isOpen, toggle }: Props) => {
     initialValues: {
       name: "",
       imageUrl: "" as any,
-      imageUrl2: "" as any,
+      // imageUrl2: "" as any,
       priority: 1,
     },
     validationSchema: BrandValidationSchema,
@@ -51,12 +51,12 @@ const AddBrand = ({ isOpen, toggle }: Props) => {
         let response = await uploadFile(formData);
         values.imageUrl = response.data.data;
       }
-      if (typeof values?.imageUrl2 !== "string") {
-        let formData = new FormData();
-        formData.append("file", values?.imageUrl2.file);
-        let response = await uploadFile(formData);
-        values.imageUrl2 = response.data.data;
-      }
+      // if (typeof values?.imageUrl2 !== "string") {
+      //   let formData = new FormData();
+      //   formData.append("file", values?.imageUrl2.file);
+      //   let response = await uploadFile(formData);
+      //   values.imageUrl2 = response.data.data;
+      // }
 
       const res = await createBrand(values);
       toast(res?.data?.message, {
@@ -84,12 +84,16 @@ const AddBrand = ({ isOpen, toggle }: Props) => {
         <Form onSubmit={formik.handleSubmit}>
           <Modal.Body>
             <Row className=" px-md-3 ">
-              <Col className="px-2 py-1" lg={6}>
+              <Col className="px-2 py-1" lg={12}>
                 {formik.values.imageUrl ? (
                   <Col lg={12} className="px-0 py-1">
                     <div>
-                      Primary Logo (Dark Version)
-                      <div className="product_image_div mt-1" style={{height:"180px"}}>
+                      {/* Primary Logo (Dark Version) */}
+                      Logo
+                      <div
+                        className="product_image_div mt-1"
+                        style={{ height: "180px" }}
+                      >
                         <img
                           // src={generateFilePath(img)}
                           src={
@@ -118,14 +122,16 @@ const AddBrand = ({ isOpen, toggle }: Props) => {
                 ) : (
                   <Col lg={12} className="px-0 py-1 ">
                     <div>
-                      Primary Logo (Dark Version)
+                      {/* Primary Logo (Dark Version) */}
+                      Logo
                       <div
                         className="product_image_div mt-1"
                         onClick={() => setIsUploadOpen(true)}
-                        style={{height:"180px"}}
+                        style={{ height: "180px" }}
                       >
                         <Button variant="dark" className="">
-                          Upload Primary Logo
+                          {/* Upload Primary Logo */}
+                          Upload Logo
                         </Button>
                       </div>
                     </div>
@@ -137,7 +143,7 @@ const AddBrand = ({ isOpen, toggle }: Props) => {
                   </div>
                 )}
               </Col>
-              <Col className="px-2 py-1" lg={6}>
+              {/* <Col className="px-2 py-1" lg={6}>
                 {formik.values.imageUrl2 ? (
                   <Col lg={12} className="px-0 py-1">
                     <div>
@@ -189,7 +195,7 @@ const AddBrand = ({ isOpen, toggle }: Props) => {
                     {formik.errors.imageUrl2}
                   </div>
                 )}
-              </Col>
+              </Col> */}
             </Row>
             <Row className="px-1 px-md-3 pt-md-3 ">
               <Col lg={12} className="px-4 py-1  ">
@@ -217,7 +223,9 @@ const AddBrand = ({ isOpen, toggle }: Props) => {
                     name="priority"
                     value={formik.values.priority}
                     onChange={formik.handleChange}
-                    isInvalid={!!formik.errors.priority && formik.touched.priority}
+                    isInvalid={
+                      !!formik.errors.priority && formik.touched.priority
+                    }
                   />
                   <Form.Control.Feedback type="invalid">
                     {formik.errors.priority}
@@ -234,7 +242,7 @@ const AddBrand = ({ isOpen, toggle }: Props) => {
                 </Button>
                 <Button
                   variant="dark"
-                  style={{ background: "#000" }}
+                  // style={{ background: "#000" }}
                   type="submit"
                 >
                   Submit
@@ -248,8 +256,28 @@ const AddBrand = ({ isOpen, toggle }: Props) => {
       <MediaGalleryModal
         isOpen={isUploadOpen}
         onClose={(files: any) => {
+          // if (files.length > 0) {
+          //   formik.setFieldValue("imageUrl", files[0]);
+          // }
           if (files.length > 0) {
-            formik.setFieldValue("imageUrl", files[0]);
+            const file = files[0];
+
+            // Handle both local uploads & already-stored gallery items
+            const mimeType =
+              file?.type || file?.file?.type || file?.copy_link?.mimeType;
+
+            const allowed = ["image/png", "image/svg+xml"];
+            // const allowed = ["image/svg+xml"];
+
+            if (!allowed.includes(mimeType)) {
+              toast(`Only PNG and SVG files are allowed.`, {
+                containerId: "modal",
+                className: "no-icon notification-danger",
+              });
+              return;
+            }
+
+            formik.setFieldValue("imageUrl", file);
           }
           setIsUploadOpen(!isUploadOpen);
         }}

@@ -485,7 +485,7 @@ const EditProduct = ({ isOpen, toggle, productId }: Props) => {
                             {formik?.values?.features?.length - 1 === index && (
                               <Button
                                 variant="dark"
-                                style={{ background: "#000" }}
+                                // style={{ background: "#000" }}
                                 type="button"
                                 onClick={() => {
                                   formik.setFieldValue("features", [
@@ -565,7 +565,7 @@ const EditProduct = ({ isOpen, toggle, productId }: Props) => {
                 </Button>
                 <Button
                   variant="dark"
-                  style={{ background: "#000" }}
+                  // style={{ background: "#000" }}
                   type="submit"
                 >
                   Submit

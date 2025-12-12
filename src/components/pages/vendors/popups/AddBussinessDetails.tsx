@@ -580,7 +580,7 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
                 </Button>
                 <Button
                   variant="dark"
-                  style={{ background: "#000" }}
+                  // style={{ background: "#000" }}
                   type="submit"
                 >
                   Submit

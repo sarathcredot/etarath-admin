@@ -53,6 +53,7 @@ export default function AddRetailerPage() {
       email: "",
       phoneNumber: "",
       eidNo: "",
+      eidExpiryDate: "",
       eidFile: "" as any,
       imgUrl: "" as any,
       role: "retailer",

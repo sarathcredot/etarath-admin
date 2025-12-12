@@ -79,7 +79,7 @@ const FileUploadPopup = ({
                 onClick={() =>
                   files.length > 0 && submit(files.map((f) => f.file))
                 }
-                style={{ background: "#000" }}
+                // style={{ background: "#000" }}
               >
                 Confirm
               </Button>

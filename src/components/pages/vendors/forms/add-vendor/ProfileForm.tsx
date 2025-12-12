@@ -275,7 +275,7 @@ export default function ProfileForm({ formik }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
-      <Col lg={6} className="px-4 py-1  ">
+      <Col lg={12} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">
             Upload Trade License/ Business Registration
@@ -304,7 +304,49 @@ export default function ProfileForm({ formik }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
-      <Col lg={6} className="px-2 py-1">
+      <Col lg={6} className="px-4 py-1  ">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">
+            Trade License Registration Date
+          </Form.Label>
+          <Form.Control
+            type="date"
+            placeholder="Trade License Registration Date"
+            name="tradeLicenseRegistrationDate"
+            value={formik.values.tradeLicenseRegistrationDate}
+            onChange={formik.handleChange}
+            isInvalid={
+              !!formik.errors.tradeLicenseRegistrationDate &&
+              formik.touched.tradeLicenseRegistrationDate
+            }
+          />
+          <Form.Control.Feedback type="invalid">
+            {formik.errors.tradeLicenseRegistrationDate}
+          </Form.Control.Feedback>
+        </Form.Group>
+      </Col>
+      <Col lg={6} className="px-4 py-1  ">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">
+            Trade License Expiry Date
+          </Form.Label>
+          <Form.Control
+            type="date"
+            placeholder="Trade License Expiry Date"
+            name="tradeLicenseExpiryDate"
+            value={formik.values.tradeLicenseExpiryDate}
+            onChange={formik.handleChange}
+            isInvalid={
+              !!formik.errors.tradeLicenseExpiryDate &&
+              formik.touched.tradeLicenseExpiryDate
+            }
+          />
+          <Form.Control.Feedback type="invalid">
+            {formik.errors.tradeLicenseExpiryDate}
+          </Form.Control.Feedback>
+        </Form.Group>
+      </Col>
+      <Col lg={12} className="px-2 py-1">
         <Form.Group>
           <Form.Label className="col-form-label">Business Address</Form.Label>
           <Form.Control

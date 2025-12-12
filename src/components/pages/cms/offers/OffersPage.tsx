@@ -147,7 +147,7 @@ const OffersPage = () => {
                         <Button
                           className="font-weight-semibold px-3"
                           variant="dark"
-                          style={{ background: "#000" }}
+                          // style={{ background: "#000" }}
                           onClick={() => setIsOpen(true)}
                         >
                           + Add

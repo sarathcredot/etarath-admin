@@ -180,14 +180,15 @@ const BrandsDetailPage = () => {
                   </Col>
                   <Col  className="pl-3 d-flex justify-content-end" style={{ gap: 10 }}>
                     <div className="">
-                      <h6>Primary Logo (Dark Version)</h6>
+                      {/* <h6>Primary Logo (Dark Version)</h6> */}
+                      <h6>Logo</h6>
                       <div
                         className="product_image_div"
                         style={{ cursor: "default", width: 200, height: 200 }}
                       >
                         <img
                           src={generateFilePath(brand?.imageUrl)}
-                          alt="brand"
+                          alt="brand logo"
                           width="110"
                           height="110"
                           // crossOrigin="anonymous"
