@@ -11,6 +11,7 @@ export type User = {
   isVerified: string;
   isSuspend: boolean;
   salesAgentOwner: string;
+  active_plan: string;
   location: string;
   eidNo: string;
   eidFile: string;
@@ -27,6 +28,8 @@ export type User = {
     shop_location: string;
     location: string;
     tradeLicenseNumber: string;
+    tradeLicenseRegistrationDate: string;
+    tradeLicenseExpiryDate: string;
     documents: {
       tradeLicense: string;
     };

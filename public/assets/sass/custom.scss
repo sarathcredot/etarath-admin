@@ -283,4 +283,15 @@ body:not(.loaded) > *:not(.loading-overlay) {
   width: 60px;
 }
 
-
+.kyc_btns_div {
+  position: fixed;
+  bottom: 20;
+  right: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  padding: 20px;
+  border-radius: 50%;
+  gap: 20;
+}

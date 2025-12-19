@@ -71,6 +71,7 @@ import TokenList from "src/components/pages/customer-supports/TokenList";
 import OrderDetailPage from "src/components/pages/orders/OrderDetailPage";
 import AddVendorPage from "src/components/pages/vendors/forms/add-vendor/AddVendorPage";
 import AddRetailerPage from "src/components/pages/retailers/forms/add-retailer/AddRetailerPage";
+import EditVendorPage from "src/components/pages/vendors/forms/edit-vendor/EditVendorPage";
 
 interface RouteProps {
   path: string;
@@ -87,6 +88,7 @@ const adminRoutes: Array<RouteProps> = [
   { path: "/vendors", exact: true, component: <VendorsPage /> },
   { path: "/vendors/detail", component: <VendorsDetailPage /> },
   { path: "/vendors/add-vendor", component: <AddVendorPage /> },
+  { path: "/vendors/edit-vendor", component: <EditVendorPage /> },
   
   // Retailers
   { path: "/retailers", exact: true, component: <RetailersPage /> },

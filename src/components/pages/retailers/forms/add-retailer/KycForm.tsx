@@ -2,6 +2,7 @@ import { TimePicker } from "antd";
 import dayjs from "dayjs";
 import { Col, Form, Row } from "react-bootstrap";
 import Select from "react-select";
+import { timeFormat } from "src/components/pages/vendors/forms/add-vendor/ProfileForm";
 import { BUSSINESS_TYPES } from "src/components/pages/vendors/popups/AddBussinessDetails";
 
 const locations = [
@@ -89,7 +90,6 @@ const locations = [
   { value: "ZMB", label: "ZMB" },
   { value: "ZWE", label: "ZWE" },
 ];
-const timeFormat = "HH:mm";
 export default function KycForm({ formik }: any) {
   return (
     <Row className="px-1 px-md-3">
@@ -288,7 +288,7 @@ export default function KycForm({ formik }: any) {
           <Form.Label className="col-form-label">Business Hours</Form.Label>
 
           <TimePicker.RangePicker
-            // use12Hours
+            use12Hours
             format={timeFormat}
             value={
               formik.values.business_hours
@@ -386,11 +386,11 @@ export default function KycForm({ formik }: any) {
       <Col lg={12} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">
-            Upload Shop Photo or Logo
+            Upload Shop Photo 
           </Form.Label>
           <Form.Control
             type="file"
-            placeholder="Upload Shop Photo or Logo"
+            placeholder="Upload Shop Photo "
             name="shop_photo_logo"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               if (e.currentTarget?.files && e.currentTarget?.files[0]) {

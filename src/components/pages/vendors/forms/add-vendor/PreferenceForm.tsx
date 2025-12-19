@@ -1,6 +1,13 @@
 import { Col, Form, Row } from "react-bootstrap";
 import Select from "react-select";
 import { useGetAllBrands } from "src/services/brand.service";
+
+export const paymentMethods = [
+  "Debit/Credit Card",
+  "Cash on Delivery",
+  "Credit Terms",
+];
+export const creditDays = ["15", "30", "45", "60", "90", "120", "150"];
 export default function PreferenceForm({ formik }: any) {
   // QUERIES
   const {
@@ -9,9 +16,7 @@ export default function PreferenceForm({ formik }: any) {
     error: brandsError,
   } = useGetAllBrands();
 
-  console.log({ authorised_brands: formik.values.authorised_brands });
-
-  
+  console.log("pref formik values", formik.values);
 
   return (
     <Row className="px-1 px-md-3">
@@ -23,6 +28,16 @@ export default function PreferenceForm({ formik }: any) {
             value: item?._id,
             label: item?.name?.toUpperCase(),
           }))}
+          value={brands?.result
+            ?.map((item: any) => ({
+              value: item?._id,
+              label: item?.name?.toUpperCase(),
+            }))
+            .filter((opt: any) =>
+              formik.values.brands
+                .map((ab: any) => ab?.brandId)
+                .includes(opt.value)
+            )}
           isMulti={true}
           placeholder="Preferred Brands"
           // value={["english", "arabic", "german", "spanish", "french"]
@@ -56,9 +71,16 @@ export default function PreferenceForm({ formik }: any) {
           }))}
           isMulti={true}
           placeholder="Select Authorised Brands"
-          // value={["english", "arabic", "german", "spanish", "french"]
-          //   .map((loc) => ({ value: loc, label: loc?.toUpperCase() }))
-          //   .filter((opt) => formik.values.brands.includes(opt.value))}
+          value={brands?.result
+            ?.map((item: any) => ({
+              value: item?._id,
+              label: item?.name?.toUpperCase(),
+            }))
+            .filter((opt: any) =>
+              formik.values.authorised_brands
+                .map((ab: any) => ab?.brandId)
+                .includes(opt.value)
+            )}
           onChange={(selected) => {
             console.log({ selected });
             formik.setFieldValue(
@@ -80,23 +102,28 @@ export default function PreferenceForm({ formik }: any) {
             </div>
           )}
       </Col>
-      <Col lg={12} className="px-2 py-1  ">
+      <Col className="px-2 py-1  ">
         <Form.Label className="col-form-label">
           Preferred Payment Method
         </Form.Label>
         <Select
           name="paymentMethod"
-          options={["COD", "CARD"].map((item: string) => ({
+          options={paymentMethods.map((item: string) => ({
             value: item,
             label: item,
           }))}
           isMulti={false}
           placeholder="Preferred Payment Method"
-          // value={["english", "arabic", "german", "spanish", "french"]
-          //   .map((loc) => ({ value: loc, label: loc?.toUpperCase() }))
-          //   .filter((opt) => formik.values.brands.includes(opt.value))}
+          value={paymentMethods
+            .map((item: string) => ({
+              value: item,
+              label: item,
+            }))
+            .find((opt) => opt.value === formik.values.paymentMethod)}
           onChange={(selected) => {
             console.log({ selected });
+
+            formik.setFieldValue("creditDays", ""); // reset credit days if payment method changes
             formik.setFieldValue("paymentMethod", selected?.value);
           }}
           onBlur={() => formik.setFieldTouched("paymentMethod", true)}
@@ -106,13 +133,49 @@ export default function PreferenceForm({ formik }: any) {
               : ""
           }
         />
-        {formik.touched.paymentMethod &&
-          formik.errors.paymentMethod && (
+        {formik.touched.paymentMethod && formik.errors.paymentMethod && (
+          <div className="text-danger mt-1" style={{ fontSize: "11px" }}>
+            {formik.errors.paymentMethod}
+          </div>
+        )}
+      </Col>
+      {formik.values.paymentMethod === "Credit Terms" && (
+        <Col className="px-2 py-1  ">
+          <Form.Label className="col-form-label">
+            Credit Period (Days)
+          </Form.Label>
+          <Select
+            name="creditDays"
+            options={creditDays.map((item: string) => ({
+              value: item,
+              label: item,
+            }))}
+            value={creditDays
+              .map((item: string) => ({
+                value: item,
+                label: item,
+              }))
+              .find((opt) => opt.value === formik.values.creditDays)}
+            isMulti={false}
+            placeholder="Select credit period"
+            onChange={(selected) => {
+              console.log({ selected });
+              formik.setFieldValue("creditDays", selected?.value);
+            }}
+            onBlur={() => formik.setFieldTouched("creditDays", true)}
+            classNamePrefix={
+              formik.touched.creditDays && formik.errors.creditDays
+                ? "is-invalid"
+                : ""
+            }
+          />
+          {formik.touched.creditDays && formik.errors.creditDays && (
             <div className="text-danger mt-1" style={{ fontSize: "11px" }}>
-              {formik.errors.paymentMethod}
+              {formik.errors.creditDays}
             </div>
           )}
-      </Col>
+        </Col>
+      )}
     </Row>
   );
 }

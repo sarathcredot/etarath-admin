@@ -205,7 +205,7 @@ const VendorStocksList = ({
                       </InputGroup>
                     </div>
                   </Col>
-                  {/* <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
+                  <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
                     <Button
                       className="font-weight-semibold"
                       variant="dark"
@@ -214,7 +214,7 @@ const VendorStocksList = ({
                     >
                       + Add
                     </Button>
-                  </Col> */}
+                  </Col>
                 </Row>
               </div>
               <Form onSubmit={formik.handleSubmit}>

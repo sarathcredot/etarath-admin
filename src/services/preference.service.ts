@@ -4,6 +4,23 @@ import axiosAuth from "./axios.service";
 
 const baseUrl = `${url}/admin/users`;
 
+
+
+// GET A PREFERENCE BY USER ID
+
+export const getPreferenceByUserId = async (id: string | undefined) => {
+  if (!id) throw new Error("No id provided");
+  return await axiosAuth.get(`${baseUrl}/${id}/priority`);
+};
+
+export const useGetPreferenceByUserId = (id: string | undefined, enabled: boolean) => {
+  return useQuery({
+    queryKey: ["preference", id],
+    queryFn: () => getPreferenceByUserId(id).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};
+
 // UPDATE A PREFERENCE
 export const updatePreference = async ({
   id,

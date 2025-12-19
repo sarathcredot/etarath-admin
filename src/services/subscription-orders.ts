@@ -19,11 +19,22 @@ export const useGetAllPlanOrdersById = (
     enabled: enabled,
   });
 };
+// GET SUBSCRIPTION ORDER BY ORDER ID
+export const getSubscriptionOrderById = async (id: string) => {
+  return await axiosAuth.get(`${baseUrl}/${id}/order/${id}`);
+};
 
+export const useGetSubscriptionOrderById = (id?: string) => {
+  return useQuery({
+    queryKey: ["subscription-order", id],
+    queryFn: () => getSubscriptionOrderById(id!).then((res) => res?.data?.data),
+    enabled: !!id,
+  });
+};
 
 // PURCHASE A SUBSCRIPTION PLAN
 export const purchasePlan = async (data: any) => {
-  return await axiosAuth.put(`${baseUrl}/purchase-plan`,data);
+  return await axiosAuth.put(`${baseUrl}/purchase-plan`, data);
 };
 
 export const usePurchasePlan = () => {
@@ -33,6 +44,8 @@ export const usePurchasePlan = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["vendor"] });
       queryClient.invalidateQueries({ queryKey: ["vendors"] });
+      queryClient.invalidateQueries({ queryKey: ["subscription-orders"] });
+      queryClient.invalidateQueries({ queryKey: ["subscription-order"] });
     },
   });
 };

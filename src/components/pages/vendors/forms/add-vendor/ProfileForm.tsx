@@ -1,10 +1,11 @@
 import { TimePicker } from "antd";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import Select from "react-select";
 import MediaGalleryModal from "src/components/features/modals/media-gallery-modal";
 import { generateFilePath } from "src/services/url.service";
+import {Country, State, City} from 'country-state-city';
 
 const locations = [
   { value: "AFG", label: "AFG" },
@@ -91,9 +92,31 @@ const locations = [
   { value: "ZMB", label: "ZMB" },
   { value: "ZWE", label: "ZWE" },
 ];
-const timeFormat = "HH:mm";
-export default function ProfileForm({ formik }: any) {
+export const timeFormat = "hh:mm A";
+export default function ProfileForm({ formik, isEdit = false }: any) {
+  const tradeLicenseInputRef = useRef<HTMLInputElement | null>(null);
+  const shopPhotoInputRef = useRef<HTMLInputElement | null>(null);
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
+
+  const [locations, setLocations] = useState<{ label: string; value: string }[]>([]);
+  const uaeCountry: any = Country.getAllCountries().find(c => c.isoCode === "AE"); // UAE country code
+  const allCities: { label: string; value: string }[] = [];
+  const res = State.getStatesOfCountry(uaeCountry.isoCode)
+  useEffect(() => {
+    res?.map((state) => {
+      City.getCitiesOfState(uaeCountry.isoCode, state.isoCode).forEach((city) => {
+        // allCities.push({
+        //   label: `${city.name}, ${state.name}`, // optional: add state
+        //   value: city.name,
+        // });
+        allCities.push({ label: city.name, value: city.name })
+      });
+    })
+    console.log("loc", allCities)
+    setLocations(allCities)
+  }, [])
+
+  console.log("profile formik values", formik.values);
 
   return (
     <Row className="px-1 px-md-3">
@@ -185,6 +208,7 @@ export default function ProfileForm({ formik }: any) {
                 isInvalid={
                   formik.touched.phoneNumber && !!formik.errors.phoneNumber
                 }
+                disabled={isEdit}
               />
               <Form.Control.Feedback type="invalid">
                 {formik.errors.phoneNumber}
@@ -201,6 +225,7 @@ export default function ProfileForm({ formik }: any) {
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 isInvalid={formik.touched.email && !!formik.errors.email}
+                disabled={isEdit}
               />
               <Form.Control.Feedback type="invalid">
                 {formik.errors.email}
@@ -211,25 +236,6 @@ export default function ProfileForm({ formik }: any) {
       </Col>
 
       <Col lg={6} className="px-2 py-1  ">
-        {/* <Form.Group as={Row} className="align-items-center">
-          <Form.Label className="col-form-label">
-            Shop Location
-          </Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter Shop Location"
-            name="location"
-            value={formik.values.location}
-            onChange={formik.handleChange}
-            isInvalid={
-              !!formik.errors.location &&
-              formik.touched.location
-            }
-          />
-          <Form.Control.Feedback type="invalid">
-            {formik.errors.location}
-          </Form.Control.Feedback>
-        </Form.Group> */}
         <Form.Label className="col-form-label">Shop Location</Form.Label>
         <Select
           name="location"
@@ -280,25 +286,45 @@ export default function ProfileForm({ formik }: any) {
           <Form.Label className="col-form-label">
             Upload Trade License/ Business Registration
           </Form.Label>
-          <Form.Control
-            type="file"
-            placeholder="Upload Trade License/ Business Registration"
-            name="documents.tradeLicense"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              if (e.currentTarget?.files && e.currentTarget?.files[0]) {
-                formik.setFieldValue(
-                  "documents.tradeLicense",
-                  e.currentTarget.files[0]
-                );
+
+          <div className="d-flex align-items-center  w-100" style={{ gap: 10 }}>
+            <Form.Control
+              ref={tradeLicenseInputRef}
+              type="file"
+              placeholder="Upload Trade License/ Business Registration"
+              name="documents.tradeLicense"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                if (e.currentTarget?.files && e.currentTarget?.files[0]) {
+                  formik.setFieldValue(
+                    "documents.tradeLicense",
+                    e.currentTarget.files[0]
+                  );
+                }
+              }}
+              isInvalid={
+                !!(
+                  formik.errors.documents?.tradeLicense ||
+                  formik.touched.documents?.tradeLicense
+                )
               }
-            }}
-            isInvalid={
-              !!(
-                formik.errors.documents?.tradeLicense ||
-                formik.touched.documents?.tradeLicense
-              )
-            }
-          />
+            />
+            {formik.values.documents?.tradeLicense && (
+              <Button
+                variant="danger"
+                size="sm"
+                className="h-100 "
+                style={{ minHeight: "42px" }}
+                onClick={() => {
+                  formik.setFieldValue("documents.tradeLicense", null);
+                  if (tradeLicenseInputRef.current) {
+                    tradeLicenseInputRef.current.value = "";
+                  }
+                }}
+              >
+                Remove
+              </Button>
+            )}
+          </div>
           <Form.Control.Feedback type="invalid">
             {formik.errors.documents?.tradeLicense}
           </Form.Control.Feedback>
@@ -367,11 +393,11 @@ export default function ProfileForm({ formik }: any) {
       </Col>
       <Col lg={6} className="px-2 py-1">
         <Form.Group>
-          <Form.Label className="col-form-label">Post</Form.Label>
+          <Form.Label className="col-form-label">P.O. Box</Form.Label>
           <Form.Control
             type="text"
             name="post"
-            placeholder=" Post"
+            placeholder="P.O. Box number"
             value={formik.values.post}
             onChange={formik.handleChange}
             isInvalid={formik.touched.post && !!formik.errors.post}
@@ -381,12 +407,12 @@ export default function ProfileForm({ formik }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
-      <Col lg={6} className="px-4 pb-1">
+      <Col lg={6} className="px-4 pt-1">
         <Form.Group as={Row} style={{ flexDirection: "column" }}>
           <Form.Label className="col-form-label">Business Hours</Form.Label>
 
           <TimePicker.RangePicker
-            // use12Hours
+            use12Hours
             format={timeFormat}
             value={
               formik.values.business_hours
@@ -431,27 +457,46 @@ export default function ProfileForm({ formik }: any) {
       </Col>
       <Col lg={12} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
-          <Form.Label className="col-form-label">
-            Upload Shop Photo or Logo
-          </Form.Label>
-          <Form.Control
-            type="file"
-            placeholder="Upload Shop Photo or Logo"
-            name="shop_photo_logo"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              if (e.currentTarget?.files && e.currentTarget?.files[0]) {
-                formik.setFieldValue(
-                  "shop_photo_logo",
-                  e.currentTarget.files[0]
-                );
+          <Form.Label className="col-form-label">Upload Shop Photo</Form.Label>
+          <div className="d-flex align-items-center  w-100" style={{ gap: 10 }}>
+            <Form.Control
+              ref={shopPhotoInputRef}
+              type="file"
+              placeholder="Upload Shop Photo"
+              name="shop_photo_logo"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                if (e.currentTarget?.files && e.currentTarget?.files[0]) {
+                  formik.setFieldValue(
+                    "shop_photo_logo",
+                    e.currentTarget.files[0]
+                  );
+                }
+              }}
+              isInvalid={
+                !!(
+                  formik.errors.shop_photo_logo &&
+                  formik.touched.shop_photo_logo
+                )
               }
-            }}
-            isInvalid={
-              !!(
-                formik.errors.shop_photo_logo && formik.touched.shop_photo_logo
-              )
-            }
-          />
+            />
+
+            {formik.values.shop_photo_logo && (
+              <Button
+                variant="danger"
+                size="sm"
+                className="h-100 "
+                style={{ minHeight: "42px" }}
+                onClick={() => {
+                  formik.setFieldValue("shop_photo_logo", null);
+                  if (shopPhotoInputRef.current) {
+                    shopPhotoInputRef.current.value = "";
+                  }
+                }}
+              >
+                Remove
+              </Button>
+            )}
+          </div>
           <Form.Control.Feedback type="invalid">
             {formik.errors.shop_photo_logo}
           </Form.Control.Feedback>

@@ -47,7 +47,7 @@ export const useAddVendor = () => {
 };
 
 // UPDATE A VENDOR
-export const updateVendor = async ({ id, data }: { id: number; data: any }) => {
+export const updateVendor = async ({ id, data }: { id: number|string; data: any }) => {
   if (!id) throw new Error("No id provided");
   return await axiosAuth.put(`${baseUrl}/${id}`, data);
 };

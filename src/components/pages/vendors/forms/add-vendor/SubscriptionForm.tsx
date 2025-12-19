@@ -3,6 +3,17 @@ import Select from "react-select";
 import { useGetAllBrands } from "src/services/brand.service";
 import { useGetAllPlansByRole } from "src/services/subscription.service";
 import { SubscriptionPlan } from "src/types/types";
+
+export const durationTypes = [
+  {
+    value: "monthly",
+    label: "Monthly",
+  },
+  {
+    value: "yearly",
+    label: "Yearly",
+  },
+];
 export default function SubscriptionForm({ formik }: any) {
   // QUERIES
   const {
@@ -17,7 +28,10 @@ export default function SubscriptionForm({ formik }: any) {
     isLoading: boolean;
   };
 
-  console.log({ planId: formik.values.planId,durationType: formik.values.durationType });
+  console.log({
+    planId: formik.values.planId,
+    durationType: formik.values.durationType,
+  });
 
   return (
     <Row className="px-1 px-md-3">
@@ -29,6 +43,13 @@ export default function SubscriptionForm({ formik }: any) {
             value: item?._id,
             label: item?.plan?.toUpperCase(),
           }))}
+          value={plans
+            ?.map((item: any) => ({
+              value: item?._id,
+              label: item?.plan?.toUpperCase(),
+            }))
+            .find((opt) => opt.value === formik.values.planId)}
+          // isMulti={false}
           placeholder="Select Subscription Plan"
           onChange={(selected: any) => {
             console.log({ selected });
@@ -51,10 +72,10 @@ export default function SubscriptionForm({ formik }: any) {
         </Form.Label>
         <Select
           name="durationType"
-          options={["monthly", "yearly"].map((item: string) => ({
-            value: item,
-            label: item.toUpperCase(),
-          }))}
+          options={durationTypes}
+          value={durationTypes.find(
+            (opt) => opt.value === formik.values.durationType
+          )}
           isMulti={false}
           placeholder="Select subscription duration"
           // value={["english", "arabic", "german", "spanish", "french"]

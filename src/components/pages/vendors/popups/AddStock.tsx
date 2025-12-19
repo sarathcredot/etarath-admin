@@ -37,8 +37,9 @@ const AddStock = ({ isOpen, toggle, vendorId }: Props) => {
   const formik = useFormik({
     initialValues: {
       productId: "",
-      stock: "",
-      price: "",
+      // stock: "",
+      price_normal_customer: "",
+      price_loyal_customer: "",
       requestedBy: "",
       warrantyPeriod: "",
       warranty_type: "",
@@ -172,7 +173,7 @@ const AddStock = ({ isOpen, toggle, vendorId }: Props) => {
                   )}
                 </Form.Group>
               </Col> */}
-              <Col lg={6} className="px-4 py-1  ">
+              {/* <Col lg={6} className="px-4 py-1  ">
                 <Form.Group as={Row} className="align-items-center">
                   <Form.Label className="col-form-label">Quantity</Form.Label>
                   <Form.Control
@@ -187,20 +188,42 @@ const AddStock = ({ isOpen, toggle, vendorId }: Props) => {
                     {formik.errors.stock}
                   </Form.Control.Feedback>
                 </Form.Group>
+              </Col> */}
+              <Col lg={6} className="px-4 py-1  ">
+                <Form.Group as={Row} className="align-items-center">
+                  <Form.Label className="col-form-label">General Sale Price</Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="price for normal customers"
+                    name="price_normal_customer"
+                    value={formik.values.price_normal_customer}
+                    onChange={formik.handleChange}
+                    isInvalid={
+                      !!formik.errors.price_normal_customer &&
+                      formik.touched.price_normal_customer
+                    }
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.price_normal_customer}
+                  </Form.Control.Feedback>
+                </Form.Group>
               </Col>
               <Col lg={6} className="px-4 py-1  ">
                 <Form.Group as={Row} className="align-items-center">
-                  <Form.Label className="col-form-label">Sale Price</Form.Label>
+                  <Form.Label className="col-form-label">Loyal Customer Price</Form.Label>
                   <Form.Control
                     type="number"
-                    placeholder="Enter sale price"
-                    name="price"
-                    value={formik.values.price}
+                    placeholder="price for loyal customers"
+                    name="price_loyal_customer"
+                    value={formik.values.price_loyal_customer}
                     onChange={formik.handleChange}
-                    isInvalid={!!formik.errors.price && formik.touched.price}
+                    isInvalid={
+                      !!formik.errors.price_loyal_customer &&
+                      formik.touched.price_loyal_customer
+                    }
                   />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.price}
+                    {formik.errors.price_loyal_customer}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>

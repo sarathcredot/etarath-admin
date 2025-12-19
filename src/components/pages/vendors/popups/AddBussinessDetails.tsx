@@ -11,6 +11,7 @@ import { useCreateVendorKyc } from "src/services/vendor-kyc.service";
 import { TimePicker } from "antd";
 import dayjs from "dayjs";
 import Select from "react-select";
+import { timeFormat } from "../forms/add-vendor/ProfileForm";
 
 type Props = {
   isOpen: boolean;
@@ -191,7 +192,6 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
     }
   };
 
-  const timeFormat = "HH:mm";
 
   console.log(formikKyc.values, "VALUES");
   console.log(formikKyc.errors, "ERRORS");
@@ -445,7 +445,7 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
                   </Form.Label>
 
                   <TimePicker.RangePicker
-                    // use12Hours
+                    use12Hours
                     format={timeFormat}
                     value={
                       formikKyc.values.business_hours
@@ -544,11 +544,11 @@ const AddBussinessDetails = ({ isOpen, toggle, userId }: Props) => {
               <Col lg={12} className="px-4 py-1  ">
                 <Form.Group as={Row} className="align-items-center">
                   <Form.Label className="col-form-label">
-                    Upload Shop Photo or Logo
+                    Upload Shop Photo
                   </Form.Label>
                   <Form.Control
                     type="file"
-                    placeholder="Upload Shop Photo or Logo"
+                    placeholder="Upload Shop Photo"
                     name="shop_photo_logo"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       if (e.currentTarget?.files && e.currentTarget?.files[0]) {

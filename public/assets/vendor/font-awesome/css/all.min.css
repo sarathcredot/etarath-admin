@@ -381,6 +381,8 @@
 .fa-at:before {
   content: "\f1fa";
 }
+.fa-xmark:before {
+  content: "\f00d"; }
 .fa-atlas:before {
   content: "\f558";
 }

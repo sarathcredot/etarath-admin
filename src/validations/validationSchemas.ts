@@ -191,7 +191,7 @@ export const VendorKycValidationSchema = Yup.object().shape({
   post: Yup.string().required("Post is required"),
   business_hours: Yup.string().required("Business Hours is required"),
   shop_contact_number: Yup.string().required("Shop Contact Number is required"),
-  shop_photo_logo: Yup.mixed().required("Upload Shop Photo or Logo"),
+  shop_photo_logo: Yup.mixed().required("Upload Shop Photo "),
 });
 export const VendorEditKycValidationSchema = Yup.object().shape({
   shop_name: Yup.string().required("Shop Name is required"),

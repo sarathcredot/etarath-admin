@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -9,8 +9,6 @@ import Wizard, {
   WizardNav,
 } from "src/components/features/elements/wizard";
 
-import ProfileForm from "./ProfileForm";
-import ContactForm from "./ContactForm";
 import Breadcrumb from "src/components/common/breadcrumb";
 import {
   VendorContactValidationSchema,
@@ -18,27 +16,64 @@ import {
   VendorProfileValidationSchema,
   VendorSubscriptionValidationSchema,
 } from "src/validations/validationSchemas";
-import PreferenceForm from "./PreferenceForm";
-import { useAddVendor } from "src/services/vendor.service";
+import {
+  useAddVendor,
+  useGetVendorById,
+  useUpdateVendor,
+} from "src/services/vendor.service";
 import { toast } from "react-toastify";
 import { errorMsg } from "src/utils/toast";
 import _ from "lodash";
 import { useUploadFile } from "src/services/fileUpload.service";
-import { useCreateVendorKyc } from "src/services/vendor-kyc.service";
-import { useUpdatePreference } from "src/services/preference.service";
-import { useNavigate } from "react-router-dom";
-import SubscriptionForm from "./SubscriptionForm";
-import { usePurchasePlan } from "src/services/subscription-orders";
+import {
+  useCreateVendorKyc,
+  useUpdateVendorKyc,
+} from "src/services/vendor-kyc.service";
+import {
+  useGetPreferenceByUserId,
+  useUpdatePreference,
+} from "src/services/preference.service";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  useGetSubscriptionOrderById,
+  usePurchasePlan,
+} from "src/services/subscription-orders";
+import ProfileForm from "../add-vendor/ProfileForm";
+import ContactForm from "../add-vendor/ContactForm";
+import PreferenceForm from "../add-vendor/PreferenceForm";
+import SubscriptionForm from "../add-vendor/SubscriptionForm";
+import { User } from "src/types/types";
 
-export default function AddVendorPage() {
+export default function EditVendorPage() {
+  const [searchParams] = useSearchParams();
+  const vendorID = searchParams.get("_id");
   const navigate = useNavigate();
 
-  const [vendorId, setVendorId] = useState<string>("");
+  // const [vendorId, setVendorId] = useState<string>("");
   const [stepIndex, setStepIndex] = useState<number>(0);
-  console.log({ vendorId });
+  // console.log({ vendorId });
+
+  // QUERIES
+  const { data: vendor, isLoading: isVendorLoading } = useGetVendorById(
+    vendorID ? vendorID : "",
+    !!vendorID
+  ) as {
+    data: User;
+    isLoading: boolean;
+  };
+
+  const activePlanId = vendor?.active_plan;
+
+  const { data: vendorPreference, isLoading: isPreferenceLoading } =
+    useGetPreferenceByUserId(vendorID ? vendorID : "", !!vendorID);
+
+  const { data: vendorActivePlan, isLoading: isActivePlanLoading } =
+    useGetSubscriptionOrderById(activePlanId);
 
   // MUTATIONS
   const { mutateAsync: createVendor } = useAddVendor();
+  const { mutateAsync: updateVendor } = useUpdateVendor();
+  const { mutateAsync: updateVendorKyc } = useUpdateVendorKyc();
   const { mutateAsync: createVendorKyc } = useCreateVendorKyc();
   const { mutateAsync: updatePreference } = useUpdatePreference();
   const { mutateAsync: purchasePlan } = usePurchasePlan();
@@ -78,7 +113,7 @@ export default function AddVendorPage() {
       );
 
       if (values?.vendorId) {
-        toast.loading("Adding Contact Details", {
+        toast.loading("Updating Profile Details", {
           containerId: "default",
           className: "no-icon notification-warning",
         });
@@ -102,7 +137,7 @@ export default function AddVendorPage() {
             values.shop_photo_logo = response.data.data;
           }
           values.phoneNumber = values.phoneNumber.toString();
-          const res = await createVendorKyc({
+          const res = await updateVendorKyc({
             userId: values.vendorId,
             data: values,
           });
@@ -144,17 +179,18 @@ export default function AddVendorPage() {
 
     onSubmit: async (values) => {
       console.log("CONTACT SUBMIT:", values);
-      toast.loading("Creating Vendor Account", {
+      toast.loading("Updating Vendor Account", {
         containerId: "default",
         className: "no-icon notification-warning",
       });
       try {
-        const res = await createVendor(values);
+        // const res = await createVendor(values);
+        const res = await updateVendor({ id: vendor?._id, data: values });
         console.log("RESPONSE = ", res);
         if (res.status === 200) {
-          setVendorId(res?.data?.data?._id);
+          // setVendorId(res?.data?.data?._id);
 
-          await profileFormik.setFieldValue("vendorId", res?.data?.data?._id);
+          await profileFormik.setFieldValue("vendorId", vendor?._id);
           // toast(res?.data?.message, {
           //   containerId: "default",
           //   className: "no-icon notification-success",
@@ -187,25 +223,32 @@ export default function AddVendorPage() {
 
     onSubmit: async (values) => {
       console.log("PREFERENCE SUBMIT:", values);
-      toast.loading("Adding Vendor Preferences", {
+      toast.loading("Updating Vendor Preferences", {
         containerId: "default",
         className: "no-icon notification-warning",
       });
       try {
         const res = await updatePreference({
-          id: vendorId,
+          id: vendor?._id,
           data: values,
         });
         if (res.status === 200) {
           toast.dismiss();
 
-          // toast(res?.data?.message, {
-          //   containerId: "default",
-          //   className: "no-icon notification-success",
-          // });
+          toast("Updation completed successfully!", {
+            containerId: "default",
+            className: "no-icon notification-success",
+          });
 
-          setStepIndex(3);
-          await subscriptionFormik.submitForm();
+          setStepIndex(0);
+          subscriptionFormik.resetForm();
+          preferenceFormik.resetForm();
+          contactFormik.resetForm();
+          profileFormik.resetForm();
+          navigate(-1);
+
+          // setStepIndex(3);
+          // await subscriptionFormik.submitForm();
         }
       } catch (error: any) {
         toast.dismiss();
@@ -232,7 +275,7 @@ export default function AddVendorPage() {
       });
       try {
         const res = await purchasePlan({
-          userId: vendorId,
+          userId: vendor?._id,
           planId: values.planId,
           durationType: values.durationType,
         });
@@ -296,12 +339,81 @@ export default function AddVendorPage() {
   //   return true;
   // };
 
+  useEffect(() => {
+    if (vendor) {
+      contactFormik.setValues({
+        userName: vendor?.userName || "",
+        designation: vendor?.designation || "",
+        phoneNumber: vendor?.phoneNumber || "",
+        email: vendor?.email || "",
+        language: vendor?.language || [],
+        role: "vendor",
+      });
+
+      if (vendor?.kyc) {
+        profileFormik.setValues({
+          business_name: vendor?.kyc?.business_name || "",
+          phoneNumber: vendor?.kyc?.phoneNumber || "",
+          email: vendor?.kyc?.email || "",
+          location: vendor?.kyc?.location || "",
+          tradeLicenseNumber: vendor?.kyc?.tradeLicenseNumber || "",
+          tradeLicenseRegistrationDate: vendor?.kyc
+            ?.tradeLicenseRegistrationDate
+            ? new Date(vendor?.kyc?.tradeLicenseRegistrationDate)
+                .toISOString()
+                .split("T")[0]
+            : "",
+          tradeLicenseExpiryDate: vendor?.kyc?.tradeLicenseExpiryDate
+            ? new Date(vendor?.kyc?.tradeLicenseExpiryDate)
+                .toISOString()
+                .split("T")[0]
+            : "",
+          documents: {
+            tradeLicense: vendor?.kyc?.documents?.tradeLicense || "",
+          },
+          business_address: vendor?.kyc?.business_address || "",
+          post: vendor?.kyc?.post || "",
+          business_hours: vendor?.kyc?.business_hours || "",
+          vendor_logo: vendor?.kyc?.vendor_logo || "",
+          shop_photo_logo: vendor?.kyc?.shop_photo_logo || "",
+          vendorId: vendor?._id || "",
+        });
+      }
+    }
+  }, [vendor, vendorID]);
+  useEffect(() => {
+    if (vendorPreference) {
+      preferenceFormik.setValues({
+        brands: vendorPreference?.brands
+          ? vendorPreference?.brands?.map((brand: any) => ({
+              brandId: brand?.brandId?._id,
+            }))
+          : [],
+        authorised_brands: vendorPreference?.authorised_brands
+          ? vendorPreference?.authorised_brands?.map((brand: any) => ({
+              brandId: brand?.brandId?._id,
+            }))
+          : [],
+        paymentMethod: vendorPreference?.paymentMethod || "",
+        creditDays: vendorPreference?.creditDays || "",
+      });
+    }
+  }, [vendorPreference]);
+  useEffect(() => {
+    if (vendorActivePlan) {
+      subscriptionFormik.setValues({
+        planId: vendorActivePlan?.planId?._id || "",
+        durationType: vendorActivePlan?.durationType || "",
+      });
+    }
+  }, [vendorActivePlan]);
+
   console.log("contact formik values:", contactFormik.values);
 
   return (
     <>
       <Breadcrumb
-        current={"Create Vendor"}
+        current={"Edit Vendor"}
         paths={[
           {
             name: "Dashboard",
@@ -312,19 +424,24 @@ export default function AddVendorPage() {
             url: "/vendors",
           },
           {
-            name: "create vendor",
-            url: "/vendors/add-vendor",
+            name: "edit vendor",
+            url: "/vendors/edit-vendor",
           },
         ]}
       />
       <div className="p-3">
-        {/* <h4>Create Vendor</h4> */}
+        {/* <h4>Edit Vendor</h4> */}
 
         <Wizard
           className="form-horizontal"
           showProgress={true}
           progressSize="lg"
-          validators={[profileFormik, contactFormik, preferenceFormik,subscriptionFormik]}
+          validators={[
+            profileFormik,
+            contactFormik,
+            preferenceFormik,
+            subscriptionFormik,
+          ]}
           onFinish={handleWizardFinish}
         >
           {/* ------------------------- */}
@@ -352,7 +469,7 @@ export default function AddVendorPage() {
           {/* STEP 1: PROFILE           */}
           {/* ------------------------- */}
           <WizardTab>
-            <ProfileForm formik={profileFormik} />
+            <ProfileForm isEdit={true} formik={profileFormik} />
           </WizardTab>
 
           {/* ------------------------- */}

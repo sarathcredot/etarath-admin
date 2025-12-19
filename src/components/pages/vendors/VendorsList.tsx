@@ -220,14 +220,13 @@ const VendorsList = ({
                               alt="profile"
                               width="50"
                               height="50"
+                              style={{ objectFit: "cover" }}
                               // crossOrigin="anonymous"
                             />
                           </Link>
                         </td>
                         <td>
-                          <Link to={`/vendors/detail?_id=${item?._id}`}>
-                            {item?.kycDetails?.business_name || item?.userName}
-                          </Link>
+                          {item?.kycDetails?.business_name || item?.userName}
                         </td>
                         <td>
                           {item?.kycDetails?.phoneNumber || item?.phoneNumber}
@@ -264,21 +263,24 @@ const VendorsList = ({
                               className="action_btn "
                               onClick={(e) => {
                                 e.stopPropagation();
+                                navigate(
+                                  `/vendors/edit-vendor?_id=${item?._id}`
+                                );
+                                // setSelectedVendor(item);
+                                // setEditOpen(true);
+                              }}
+                            >
+                              <i className="fas fa-pencil-alt"></i>
+                            </div>
+                            <div
+                              className="action_btn "
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 navigate(`/vendors/detail?_id=${item?._id}`);
                               }}
                             >
                               <i className="far fa-eye"></i>
                             </div>
-                            {/* <div
-                              className="action_btn "
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedVendor(item);
-                                setEditOpen(true);
-                              }}
-                            >
-                              <i className="fas fa-pencil-alt"></i>
-                            </div> */}
                             {/* <div
                               className="action_btn"
                               onClick={() => {

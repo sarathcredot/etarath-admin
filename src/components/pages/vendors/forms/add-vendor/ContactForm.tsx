@@ -1,6 +1,46 @@
 import { Col, Form, Row } from "react-bootstrap";
 import Select from "react-select";
-export default function ContactForm({ formik }: any) {
+
+export const languageOptions = [
+  { value: "english", label: "English" },
+  { value: "arabic", label: "Arabic" },
+  { value: "french", label: "French" },
+  { value: "spanish", label: "Spanish" },
+  { value: "german", label: "German" },
+  { value: "italian", label: "Italian" },
+  { value: "portuguese", label: "Portuguese" },
+  { value: "russian", label: "Russian" },
+  { value: "chinese", label: "Chinese" },
+  { value: "japanese", label: "Japanese" },
+  { value: "korean", label: "Korean" },
+  { value: "hindi", label: "Hindi" },
+  { value: "bengali", label: "Bengali" },
+  { value: "tamil", label: "Tamil" },
+  { value: "telugu", label: "Telugu" },
+  { value: "malayalam", label: "Malayalam" },
+  { value: "urdu", label: "Urdu" },
+  { value: "turkish", label: "Turkish" },
+  { value: "persian", label: "Persian" },
+  { value: "dutch", label: "Dutch" },
+  { value: "polish", label: "Polish" },
+  { value: "swedish", label: "Swedish" },
+  { value: "norwegian", label: "Norwegian" },
+  { value: "finnish", label: "Finnish" },
+  { value: "thai", label: "Thai" },
+  { value: "vietnamese", label: "Vietnamese" },
+  { value: "indonesian", label: "Indonesian" },
+  { value: "malay", label: "Malay" },
+  { value: "swahili", label: "Swahili" },
+  { value: "hebrew", label: "Hebrew" },
+  { value: "greek", label: "Greek" },
+  { value: "hungarian", label: "Hungarian" },
+  { value: "czech", label: "Czech" },
+  { value: "romanian", label: "Romanian" },
+  { value: "slovak", label: "Slovak" },
+  { value: "ukrainian", label: "Ukrainian" },
+];
+
+export default function ContactForm({ formik,isEdit=false }: any) {
   return (
     <Row className="px-1 px-md-3">
       <Col lg={6} className="px-2 py-1">
@@ -74,23 +114,26 @@ export default function ContactForm({ formik }: any) {
         </Form.Group>
       </Col>
       <Col lg={12} className="px-2 py-1  ">
-        
         <Form.Label className="col-form-label">
           Preferred Language for Communication
         </Form.Label>
         <Select
           name="language"
-          options={["english", "arabic", "german", "spanish", "french"].map(
-            (loc) => ({ value: loc, label: loc?.toUpperCase() })
-          )}
+          options={languageOptions}
           isMulti={true}
           placeholder="Preferred Language for Communication"
+          value={languageOptions.filter((opt) =>
+            formik.values.language?.includes(opt.value)
+          )}
           // value={["english", "arabic", "german", "spanish", "french"]
           //   .map((loc) => ({ value: loc, label: loc?.toUpperCase() }))
           //   .filter((opt) => formik.values.language.includes(opt.value))}
           onChange={(selected) => {
             console.log({ selected });
-            formik.setFieldValue("language", selected?.map((s: any) => s.value));
+            formik.setFieldValue(
+              "language",
+              selected?.map((s: any) => s.value)
+            );
           }}
           onBlur={() => formik.setFieldTouched("language", true)}
           classNamePrefix={

@@ -10,9 +10,13 @@ export const formatNumberShort = (num: number) => {
   return num.toString();
 };
 
-export const formatDate = (dateString: string) => {
+export const formatDate = (dateString?: string) => {
+  if (!dateString) return "-";
+
   const date = new Date(dateString);
-  return format(date, "MMM dd, yyyy", { useAdditionalDayOfYearTokens: true });
+  if (isNaN(date.getTime())) return "-";
+
+  return format(date, "MMM dd, yyyy");
 };
 
 export const formatText = (str: string = "") =>
@@ -20,3 +24,7 @@ export const formatText = (str: string = "") =>
     .replace(/_/g, " ") // Replace underscores with space
     .toLowerCase()
     .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize each word
+
+export const formatCurrency = (amount: number) => {
+  return `${amount?.toFixed(2) || 0} AED`;
+};
