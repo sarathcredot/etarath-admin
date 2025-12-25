@@ -179,15 +179,21 @@ export const VendorKycValidationSchema = Yup.object().shape({
   business_type: Yup.string().required("Business Type is required"),
   shop_location: Yup.string().required("Shop Location is required"),
   tradeLicenseNumber: Yup.string().required(
-    "Enter Trade License/ Business Registration Number "
+    "Enter Trade License Number "
+  ),
+  tradeLicenseRegistrationDate: Yup.string().required(
+    "Enter Trade License Registration Date "
+  ),
+  tradeLicenseExpiryDate: Yup.string().required(
+    "Enter Trade License Expiry Date "
   ),
   documents: Yup.object().shape({
     tradeLicense: Yup.mixed().required(
-      "Upload Trade License/ Business Registration"
+      "Upload Trade License"
     ),
   }),
   shop_address: Yup.string().required("Shop Address is required"),
-  city: Yup.string().required("City is required"),
+  // city: Yup.string().required("City is required"),
   post: Yup.string().required("Post is required"),
   business_hours: Yup.string().required("Business Hours is required"),
   shop_contact_number: Yup.string().required("Shop Contact Number is required"),

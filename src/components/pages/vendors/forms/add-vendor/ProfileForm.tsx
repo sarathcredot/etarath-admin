@@ -263,11 +263,11 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
       <Col lg={6} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">
-            Trade License/ Business Registration Number
+            Trade License Number
           </Form.Label>
           <Form.Control
             type="text"
-            placeholder="Enter Trade License/ Business Registration Number"
+            placeholder="Enter Trade License Number"
             name="tradeLicenseNumber"
             value={formik.values.tradeLicenseNumber}
             onChange={formik.handleChange}
@@ -284,14 +284,14 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
       <Col lg={12} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">
-            Upload Trade License/ Business Registration
+            Upload Trade License
           </Form.Label>
 
           <div className="d-flex align-items-center  w-100" style={{ gap: 10 }}>
             <Form.Control
               ref={tradeLicenseInputRef}
               type="file"
-              placeholder="Upload Trade License/ Business Registration"
+              placeholder="Upload Trade License"
               name="documents.tradeLicense"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 if (e.currentTarget?.files && e.currentTarget?.files[0]) {

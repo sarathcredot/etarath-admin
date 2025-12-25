@@ -284,7 +284,10 @@ const VendorsDetailPage = () => {
                           className="font-weight-semibold"
                           variant="dark"
                           //   size="md"
-                          onClick={() => setKycOpen(true)}
+                          // onClick={() => setKycOpen(true)}
+                          onClick={() => {
+                            navigate(`/vendors/edit-vendor?_id=${vendor?._id}`);
+                          }}
                         >
                           + Add Profile
                         </Button>
@@ -438,7 +441,7 @@ const VendorsDetailPage = () => {
                     <h5 className="m-0 card-title h5 font-weight-bold">
                       Contact Details
                     </h5>
-                    {vendor?.kyc ? (
+                    {vendor ? (
                       <div
                         className="d-flex align-items-center"
                         style={{ gap: 10 }}
@@ -544,7 +547,9 @@ const VendorsDetailPage = () => {
                         className="font-weight-semibold"
                         variant="dark"
                         //   size="md"
-                        onClick={() => setKycOpen(true)}
+                        onClick={() => {
+                          navigate(`/vendors/edit-vendor?_id=${vendor?._id}`);
+                        }}
                       >
                         + Add Preferences
                       </Button>
@@ -631,8 +636,9 @@ const VendorsDetailPage = () => {
                       <Button
                         className="font-weight-semibold"
                         variant="dark"
-                        //   size="md"
-                        onClick={() => setKycOpen(true)}
+                        onClick={() => {
+                          navigate(`/vendors/edit-vendor?_id=${vendor?._id}`);
+                        }}
                       >
                         + Purchase Plan
                       </Button>
@@ -895,6 +901,13 @@ const VendorsDetailPage = () => {
                 stocksLoading={stocksLoading}
               />
             </Tab>
+            <Tab eventKey="orders" title="Orders">
+              <VendorOrdersList
+                vendorId={vendorID ? vendorID : ""}
+                orders={orders}
+                ordersLoading={ordersLoading}
+              />
+            </Tab>
           </Tabs>
         </div>
       </div>
@@ -917,7 +930,8 @@ const VendorsDetailPage = () => {
               fontSize: 12,
               fontWeight: "bold",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-              background: "#fff",
+              background: "#FF600F",
+              color: "#fff",
               flexDirection: "column",
               justifyContent: "center",
               padding: 20,
@@ -928,7 +942,7 @@ const VendorsDetailPage = () => {
                 position: "absolute",
                 top: 15,
                 right: 15,
-                color: "#000",
+                color: "#fff",
                 width: 20,
                 height: 20,
                 display: "grid",
@@ -942,10 +956,13 @@ const VendorsDetailPage = () => {
             </div>
 
             <div>
-              <h3 className="mt-0 p-0 " style={{ color: "#000", fontSize: 17 }}>
+              <h3 className="mt-0 p-0 " style={{ color: "#fff", fontSize: 17 }}>
                 Vendor Verification
               </h3>
-              <p className="m-0" style={{ fontWeight: "normal" }}>
+              <p
+                className="m-0"
+                style={{ color: "#fff", fontWeight: "normal" }}
+              >
                 Please verify the profile details and documents before approving
                 or rejecting the vendor.
               </p>
@@ -961,7 +978,7 @@ const VendorsDetailPage = () => {
               }}
             >
               <Button
-                className="font-weight-semibold"
+                className=""
                 variant="success"
                 //   size="md"
                 onClick={() => set_is_kyc_approve_open(true)}
@@ -969,7 +986,7 @@ const VendorsDetailPage = () => {
                 Approve
               </Button>
               <Button
-                className="font-weight-semibold"
+                className=""
                 variant="danger"
                 //   size="md"
                 onClick={() => set_is_kyc_reject_open(true)}

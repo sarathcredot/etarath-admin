@@ -27,8 +27,8 @@ const VendorOrdersList = ({
   vendorId: string;
   orders: any;
   ordersLoading: boolean;
-  page: number;
-  setPage: Dispatch<SetStateAction<number>>;
+  page?: number;
+  setPage?: Dispatch<SetStateAction<number>>;
 }) => {
   const navigate = useNavigate();
 
@@ -210,9 +210,9 @@ const VendorOrdersList = ({
                       <th>Total Price</th>
                       <th>Order Date</th>
                       <th>Status</th>
-                      <th className="text-center" style={{ width: "80px" }}>
+                      {/* <th className="text-center" style={{ width: "80px" }}>
                         Actions
-                      </th>
+                      </th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -249,7 +249,7 @@ const VendorOrdersList = ({
                             <Link
                               style={{ width: "50px", height: "50px" }}
                               className="d-flex align-items-center justify-content-center"
-                              to={`/products/detail?_id=${item?.product?._id}`}
+                              to={`/products/detail?_id=${item?.productDetails?._id}`}
                               onClick={(e) => e.stopPropagation()}
                             >
                               <img
@@ -261,7 +261,7 @@ const VendorOrdersList = ({
                                 alt="product"
                                 width="40"
                                 height="40"
-                                crossOrigin="anonymous"
+                                // crossOrigin="anonymous"
                               />
                             </Link>
                           </td>
@@ -270,7 +270,12 @@ const VendorOrdersList = ({
                               to={`/stock/detail?_id=${item?.stockIdByVendor}`}
                               onClick={(e) => e.stopPropagation()}
                             >
-                              {item?.productDetails?.productName}
+                              {item?.productDetails?.productName}-{" "}
+                              {`${item?.productDetails?.width}${
+                                item?.productDetails?.height
+                                  ? `/${item.productDetails?.height}`
+                                  : ""
+                              } R${item?.productDetails?.size}`}
                             </Link>
                           </td>
                           <td>
@@ -293,7 +298,7 @@ const VendorOrdersList = ({
                               {capitalize(item?.status)}
                             </div>
                           </td>
-                          <td onClick={(e) => e.stopPropagation()}>
+                          {/* <td onClick={(e) => e.stopPropagation()}>
                             <div className="d-flex align-items-center justify-content-around">
                               {isEditOpen &&
                               selectedStock &&
@@ -324,19 +329,10 @@ const VendorOrdersList = ({
                                   >
                                     <i className="fas fa-pencil-alt"></i>
                                   </div>
-                                  {/* <div
-                                    className="action_btn"
-                                    onClick={() => {
-                                      setSelectedStock(item);
-                                      setDeleteOpen(true);
-                                    }}
-                                  >
-                                    <i className="far fa-trash-alt"></i>
-                                  </div> */}
                                 </>
                               )}
                             </div>
-                          </td>
+                          </td> */}
                         </tr>
                       ))
                     ) : (
@@ -353,13 +349,13 @@ const VendorOrdersList = ({
                 </Table>
               </Form>
             </div>
-            <Pagination
+            {/* <Pagination
               currentPage={page}
               setCurrentPage={setPage}
               totalButtonsToShow={3}
               totalPages={totalPages}
               style={{ marginTop: "20px" }}
-            />
+            /> */}
             {/* </Card.Body>
             </Card> */}
           </Col>

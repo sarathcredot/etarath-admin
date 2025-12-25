@@ -256,21 +256,24 @@ const RetailersList = ({
                               className="action_btn "
                               onClick={(e) => {
                                 e.stopPropagation();
+                                // setSelectedRetailer(item);
+                                // setEditOpen(true);
+                                navigate(
+                                  `/retailers/edit-retailer?_id=${item?._id}`
+                                );
+                              }}
+                            >
+                              <i className="fas fa-pencil-alt"></i>
+                            </div>
+                            <div
+                              className="action_btn "
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 navigate(`/retailers/detail?_id=${item?._id}`);
                               }}
                             >
                               <i className="far fa-eye"></i>
                             </div>
-                            {/* <div
-                              className="action_btn "
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedRetailer(item);
-                                setEditOpen(true);
-                              }}
-                            >
-                              <i className="fas fa-pencil-alt"></i>
-                            </div> */}
                             {/* <div
                               className="action_btn"
                               onClick={() => {

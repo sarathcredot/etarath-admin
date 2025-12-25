@@ -208,9 +208,9 @@ const RetailerOrdersList = ({
                       <th>Total Price</th>
                       <th>Order Date</th>
                       <th>Status</th>
-                      <th className="text-center" style={{ width: "80px" }}>
+                      {/* <th className="text-center" style={{ width: "80px" }}>
                         Actions
-                      </th>
+                      </th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -263,7 +263,13 @@ const RetailerOrdersList = ({
                               to={`/stock/detail?_id=${item?.stockIdByVendor}`}
                               onClick={(e) => e.stopPropagation()}
                             >
-                              {item?.productDetails?.productName}
+                              {`${item?.productDetails?.productName} - ${
+                                item?.productDetails?.width
+                              }${
+                                item?.productDetails?.height
+                                  ? `/${item?.productDetails?.height}`
+                                  : ""
+                              } R${item?.productDetails?.size}`}
                             </Link>
                           </td>
                           <td>
@@ -271,7 +277,7 @@ const RetailerOrdersList = ({
                               to={`/vendors/detail?_id=${item?.vendorId}`}
                               onClick={(e) => e.stopPropagation()}
                             >
-                              {item?.vendorDetails?.userName}
+                              {item?.kycDetails?.business_name||item?.vendorDetails?.userName}
                             </Link>
                           </td>
                           {/* <td>{item?.quantity || 0} </td> */}
@@ -286,7 +292,7 @@ const RetailerOrdersList = ({
                               {capitalize(item?.status)}
                             </div>
                           </td>
-                          <td onClick={(e) => e.stopPropagation()}>
+                          {/* <td onClick={(e) => e.stopPropagation()}>
                             <div className="d-flex align-items-center justify-content-around">
                               {isEditOpen &&
                               selectedStock &&
@@ -317,19 +323,10 @@ const RetailerOrdersList = ({
                                   >
                                     <i className="fas fa-pencil-alt"></i>
                                   </div>
-                                  {/* <div
-                                    className="action_btn"
-                                    onClick={() => {
-                                      setSelectedStock(item);
-                                      setDeleteOpen(true);
-                                    }}
-                                  >
-                                    <i className="far fa-trash-alt"></i>
-                                  </div> */}
                                 </>
                               )}
                             </div>
-                          </td>
+                          </td> */}
                         </tr>
                       ))
                     ) : (

@@ -117,8 +117,10 @@ export default function AddRetailerPage() {
       documents: {
         tradeLicense: "" as any,
       },
+      tradeLicenseRegistrationDate: "",
+      tradeLicenseExpiryDate: "",
       shop_address: "",
-      city: "",
+      // city: "",
       post: "",
       business_hours: "",
       shop_contact_number: "",
@@ -185,6 +187,7 @@ export default function AddRetailerPage() {
       // authorised_brands: [] as object[],
       averageMonthlyVolume: "",
       paymentMethod: "",
+      creditDays: "",
       // typeOfTyers: [] as string[],
     },
 

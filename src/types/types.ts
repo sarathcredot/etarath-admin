@@ -15,6 +15,7 @@ export type User = {
   location: string;
   eidNo: string;
   eidFile: string;
+  eidExpiryDate: string;
   vendorTag: string;
   createdAt: string;
   updatedAt: string;

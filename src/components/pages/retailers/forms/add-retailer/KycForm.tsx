@@ -4,93 +4,28 @@ import { Col, Form, Row } from "react-bootstrap";
 import Select from "react-select";
 import { timeFormat } from "src/components/pages/vendors/forms/add-vendor/ProfileForm";
 import { BUSSINESS_TYPES } from "src/components/pages/vendors/popups/AddBussinessDetails";
+import {Country, State, City} from 'country-state-city';
+import { useEffect, useState } from "react";
 
-const locations = [
-  { value: "AFG", label: "AFG" },
-  { value: "ALB", label: "ALB" },
-  { value: "DZA", label: "DZA" },
-  { value: "USA", label: "USA" },
-  { value: "ARG", label: "ARG" },
-  { value: "ARM", label: "ARM" },
-  { value: "AUS", label: "AUS" },
-  { value: "AUT", label: "AUT" },
-  { value: "BGD", label: "BGD" },
-  { value: "BEL", label: "BEL" },
-  { value: "BRA", label: "BRA" },
-  { value: "GBR", label: "GBR" },
-  { value: "BGR", label: "BGR" },
-  { value: "CAN", label: "CAN" },
-  { value: "CHL", label: "CHL" },
-  { value: "CHN", label: "CHN" },
-  { value: "COL", label: "COL" },
-  { value: "HRV", label: "HRV" },
-  { value: "CZE", label: "CZE" },
-  { value: "DNK", label: "DNK" },
-  { value: "NLD", label: "NLD" },
-  { value: "EGY", label: "EGY" },
-  { value: "ARE", label: "ARE" },
-  { value: "EST", label: "EST" },
-  { value: "FIN", label: "FIN" },
-  { value: "FRA", label: "FRA" },
-  { value: "GEO", label: "GEO" },
-  { value: "DEU", label: "DEU" },
-  { value: "GRC", label: "GRC" },
-  { value: "HUN", label: "HUN" },
-  { value: "ISL", label: "ISL" },
-  { value: "IND", label: "IND" },
-  { value: "IDN", label: "IDN" },
-  { value: "IRN", label: "IRN" },
-  { value: "IRQ", label: "IRQ" },
-  { value: "IRL", label: "IRL" },
-  { value: "ISR", label: "ISR" },
-  { value: "ITA", label: "ITA" },
-  { value: "JPN", label: "JPN" },
-  { value: "JOR", label: "JOR" },
-  { value: "KEN", label: "KEN" },
-  { value: "KWT", label: "KWT" },
-  { value: "LVA", label: "LVA" },
-  { value: "LBN", label: "LBN" },
-  { value: "LTU", label: "LTU" },
-  { value: "MYS", label: "MYS" },
-  { value: "MEX", label: "MEX" },
-  { value: "MAR", label: "MAR" },
-  { value: "NPL", label: "NPL" },
-  { value: "NZL", label: "NZL" },
-  { value: "NGA", label: "NGA" },
-  { value: "NOR", label: "NOR" },
-  { value: "PAK", label: "PAK" },
-  { value: "PER", label: "PER" },
-  { value: "PHL", label: "PHL" },
-  { value: "POL", label: "POL" },
-  { value: "PRT", label: "PRT" },
-  { value: "QAT", label: "QAT" },
-  { value: "ROU", label: "ROU" },
-  { value: "RUS", label: "RUS" },
-  { value: "SAU", label: "SAU" },
-  { value: "SRB", label: "SRB" },
-  { value: "SGP", label: "SGP" },
-  { value: "SVK", label: "SVK" },
-  { value: "SVN", label: "SVN" },
-  { value: "ZAF", label: "ZAF" },
-  { value: "KOR", label: "KOR" },
-  { value: "ESP", label: "ESP" },
-  { value: "LKA", label: "LKA" },
-  { value: "SWE", label: "SWE" },
-  { value: "CHE", label: "CHE" },
-  { value: "SYR", label: "SYR" },
-  { value: "THA", label: "THA" },
-  { value: "TUR", label: "TUR" },
-  { value: "UGA", label: "UGA" },
-  { value: "UKR", label: "UKR" },
-  { value: "URY", label: "URY" },
-  { value: "UZB", label: "UZB" },
-  { value: "VEN", label: "VEN" },
-  { value: "VNM", label: "VNM" },
-  { value: "YEM", label: "YEM" },
-  { value: "ZMB", label: "ZMB" },
-  { value: "ZWE", label: "ZWE" },
-];
 export default function KycForm({ formik }: any) {
+
+  const [locations, setLocations] = useState<{ label: string; value: string }[]>([]);
+    const uaeCountry: any = Country.getAllCountries().find(c => c.isoCode === "AE"); // UAE country code
+    const allCities: { label: string; value: string }[] = [];
+    const res = State.getStatesOfCountry(uaeCountry.isoCode)
+    useEffect(() => {
+      res?.map((state) => {
+        City.getCitiesOfState(uaeCountry.isoCode, state.isoCode).forEach((city) => {
+          // allCities.push({
+          //   label: `${city.name}, ${state.name}`, // optional: add state
+          //   value: city.name,
+          // });
+          allCities.push({ label: city.name, value: city.name })
+        });
+      })
+      console.log("loc", allCities)
+      setLocations(allCities)
+    }, [])
   return (
     <Row className="px-1 px-md-3">
       <Col lg={6} className="px-4 py-1">
@@ -183,14 +118,35 @@ export default function KycForm({ formik }: any) {
           </div>
         )}
       </Col>
-      <Col lg={6} className="px-4 py-1  ">
+      <Col lg={6} className="px-4 pb-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">
-            Trade License/ Business Registration Number
+            Shop Contact Number
+          </Form.Label>
+          <Form.Control
+            type="number"
+            placeholder="Shop Contact Number"
+            name="shop_contact_number"
+            value={formik.values.shop_contact_number}
+            onChange={formik.handleChange}
+            isInvalid={
+              !!formik.errors.shop_contact_number &&
+              formik.touched.shop_contact_number
+            }
+          />
+          <Form.Control.Feedback type="invalid">
+            {formik.errors.shop_contact_number}
+          </Form.Control.Feedback>
+        </Form.Group>
+      </Col>
+      <Col lg={4} className="px-4 py-1  ">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">
+            Trade License Number
           </Form.Label>
           <Form.Control
             type="text"
-            placeholder="Trade License/ Business Registration Number"
+            placeholder="Trade License Number"
             name="tradeLicenseNumber"
             value={formik.values.tradeLicenseNumber}
             onChange={formik.handleChange}
@@ -204,14 +160,56 @@ export default function KycForm({ formik }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
+      <Col lg={4} className="px-4 py-1  ">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">
+            Trade License Registration Date
+          </Form.Label>
+          <Form.Control
+            type="date"
+            placeholder="Trade License Registration Date"
+            name="tradeLicenseRegistrationDate"
+            value={formik.values.tradeLicenseRegistrationDate}
+            onChange={formik.handleChange}
+            isInvalid={
+              !!formik.errors.tradeLicenseRegistrationDate &&
+              formik.touched.tradeLicenseRegistrationDate
+            }
+          />
+          <Form.Control.Feedback type="invalid">
+            {formik.errors.tradeLicenseRegistrationDate}
+          </Form.Control.Feedback>
+        </Form.Group>
+      </Col>
+      <Col lg={4} className="px-4 py-1  ">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">
+            Trade License Expiry Date
+          </Form.Label>
+          <Form.Control
+            type="date"
+            placeholder="Trade License Expiry Date"
+            name="tradeLicenseExpiryDate"
+            value={formik.values.tradeLicenseExpiryDate}
+            onChange={formik.handleChange}
+            isInvalid={
+              !!formik.errors.tradeLicenseExpiryDate &&
+              formik.touched.tradeLicenseExpiryDate
+            }
+          />
+          <Form.Control.Feedback type="invalid">
+            {formik.errors.tradeLicenseExpiryDate}
+          </Form.Control.Feedback>
+        </Form.Group>
+      </Col>
       <Col lg={12} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">
-            Upload Trade License/ Business Registration
+            Upload Trade License
           </Form.Label>
           <Form.Control
             type="file"
-            placeholder="Upload Trade License/ Business Registration"
+            placeholder="Upload Trade License"
             name="documents.tradeLicense"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               if (e.currentTarget?.files && e.currentTarget?.files[0]) {
@@ -233,7 +231,7 @@ export default function KycForm({ formik }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
-      <Col lg={4} className="px-4 pb-1  ">
+      <Col lg={12} className="px-4 pb-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">Shop Address</Form.Label>
           <Form.Control
@@ -251,28 +249,13 @@ export default function KycForm({ formik }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
-      <Col lg={4} className="px-4 pb-1  ">
+
+      <Col lg={6} className="px-4 pb-1  ">
         <Form.Group as={Row} className="align-items-center">
-          <Form.Label className="col-form-label">City</Form.Label>
+          <Form.Label className="col-form-label">P.O. Box</Form.Label>
           <Form.Control
             type="text"
-            placeholder="City"
-            name="city"
-            value={formik.values.city}
-            onChange={formik.handleChange}
-            isInvalid={!!formik.errors.city && formik.touched.city}
-          />
-          <Form.Control.Feedback type="invalid">
-            {formik.errors.city}
-          </Form.Control.Feedback>
-        </Form.Group>
-      </Col>
-      <Col lg={4} className="px-4 pb-1  ">
-        <Form.Group as={Row} className="align-items-center">
-          <Form.Label className="col-form-label">Post</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Post"
+            placeholder="P.O. Box"
             name="post"
             value={formik.values.post}
             onChange={formik.handleChange}
@@ -362,32 +345,9 @@ export default function KycForm({ formik }: any) {
                       </Form.Group>
                     </Col> */}
 
-      <Col lg={6} className="px-4 pb-1  ">
-        <Form.Group as={Row} className="align-items-center">
-          <Form.Label className="col-form-label">
-            Shop Contact Number
-          </Form.Label>
-          <Form.Control
-            type="number"
-            placeholder="Shop Contact Number"
-            name="shop_contact_number"
-            value={formik.values.shop_contact_number}
-            onChange={formik.handleChange}
-            isInvalid={
-              !!formik.errors.shop_contact_number &&
-              formik.touched.shop_contact_number
-            }
-          />
-          <Form.Control.Feedback type="invalid">
-            {formik.errors.shop_contact_number}
-          </Form.Control.Feedback>
-        </Form.Group>
-      </Col>
       <Col lg={12} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
-          <Form.Label className="col-form-label">
-            Upload Shop Photo 
-          </Form.Label>
+          <Form.Label className="col-form-label">Upload Shop Photo</Form.Label>
           <Form.Control
             type="file"
             placeholder="Upload Shop Photo "

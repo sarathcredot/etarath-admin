@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Col, Row, Tabs, Tab, Card, Button } from "react-bootstrap";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Breadcrumb from "src/components/common/breadcrumb";
 import PtSwitch from "src/components/features/elements/switch";
 import { toast } from "react-toastify";
@@ -10,20 +10,25 @@ import { User } from "src/types/types";
 import { generateFilePath } from "src/services/url.service";
 import { useKycVerification } from "src/services/kyc.service";
 import EditRetailer from "./popups/EditRetailer";
-import AddBussinessDetails from "../vendors/popups/AddBussinessDetails";
-import EditBussinessDetails from "../vendors/popups/EditBussinessDetails";
 import {
   useGetOrdersByRetailerId,
   useGetRetailerById,
   useUpdateRetailerStatus,
 } from "src/services/retailer.service";
 import RetailerOrdersList from "./RetailerOrdersList";
-import { formatNumberShort } from "src/utils/formats";
+import {
+  formatCurrency,
+  formatDate,
+  formatNumberShort,
+} from "src/utils/formats";
+import { useGetPreferenceByUserId } from "src/services/preference.service";
+import { useGetSubscriptionOrderById } from "src/services/subscription-orders";
 
 const RetailersDetailPage = () => {
   //IMPORTS
   const [searchParams] = useSearchParams();
   const retailerID = searchParams.get("_id");
+  const navigate = useNavigate();
 
   //STATE
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
@@ -69,6 +74,13 @@ const RetailersDetailPage = () => {
     data: User;
     isLoading: boolean;
   };
+
+  const { data: retailerPreferences, isLoading: isPreferenceLoading } =
+    useGetPreferenceByUserId(retailerID ? retailerID : "", !!retailerID);
+
+  const { data: retailerActivePlan, isLoading: isActivePlanLoading } =
+    useGetSubscriptionOrderById(retailer?.active_plan);
+
   const { data: orders, isLoading: ordersLoading } = useGetOrdersByRetailerId(
     retailerID ? retailerID : "",
     !!retailerID
@@ -154,6 +166,627 @@ const RetailersDetailPage = () => {
         ]}
       />
       <div>
+        <div
+          className="tabs"
+          style={{ borderRadius: "5px", marginTop: "20px", overflow: "hidden" }}
+        >
+          <Tabs className="nav-justified">
+            <Tab eventKey="profile" title="Profile Details">
+              <Row className="">
+                <Col>
+                  <div className="d-flex align-items-center justify-content-between mb-3">
+                    <h5 className="m-0 card-title h5 font-weight-bold">
+                      Profile Details
+                    </h5>
+                    {retailer ? (
+                      <div
+                        className="d-flex align-items-center"
+                        style={{ gap: 10 }}
+                      >
+                        <div
+                          title="Edit Retailer"
+                          className="action_btn bg-dark"
+                          onClick={() => {
+                            navigate(
+                              `/retailers/edit-retailer?_id=${retailer?._id}`
+                            );
+                          }}
+                        >
+                          <i className="fas fa-pencil-alt text-light"></i>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        className="font-weight-semibold"
+                        variant="dark"
+                        //   size="md"
+                        onClick={() => setKycOpen(true)}
+                      >
+                        + Add Profile Details
+                      </Button>
+                    )}
+                  </div>
+                  <Row>
+                    <Col>
+                      <div>
+                        <h6>Profile</h6>
+                        <div>
+                          <img
+                            src={generateFilePath(retailer?.imgUrl)}
+                            width={100}
+                            height={100}
+                            alt="profile"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <h6>Full Name</h6>
+                        <h5 className=" text-dark font-weight-500 ">
+                          {retailer?.userName || "-"}
+                        </h5>
+                      </div>
+                      <div>
+                        <h6> Phone Number</h6>
+                        <h5 className=" text-dark font-weight-500 ">
+                          {retailer?.phoneNumber || "-"}
+                        </h5>
+                      </div>
+                      <div>
+                        <h6>Email</h6>
+                        <h5 className=" text-dark font-weight-500 ">
+                          {retailer?.email || "-"}
+                        </h5>
+                      </div>
+                    </Col>
+                    <Col>
+                      <div>
+                        <h6>EID No</h6>
+                        <h5 className=" text-dark font-weight-500 ">
+                          {retailer?.eidNo || "-"}
+                        </h5>
+                      </div>
+                      <div>
+                        <h6>EID Expiry Date</h6>
+                        <h5 className=" text-dark font-weight-500 ">
+                          {formatDate(retailer?.eidExpiryDate)}
+                        </h5>
+                      </div>
+                      {retailer?.eidFile && (
+                        <div className="mt-3 ">
+                          <h6>EID Document </h6>
+                          <Button
+                            variant="default"
+                            onClick={() => showFile(retailer?.eidFile)}
+                          >
+                            <i className="far fa-eye mr-2"></i>
+                            View
+                          </Button>
+                        </div>
+                      )}
+                    </Col>
+                    <Col>
+                      <div className="pt-2">
+                        <h6>Verification Status</h6>
+                        <span
+                          className={`ecommerce-status ${
+                            retailer?.isVerified === "approved"
+                              ? "completed"
+                              : retailer?.isVerified === "rejected"
+                              ? "failed"
+                              : "on-hold"
+                          } text-dark font-weight-500`}
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {retailer?.isVerified}
+                        </span>
+                      </div>
+                      <div>
+                        <h6 className="mb-0">Status</h6>
+                        <div
+                          className="d-flex align-items-center"
+                          onClick={() => {
+                            setStatusOpen(true);
+                          }}
+                        >
+                          <PtSwitch
+                            className="mr-2"
+                            on={!retailer?.isSuspend}
+                            size="sm"
+                            variant="success"
+                          />
+                          <h5 className=" text-dark font-weight-500 ">
+                            {!retailer?.isSuspend ? "Active" : "Blocked"}
+                          </h5>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            </Tab>
+            <Tab eventKey="kyc" title="Business Details">
+              <Row className="px-3" style={{ gap: 15 }}>
+                {retailer?.kyc && (
+                  <Col lg={4} className="p-0 ">
+                    <Card
+                      className="card-modern"
+                      style={{ height: "100%", border: "1px solid #ddd " }}
+                    >
+                      {/* <Card.Header className="d-flex align-items-center justify-content-end"></Card.Header> */}
+                      <Card.Body
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Row>
+                          <Col className="text-center">
+                            <div>
+                              <div>
+                                <img
+                                  src={generateFilePath(
+                                    retailer?.kyc?.shop_photo_logo
+                                  )}
+                                  width={150}
+                                  height={150}
+                                  alt="profile"
+                                  style={{
+                                    borderRadius: "50%",
+                                    marginBottom: 20,
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <h6>Business Name</h6>
+                              <h5 className=" text-dark font-weight-500 ">
+                                {retailer?.kyc?.shop_name}
+                              </h5>
+                            </div>
+                            <div
+                              className="d-flex justify-content-center text-center"
+                              style={{ gap: 20 }}
+                            >
+                              <div className="text-center w-100 ">
+                                <h6>Shop Contact Number</h6>
+                                <h5 className=" text-dark font-weight-500 ">
+                                  {retailer?.kyc?.shop_contact_number}
+                                </h5>
+                              </div>
+                            </div>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                )}
+                <Col className="p-0">
+                  <Card
+                    className="card-modern"
+                    style={{ border: "1px solid #ddd " }}
+                  >
+                    <Card.Header className="d-flex align-items-center justify-content-between">
+                      <Card.Title>Business Details</Card.Title>
+                      {retailer?.kyc ? (
+                        <div
+                          className="d-flex align-items-center"
+                          style={{ gap: 10 }}
+                        >
+                          <div
+                            title="Edit Retailer"
+                            className="action_btn bg-dark"
+                            onClick={() => {
+                              navigate(
+                                `/retailers/edit-retailer?_id=${retailer?._id}`
+                              );
+                            }}
+                          >
+                            <i className="fas fa-pencil-alt text-light"></i>
+                          </div>
+                        </div>
+                      ) : (
+                        <Button
+                          className="font-weight-semibold"
+                          variant="dark"
+                          //   size="md"
+                          // onClick={() => setKycOpen(true)}
+                          onClick={() => {
+                            navigate(
+                              `/retailers/edit-retailer?_id=${retailer?._id}`
+                            );
+                          }}
+                        >
+                          + Add KYC
+                        </Button>
+                      )}
+                    </Card.Header>
+                    <Card.Body>
+                      <Row>
+                        <Col>
+                          <div>
+                            <h6>Shop Name</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.shop_name || "-"}
+                            </h5>
+                          </div>
+                          <div>
+                            <h6>Business Type</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.business_type || "-"}
+                            </h5>
+                          </div>
+
+                          <div>
+                            <h6>Shop Contact Number</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.shop_contact_number || "-"}
+                            </h5>
+                          </div>
+                          <div>
+                            <h6>Trade License Number</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.tradeLicenseNumber || "-"}
+                            </h5>
+                          </div>
+                          {retailer?.kyc && (
+                            <div className="">
+                              <h6>Trade License </h6>
+                              <Button
+                                variant="default"
+                                onClick={() =>
+                                  showFile(
+                                    retailer?.kyc?.documents?.tradeLicense
+                                  )
+                                }
+                              >
+                                <i className="far fa-eye mr-2"></i>
+                                View
+                              </Button>
+                            </div>
+                          )}
+                        </Col>
+                        <Col>
+                          <div>
+                            <h6>Trade License Registration Date</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {formatDate(
+                                retailer?.kyc?.tradeLicenseRegistrationDate
+                              )}
+                            </h5>
+                          </div>
+                          <div>
+                            <h6>Trade License Registration Date</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {formatDate(
+                                retailer?.kyc?.tradeLicenseExpiryDate
+                              )}
+                            </h5>
+                          </div>
+                          <div>
+                            <h6>Shop Address</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.shop_address || "-"}
+                            </h5>
+                          </div>
+                          <div>
+                            <h6>Shop Location</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.shop_location || "-"}
+                            </h5>
+                          </div>
+                          <div>
+                            <h6>P.O. Box</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.post || "-"}
+                            </h5>
+                          </div>
+                        </Col>
+                        <Col>
+                          {retailer?.kyc && (
+                            <div className="">
+                              <h6>Shop Photo</h6>
+                              <Button
+                                variant="default"
+                                onClick={() =>
+                                  showFile(retailer?.kyc?.shop_photo_logo)
+                                }
+                              >
+                                <i className="far fa-eye mr-2"></i>
+                                View
+                              </Button>
+                            </div>
+                          )}
+                          <div>
+                            <h6>Business Hours</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.business_hours || "-"}
+                            </h5>
+                          </div>
+                          <div>
+                            <h6>Verification Status</h6>
+                            {retailer?.kyc ? (
+                              <span
+                                className={`ecommerce-status ${
+                                  retailer?.kyc?.kycStatus === "approved"
+                                    ? "completed"
+                                    : retailer?.kyc?.kycStatus === "rejected"
+                                    ? "failed"
+                                    : "on-hold"
+                                } text-dark font-weight-500`}
+                                style={{ textTransform: "capitalize" }}
+                              >
+                                {retailer?.kyc?.kycStatus}
+                              </span>
+                            ) : (
+                              "-"
+                            )}
+                          </div>
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
+            </Tab>
+
+            <Tab eventKey="preferences" title="Preferences">
+              <Row className="">
+                <Col>
+                  <div className="d-flex align-items-center justify-content-between mb-3">
+                    <h5 className="m-0 card-title h5 font-weight-bold">
+                      Preferences
+                    </h5>
+                    {retailerPreferences ? (
+                      <div
+                        className="d-flex align-items-center"
+                        style={{ gap: 10 }}
+                      >
+                        <div
+                          title="Edit Retailer"
+                          className="action_btn bg-dark"
+                          onClick={() => {
+                            navigate(
+                              `/retailers/edit-retailer?_id=${retailer?._id}`
+                            );
+                          }}
+                        >
+                          <i className="fas fa-pencil-alt text-light"></i>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        className="font-weight-semibold"
+                        variant="dark"
+                        //   size="md"
+                        onClick={() => {
+                          navigate(
+                            `/retailers/edit-retailer?_id=${retailer?._id}`
+                          );
+                        }}
+                      >
+                        + Add Preferences
+                      </Button>
+                    )}
+                  </div>
+                  <Row>
+                    <Col>
+                      <div>
+                        <h6>Preferred Brands</h6>
+                        <h5
+                          className=" text-dark font-weight-500 "
+                          // style={{ textTransform: "capitalize" }}
+                        >
+                          {retailerPreferences?.brands?.length > 0
+                            ? retailerPreferences.brands
+                                .map((brand: any) => brand?.brandId?.name)
+                                .join(", ")
+                            : "-"}
+                        </h5>
+                      </div>
+                      {retailerPreferences?.averageMonthlyVolume ? (
+                        <div>
+                          <h6>Average Monthly Purchase Volume</h6>
+                          <h5
+                            className=" text-dark font-weight-500 "
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            {retailerPreferences?.averageMonthlyVolume}
+                          </h5>
+                        </div>
+                      ) : null}
+                      <div>
+                        <h6>Preferred Payment Method</h6>
+                        <h5
+                          className=" text-dark font-weight-500 "
+                          // style={{ textTransform: "capitalize" }}
+                        >
+                          {retailerPreferences?.paymentMethod || "-"}
+                        </h5>
+                      </div>
+                      {retailerPreferences?.paymentMethod ===
+                        "Credit Terms" && (
+                        <div>
+                          <h6>Credit Period </h6>
+                          <h5
+                            className=" text-dark font-weight-500 "
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            {retailerPreferences?.creditDays
+                              ? `${retailerPreferences.creditDays} Days`
+                              : "-"}
+                          </h5>
+                        </div>
+                      )}
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            </Tab>
+            <Tab eventKey="subscription" title="Subscription">
+              <Row className="">
+                <Col>
+                  <div className="d-flex align-items-center justify-content-between mb-3">
+                    <h5 className="m-0 card-title h5 font-weight-bold">
+                      Subscription
+                    </h5>
+                    {retailerActivePlan ? (
+                      <div
+                        className="d-flex align-items-center"
+                        style={{ gap: 10 }}
+                      >
+                        <div
+                          title="Edit Retailer"
+                          className="action_btn bg-dark"
+                          onClick={() => {
+                            navigate(
+                              `/retailers/edit-retailer?_id=${retailer?._id}`
+                            );
+                          }}
+                        >
+                          <i className="fas fa-pencil-alt text-light"></i>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        className="font-weight-semibold"
+                        variant="dark"
+                        onClick={() => {
+                          navigate(
+                            `/retailers/edit-retailer?_id=${retailer?._id}`
+                          );
+                        }}
+                      >
+                        + Purchase Plan
+                      </Button>
+                    )}
+                  </div>
+                  <Row>
+                    <Col>
+                      <div>
+                        <h6>Subscription Order ID</h6>
+                        <h5
+                          className=" text-dark font-weight-500 "
+                          // style={{ textTransform: "capitalize" }}
+                        >
+                          {retailerActivePlan?.subId || "-"}
+                        </h5>
+                      </div>
+                      <div>
+                        <h6>Subscription Plan</h6>
+                        <h5
+                          className=" text-dark font-weight-500 "
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {retailerActivePlan?.planId?.plan || "-"}
+                        </h5>
+                      </div>
+                      <div>
+                        <h6>Duration</h6>
+                        <h5
+                          className=" text-dark font-weight-500 "
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {retailerActivePlan?.durationType || "-"}
+                        </h5>
+                      </div>
+                      <div>
+                        <h6>Plan Price </h6>
+                        <h5
+                          className=" text-dark font-weight-500 "
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {formatCurrency(retailerActivePlan?.planId?.price_monthly || 0)} / Month
+                        </h5>
+                      </div>
+                      <div>
+                        <h6>Total</h6>
+                        <h5
+                          className=" text-dark font-weight-500 "
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {formatCurrency(
+                            retailerActivePlan?.total_amount || 0
+                          )}
+                        </h5>
+                      </div>
+                    </Col>
+                    <Col>
+                      <div>
+                        <h6>Purchased Date</h6>
+                        <h5
+                          className=" text-dark font-weight-500 "
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {formatDate(retailerActivePlan?.purchased_Date)}
+                        </h5>
+                      </div>
+                      <div>
+                        <h6>Start Date</h6>
+                        <h5
+                          className=" text-dark font-weight-500 "
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {formatDate(retailerActivePlan?.plan_start_date)}
+                        </h5>
+                      </div>
+                      <div>
+                        <h6>End Date</h6>
+                        <h5
+                          className=" text-dark font-weight-500 "
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {formatDate(retailerActivePlan?.plan_end_date)}
+                        </h5>
+                      </div>
+                      <div>
+                        <h6>Next Billing Date</h6>
+                        <h5
+                          className=" text-dark font-weight-500 "
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {formatDate(retailerActivePlan?.next_billing_date)}
+                        </h5>
+                      </div>
+                    </Col>
+                    <Col>
+                      <div>
+                        <h6>Trial Period</h6>
+                        <h5
+                          className=" text-dark font-weight-500 "
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {retailerActivePlan?.trial_period || "-"}
+                        </h5>
+                      </div>
+                      <div>
+                        <h6>Payment Status</h6>
+                        {retailerActivePlan?.paymentStatus ? (
+                          <span
+                            className={`ecommerce-status ${
+                              retailerActivePlan?.paymentStatus === "paid"
+                                ? "completed"
+                                : retailerActivePlan?.paymentStatus === "failed"
+                                ? "failed"
+                                : "on-hold"
+                            } text-dark font-weight-500`}
+                            style={{ textTransform: "capitalize" }}
+                          >
+                            {retailerActivePlan?.paymentStatus}
+                          </span>
+                        ) : (
+                          "-"
+                        )}
+                      </div>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            </Tab>
+          </Tabs>
+        </div>
+
         {/* <Row className="pt-0">
           <Col lg={3} className="py-3">
             <Card className={`card-modern  `}>
@@ -277,348 +910,12 @@ const RetailersDetailPage = () => {
             </Card>
           </Col>
         </Row> */}
-        <Row>
-          <Col
-            lg={12}
-            // className="mt-5"
-          >
-            <Card className="card-modern" style={{ minHeight: "100%" }}>
-              <Card.Header className="d-flex align-items-center justify-content-between">
-                <Card.Title>Details</Card.Title>
-                <div
-                  className="action_btn "
-                  onClick={() => {
-                    setEditOpen(true);
-                  }}
-                >
-                  <i className="fas fa-pencil-alt"></i>
-                </div>
-              </Card.Header>
-              <Card.Body>
-                <Row>
-                  <Col>
-                    <div>
-                      <h6>Profile</h6>
-                      <div>
-                        <img
-                          src={generateFilePath(retailer?.imgUrl)}
-                          width={100}
-                          height={100}
-                          alt="profile"
-                          // style={{ borderRadius: "50%" }}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <h6>Full Name</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                        {retailer?.userName || "-"}
-                      </h5>
-                    </div>
-                    <div>
-                      <h6>Email</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                        {retailer?.email || "-"}
-                      </h5>
-                    </div>
-                    <div>
-                      <h6>Phone Number</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                        {retailer?.phoneNumber || "-"}
-                      </h5>
-                    </div>
-                  </Col>
-                  <Col>
-                    <div>
-                      <h6>EID No</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                        {retailer?.eidNo || "-"}
-                      </h5>
-                    </div>
-                    {retailer?.eidFile && (
-                      <div className="mt-3 ">
-                        <Button
-                          variant="dark"
-                          onClick={() => showFile(retailer?.eidFile)}
-                        >
-                          {/* <i className="fas fa-arrow-up-from-bracket"></i> */}
-                          EID Document
-                        </Button>
-                      </div>
-                    )}
-                    <div className="pt-2">
-                      <h6>Verification Status</h6>
-                      <span
-                        className={`ecommerce-status ${
-                          retailer?.isVerified === "approved"
-                            ? "completed"
-                            : retailer?.isVerified === "rejected"
-                            ? "failed"
-                            : "on-hold"
-                        } text-dark font-weight-500`}
-                        style={{ textTransform: "capitalize" }}
-                      >
-                        {retailer?.isVerified}
-                      </span>
-                    </div>
-                    <div>
-                      <h6 className="mb-0">Status</h6>
-                      <div
-                        className="d-flex align-items-center"
-                        onClick={() => {
-                          setStatusOpen(true);
-                        }}
-                      >
-                        <PtSwitch
-                          className="mr-2"
-                          on={!retailer?.isSuspend}
-                          size="sm"
-                          variant="success"
-                        />
-                        <h5 className=" text-dark font-weight-500 ">
-                          {!retailer?.isSuspend ? "Active" : "Blocked"}
-                        </h5>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
         <div
           className="tabs"
           style={{ borderRadius: "5px", marginTop: "20px", overflow: "hidden" }}
         >
           <Tabs className="nav-justified">
-            <Tab eventKey="kyc" title="Business Details">
-              <Row>
-                {retailer?.kyc && (
-                  <Col lg={4}>
-                    <Card
-                      className="card-modern"
-                      style={{ border: "2px solid #ddd ", height: "100%" }}
-                    >
-                      {/* <Card.Header className="d-flex align-items-center justify-content-end"></Card.Header> */}
-                      <Card.Body
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <Row>
-                          <Col className="text-center">
-                            <div>
-                              <div>
-                                <img
-                                  src={generateFilePath(
-                                    retailer?.kyc?.shop_photo_logo
-                                  )}
-                                  width={150}
-                                  height={150}
-                                  alt="profile"
-                                  style={{
-                                    borderRadius: "50%",
-                                    marginBottom: 20,
-                                  }}
-                                />
-                              </div>
-                            </div>
-                            <div>
-                              <h6>Shop Name</h6>
-                              <h5 className=" text-dark font-weight-500 ">
-                                {retailer?.kyc?.shop_name}
-                              </h5>
-                            </div>
-                            <div
-                              className="d-flex justify-content-center text-center"
-                              style={{ gap: 20 }}
-                            >
-                              <div className="text-center w-100 ">
-                                <h6>Shop Contact Number</h6>
-                                <h5 className=" text-dark font-weight-500 ">
-                                  {retailer?.kyc?.shop_contact_number}
-                                </h5>
-                              </div>
-                            </div>
-                          </Col>
-                        </Row>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                )}
-                <Col>
-                  <Card
-                    className="card-modern"
-                    style={{ border: "2px solid #ddd " }}
-                  >
-                    <Card.Header className="d-flex align-items-center justify-content-between">
-                      <Card.Title>Business Details</Card.Title>
-                      {retailer?.kyc ? (
-                        <div
-                          className="d-flex align-items-center"
-                          style={{ gap: 10 }}
-                        >
-                          {retailer?.kyc?.kycStatus === "pending" && (
-                            <>
-                              <div
-                                title="Approve KYC"
-                                className="action_btn bg-success"
-                                onClick={() => {
-                                  set_is_kyc_approve_open(true);
-                                }}
-                              >
-                                <i className="fas fa-check text-light"></i>
-                              </div>
-                              <div
-                                title="Reject KYC"
-                                className="action_btn bg-danger"
-                                onClick={() => {
-                                  set_is_kyc_reject_open(true);
-                                }}
-                              >
-                                <i className="fas fa-x-mark text-light"></i>
-                              </div>
-                            </>
-                          )}
-                          <div
-                            title="Edit KYC"
-                            className="action_btn bg-dark"
-                            onClick={() => {
-                              setKycEditOpen(true);
-                            }}
-                          >
-                            <i className="fas fa-pencil-alt text-light"></i>
-                          </div>
-                        </div>
-                      ) : (
-                        <Button
-                          className="font-weight-semibold"
-                          variant="dark"
-                          //   size="md"
-                          onClick={() => setKycOpen(true)}
-                        >
-                          + Add Business Details
-                        </Button>
-                      )}
-                    </Card.Header>
-                    <Card.Body>
-                      <Row>
-                        <Col>
-                          <div>
-                            <h6>Shop Name</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {retailer?.kyc?.shop_name || "-"}
-                            </h5>
-                          </div>
-                          <div>
-                            <h6>Business Type</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {retailer?.kyc?.business_type || "-"}
-                            </h5>
-                          </div>
-                          <div>
-                            <h6>Shop Contact Number</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {retailer?.kyc?.shop_contact_number || "-"}
-                            </h5>
-                          </div>
-                          <div>
-                            <h6>Trade License Number</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {retailer?.kyc?.tradeLicenseNumber || "-"}
-                            </h5>
-                          </div>
-                          {retailer?.kyc && (
-                            <div className="mt-3">
-                              <Button
-                                variant="dark"
-                                onClick={() =>
-                                  showFile(
-                                    retailer?.kyc?.documents?.tradeLicense
-                                  )
-                                }
-                              >
-                                {/* <i className="fas fa-arrow-up-from-bracket"></i> */}
-                                Trade License
-                              </Button>
-                            </div>
-                          )}
-                        </Col>
-                        <Col>
-                          <div>
-                            <h6>Shop Address</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {retailer?.kyc?.shop_address || "-"}
-                            </h5>
-                          </div>
-                          <div>
-                            <h6>Shop Location</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {retailer?.kyc?.shop_location || "-"}
-                            </h5>
-                          </div>
-                          <div>
-                            <h6>City</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {retailer?.kyc?.city || "-"}
-                            </h5>
-                          </div>
-                          <div>
-                            <h6>Post</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {retailer?.kyc?.post || "-"}
-                            </h5>
-                          </div>
-                          {retailer?.kyc && (
-                            <div className="mt-3">
-                              <Button
-                                variant="dark"
-                                onClick={() =>
-                                  showFile(retailer?.kyc?.shop_photo_logo)
-                                }
-                              >
-                                {/* <i className="fas fa-arrow-up-from-bracket"></i> */}
-                                Shop Photo
-                              </Button>
-                            </div>
-                          )}
-                        </Col>
-                        <Col>
-                          <div>
-                            <h6>Business Hours</h6>
-                            <h5 className=" text-dark font-weight-500 ">
-                              {retailer?.kyc?.business_hours || "-"}
-                            </h5>
-                          </div>
-                          <div>
-                            <h6>Verification Status</h6>
-                            {retailer?.kyc ? (
-                              <span
-                                className={`ecommerce-status ${
-                                  retailer?.kyc?.kycStatus === "approved"
-                                    ? "completed"
-                                    : retailer?.kyc?.kycStatus === "rejected"
-                                    ? "failed"
-                                    : "on-hold"
-                                } text-dark font-weight-500`}
-                                style={{ textTransform: "capitalize" }}
-                              >
-                                {retailer?.kyc?.kycStatus}
-                              </span>
-                            ) : (
-                              "-"
-                            )}
-                          </div>
-                        </Col>
-                      </Row>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              </Row>
-            </Tab>
-            {/* <Tab eventKey="orders" title="Orders">
+            <Tab eventKey="orders" title="Orders">
               <RetailerOrdersList
                 orders={orders}
                 ordersLoading={ordersLoading}
@@ -626,7 +923,7 @@ const RetailersDetailPage = () => {
                 setPage={setPage}
                 retailerId={retailerID ? retailerID : ""}
               />
-            </Tab> */}
+            </Tab>
           </Tabs>
         </div>
       </div>
@@ -654,17 +951,6 @@ const RetailersDetailPage = () => {
         retailerId={retailerID ? retailerID : ""}
         isOpen={isEditOpen}
         toggle={() => setEditOpen(!isEditOpen)}
-      />
-
-      <AddBussinessDetails
-        isOpen={isKycOpen}
-        toggle={() => setKycOpen(!isKycOpen)}
-        userId={retailer ? retailer?._id : retailerID ? retailerID : ""}
-      />
-      <EditBussinessDetails
-        isOpen={isKycEditOpen}
-        toggle={() => setKycEditOpen(!isKycEditOpen)}
-        userId={retailer ? retailer?._id : retailerID ? retailerID : ""}
       />
     </>
   );

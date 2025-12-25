@@ -61,6 +61,7 @@ function SignIn(props) {
                             initialValues={{
                                 emailOrPhoneNumber: "",
                                 password: "",
+                                role: "admin",
                             }}
                             validationSchema={LoginValidationSchema}
                             onSubmit={handleSubmitForm}
