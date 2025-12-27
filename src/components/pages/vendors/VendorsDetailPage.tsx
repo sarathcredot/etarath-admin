@@ -29,6 +29,7 @@ import SalesExecutivesList from "./SalesExecutivesList";
 import VendorOrdersList from "./VendorOrdersList";
 import { useGetPreferenceByUserId } from "src/services/preference.service";
 import { useGetSubscriptionOrderById } from "src/services/subscription-orders";
+import VendorWarehousesList from "./VendorWarehousesList";
 
 const VendorsDetailPage = () => {
   //IMPORTS
@@ -143,6 +144,7 @@ const VendorsDetailPage = () => {
         containerId: "default",
         className: "no-icon notification-success",
       });
+      setVerifyKyc(false);
     } catch (error) {
       console.log(error);
       toast("Can't update kyc right now, please try later!", {
@@ -908,6 +910,9 @@ const VendorsDetailPage = () => {
                 ordersLoading={ordersLoading}
               />
             </Tab>
+            <Tab eventKey="warehouses" title="Warehouses">
+              <VendorWarehousesList vendorId={vendorID ? vendorID : ""} />
+            </Tab>
           </Tabs>
         </div>
       </div>
@@ -918,6 +923,7 @@ const VendorsDetailPage = () => {
             bottom: 15,
             right: 15,
             width: "400px",
+            zIndex: 999,
           }}
         >
           <div

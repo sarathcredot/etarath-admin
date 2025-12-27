@@ -4,7 +4,7 @@ import axiosAuth from "./axios.service";
 
 const baseUrl = `${url}/admin/order`;
 
-// GET VENDOR BY ID
+// GET ORDER BY ID
 export const getOrderById = async (id: string | undefined) => {
   if (!id) throw new Error("No id provided");
   return await axiosAuth.get(`${baseUrl}/${id}`);

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Col, Row, Tabs, Tab, Card, Button } from "react-bootstrap";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Breadcrumb from "src/components/common/breadcrumb";
@@ -38,6 +38,7 @@ const RetailersDetailPage = () => {
     useState<boolean>(false);
   const [is_kyc_reject_open, set_is_kyc_reject_open] = useState<boolean>(false);
   const [isKycOpen, setKycOpen] = useState<boolean>(false);
+  const [verifyKyc, setVerifyKyc] = useState<boolean>(false);
   //pagination
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
@@ -127,6 +128,7 @@ const RetailersDetailPage = () => {
         containerId: "default",
         className: "no-icon notification-success",
       });
+      setVerifyKyc(false);
     } catch (error) {
       console.log(error);
       toast("Can't update kyc right now, please try later!", {
@@ -145,6 +147,12 @@ const RetailersDetailPage = () => {
       window.open(url, "_blank");
     }
   };
+
+  useEffect(() => {
+    if (retailer && retailer?.kyc && retailer?.kyc?.kycStatus === "pending") {
+      setVerifyKyc(true);
+    }
+  }, [retailer]);
 
   return (
     <>
@@ -697,7 +705,10 @@ const RetailersDetailPage = () => {
                           className=" text-dark font-weight-500 "
                           style={{ textTransform: "capitalize" }}
                         >
-                          {formatCurrency(retailerActivePlan?.planId?.price_monthly || 0)} / Month
+                          {formatCurrency(
+                            retailerActivePlan?.planId?.price_monthly || 0
+                          )}{" "}
+                          / Month
                         </h5>
                       </div>
                       <div>
@@ -927,6 +938,95 @@ const RetailersDetailPage = () => {
           </Tabs>
         </div>
       </div>
+
+      {verifyKyc && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: 15,
+            right: 15,
+            width: "400px",
+            zIndex: 999,
+          }}
+        >
+          <div
+            className=""
+            style={{
+              position: "relative",
+              display: "flex",
+              borderRadius: "10px",
+              gap: 10,
+              fontSize: 12,
+              fontWeight: "bold",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+              background: "#FF600F",
+              color: "#fff",
+              flexDirection: "column",
+              justifyContent: "center",
+              padding: 20,
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                top: 15,
+                right: 15,
+                color: "#fff",
+                width: 20,
+                height: 20,
+                display: "grid",
+                placeItems: "center",
+                cursor: "pointer",
+                fontSize: 15,
+              }}
+              onClick={() => setVerifyKyc(false)}
+            >
+              <i className="fas fa-xmark"></i>
+            </div>
+
+            <div>
+              <h3 className="mt-0 p-0 " style={{ color: "#fff", fontSize: 17 }}>
+                Retailer Verification
+              </h3>
+              <p
+                className="m-0"
+                style={{ color: "#fff", fontWeight: "normal" }}
+              >
+                Please verify the profile details and documents before approving
+                or rejecting the retailer.
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "end",
+                gap: 10,
+                color: "#fff",
+              }}
+            >
+              <Button
+                className=""
+                variant="success"
+                //   size="md"
+                onClick={() => set_is_kyc_approve_open(true)}
+              >
+                Approve
+              </Button>
+              <Button
+                className=""
+                variant="danger"
+                //   size="md"
+                onClick={() => set_is_kyc_reject_open(true)}
+              >
+                Reject
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <ConfirmationPopup
         submit={() => handleChangeStatus(retailer?._id, retailer?.isSuspend)}
         isOpen={isStatusOpen}

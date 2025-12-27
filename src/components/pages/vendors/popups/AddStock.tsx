@@ -191,10 +191,10 @@ const AddStock = ({ isOpen, toggle, vendorId }: Props) => {
               </Col> */}
               <Col lg={6} className="px-4 py-1  ">
                 <Form.Group as={Row} className="align-items-center">
-                  <Form.Label className="col-form-label">General Sale Price</Form.Label>
+                  <Form.Label className="col-form-label">Sale Price for Normal Customer</Form.Label>
                   <Form.Control
                     type="number"
-                    placeholder="price for normal customers"
+                    placeholder="Price for normal customer"
                     name="price_normal_customer"
                     value={formik.values.price_normal_customer}
                     onChange={formik.handleChange}
@@ -210,10 +210,10 @@ const AddStock = ({ isOpen, toggle, vendorId }: Props) => {
               </Col>
               <Col lg={6} className="px-4 py-1  ">
                 <Form.Group as={Row} className="align-items-center">
-                  <Form.Label className="col-form-label">Loyal Customer Price</Form.Label>
+                  <Form.Label className="col-form-label">Sale Price for Loyal Customer</Form.Label>
                   <Form.Control
                     type="number"
-                    placeholder="price for loyal customers"
+                    placeholder="Price for loyal customer"
                     name="price_loyal_customer"
                     value={formik.values.price_loyal_customer}
                     onChange={formik.handleChange}
