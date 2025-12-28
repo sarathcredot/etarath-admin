@@ -252,43 +252,6 @@ export default withRouter(Sidebar);
 // side bar all options
 
 // [
-//   
-//   {
-//     "name": "Vendors",
-//     "icon": "FaPersonShelter",
-//     "url": "/vendors"
-//   },
-//   {
-//     "name": "Retailers",
-//     "icon": "bx bx-group",
-//     "url": "/retailers"
-//   },
-//   {
-//     "name": "Products",
-//     "icon": "LuShoppingCart",
-//     "url": "/products"
-//   },
-//   {
-//     "name": "Brands",
-//     "icon": "MdOutlineDashboardCustomize",
-//     "url": "/brands"
-//   },
-
-//   {
-//     "name": "Attributes",
-//     "icon": "BsTag",
-//     "url": "#",
-//     "children": [
-//       {
-//         "name": "Origin",
-//         "url": "/attributes/origin"
-//       },
-//       {
-//         "name": "Year",
-//         "url": "/attributes/year_of_manufacture"
-//       }
-//     ]
-//   },
 //   {
 //     "name": "Subscriptions",
 //     "icon": "bx bx-package",

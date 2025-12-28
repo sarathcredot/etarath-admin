@@ -39,5 +39,64 @@
         "url": "/attributes/year_of_manufacture"
       }
     ]
+  },
+  {
+    "name": "Subscriptions",
+    "icon": "bx bx-package",
+    "url": "#",
+    "children": [
+      {
+        "name": "Vendor Plans",
+        "url": "/subscriptions/vendor-plans"
+      },
+      {
+        "name": "Retailer Plans",
+        "url": "/subscriptions/retailer-plans"
+      }
+    ]
+  },
+  {
+    "name": "CMS",
+    "icon": "MdOutlineSettingsSuggest",
+    "url": "#",
+    "children": [
+      {
+        "name": "Offers",
+        "url": "/cms/offers"
+      },
+      {
+        "name": "Blogs",
+        "url": "#",
+        "children": [
+          {
+            "name": "All Blogs",
+            "url": "/cms/blogs"
+          },
+          {
+            "name": "Categories",
+            "url": "/cms/blogs/categories"
+          },
+          {
+            "name": "Tags",
+            "url": "/cms/blogs/tags"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Customer Supports",
+    "icon": "RiCustomerService2Line",
+    "url": "#",
+    "children": [
+      {
+        "name": "Vendor",
+        "url": "/customer-supports/vendor"
+      },
+      {
+        "name": "Retailer",
+        "url": "/customer-supports/retailer"
+      }
+    ]
   }
 ]
