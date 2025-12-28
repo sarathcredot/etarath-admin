@@ -10,16 +10,19 @@ import { toast, ToastContainer } from 'react-toastify';
 function SignIn(props) {
     const navigate = useNavigate();
     const { mutateAsync: login, isLoading } = useLogin();
+
+    const [rememberMe, setRememberMe] = useState(false);
+
     useEffect(() => {
         const body = document.querySelector('body');
         body.classList.add('loaded');
-        
+
         return () => {
             body.classList.remove('loaded');
         };
     }, []);
-    
-    const handleSubmitForm = async (values, { setSubmitting }) => { 
+
+    const handleSubmitForm = async (values, { setSubmitting }) => {
         console.log("Form values:", values);
         try {
             const res = await login(values);
@@ -29,27 +32,33 @@ function SignIn(props) {
                 toast(res?.data?.message, {
                     containerId: "default",
                     className: "no-icon notification-success",
-                  });
+                });
                 // navigate("/dashboard");
                 navigate("/");
             } else {
                 toast(res?.data?.message, {
                     containerId: "default",
                     className: "no-icon notification-danger",
-                  });
+                });
             }
         } catch (error) {
             toast(error?.response?.data?.message, {
                 containerId: "default",
                 className: "no-icon notification-danger",
-              });
+            });
             console.log("ERROR = ", error?.response?.data?.message);
         }
 
         setSubmitting(false);
-        
+
     };
 
+
+    const handleRememberMe = (event) => {
+        event.preventDefault();
+        // Handle remember me functionality
+
+    };
 
     return (
         <section className="body-sign">
@@ -97,6 +106,25 @@ function SignIn(props) {
                                             <p style={{ color: "red" }}>{errors.password}</p>
                                         )}
                                     </Form.Group>
+                                    <Row className="mb-3">
+                                        <Col sm={8}>
+                                            <Form.Check
+                                                custom
+                                                required
+                                                id="agree"
+                                                label={
+                                                    <> <span onClick={e => e.preventDefault()}>Remember me</span>
+                                                    </>
+                                                }
+                                            />
+                                        </Col>
+
+                                        <Col sm={4} className="text-right">
+                                        </Col>
+                                    </Row>
+
+
+
                                     <Button
                                         type="submit"
                                         className="btn-login mt-3"
@@ -114,14 +142,14 @@ function SignIn(props) {
             </div>
             <ToastContainer
                 className="ui-pnotify"
-                closeButton={ false }
-                closeOnClick={ false }
-                draggable={ false }
+                closeButton={false}
+                closeOnClick={false}
+                draggable={false}
                 position="top-right"
-                hideProgressBar={ true }
-                autoClose={ 3000 }
+                hideProgressBar={true}
+                autoClose={3000}
                 containerId="default"
-                enableMultiContainer={ true }
+                enableMultiContainer={true}
             />
         </section>
     );
