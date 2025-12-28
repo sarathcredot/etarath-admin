@@ -1,5 +1,10 @@
 [
   {
+    "name": "Dashboard",
+    "icon": "LuLayoutDashboard",
+    "url": "/dashboard"
+  },
+  {
     "name": "Vendors",
     "icon": "bx bx-group",
     "url": "/vendors"

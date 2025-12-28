@@ -252,11 +252,7 @@ export default withRouter(Sidebar);
 // side bar all options
 
 // [
-//   {
-//     "name": "Dashboard",
-//     "icon": "LuLayoutDashboard",
-//     "url": "/dashboard"
-//   },
+//   
 //   {
 //     "name": "Vendors",
 //     "icon": "FaPersonShelter",

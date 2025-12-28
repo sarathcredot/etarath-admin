@@ -81,8 +81,8 @@ interface RouteProps {
 
 const adminRoutes: Array<RouteProps> = [
   // Dashboard
-  { path: "/", exact: true, component: <Navigate to="/vendors" /> },
-  // { path: "/dashboard", exact: true, component: <Dashboard /> },
+  { path: "/", exact: true, component: <Navigate to="/dashboard" /> },
+  { path: "/dashboard", exact: true, component: <Dashboard /> },
 
   // Vendors
   { path: "/vendors", exact: true, component: <VendorsPage /> },
