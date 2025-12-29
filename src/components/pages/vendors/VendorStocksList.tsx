@@ -1,5 +1,5 @@
 import _, { capitalize } from "lodash";
-import React, { Dispatch, useEffect, useState } from "react";
+import React, { Dispatch, useCallback, useEffect, useState } from "react";
 import { Button, Col, Form, InputGroup, Row, Table } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -8,6 +8,8 @@ import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 import Loader from "src/components/features/loader";
 import PtSwitch from "src/components/features/elements/switch";
 import { generateFilePath } from "src/services/url.service";
+import { debounce } from "lodash";
+
 import {
   useDeleteStock,
   useGetStocksByProductId,
@@ -30,10 +32,24 @@ const VendorStocksList = ({
   stocks,
   stocksLoading = false,
   vendorId,
+  setPage = () => { },
+  setSearch = () => { }, // fallback so debounce doesn’t break
+  setLimit,
+  page = 1,
+  limit = 10,
+  search = "",
+  
 }: {
   vendorId: string;
   stocks: any;
   stocksLoading: boolean;
+  setPage?: Dispatch<React.SetStateAction<number>>;
+  setLimit?: Dispatch<React.SetStateAction<number>>;
+  setSearch?: Dispatch<React.SetStateAction<any>>;
+  page?: number;
+  limit?: number;
+  search?: string;
+ 
 }) => {
   const navigate = useNavigate();
 
@@ -42,8 +58,7 @@ const VendorStocksList = ({
   const [isAddOpen, setAddOpen] = useState<boolean>(false);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [selectedStock, setSelectedStock] = useState<any>(null);
-  const [search, setSearch] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
+ 
 
   // MUTATION
   const { mutateAsync: deleteStock } = useDeleteStock();
@@ -140,6 +155,21 @@ const VendorStocksList = ({
       });
     }
   }, [isEditOpen, selectedStock]);
+
+
+  const debouncedHandleSearch = useCallback(
+      debounce((text) => {
+        try {
+          setSearch(text);
+        } catch (error) {
+          console.log(error, "error in the debounce function");
+        }
+      }, 1000),
+      []
+    );
+
+
+
   return (
     <>
       <div className="">
@@ -191,7 +221,7 @@ const VendorStocksList = ({
                           style={{ width: "250px" }}
                           value={search}
                           onChange={(e) =>
-                            setSearch && setSearch(e.target.value)
+                            debouncedHandleSearch(e.target.value)
                           }
                         />
                         {/* <InputGroup.Append> */}
@@ -264,17 +294,17 @@ const VendorStocksList = ({
                             !isEditOpen &&
                             navigate(`/stock/detail?_id=${item?._id}`)
                           }
+                          style={{cursor:"pointer"}}
                         >
                           <td>
-                            <Link to={`/stock/detail?_id=${item?._id}`}>
+
+                            {index+1}
+                            {/* <Link to={`/stock/detail?_id=${item?._id}`}>
                               <strong>
-                                {/* {index +
-                                  (productsData?.pagination?.page - 1) *
-                                    productsData?.pagination?.limit +
-                                  1} */}
+                               
                                 {index + 1}
                               </strong>
-                            </Link>
+                            </Link> */}
                           </td>
                           <td>
                             <Link
@@ -297,17 +327,22 @@ const VendorStocksList = ({
                             </Link>
                           </td>
                           <td>
-                            <Link
+                            {/* <Link
                               onClick={(e) => e.stopPropagation()}
                               to={`/products/detail?_id=${item?.product?._id}`}
-                            >
-                              {item?.product?.productName}-{" "}
+                            > */}
+
+                             <strong>
+                               {item?.product?.productName}-{" "}
                               {`${item?.product?.width}${
                                 item?.product?.height
                                   ? `/${item.product?.height}`
                                   : ""
                               } R${item?.product?.size}`}
-                            </Link>
+                             </strong>
+
+
+                            {/* </Link> */}
                           </td>
                           {/* {isEditOpen &&
                           selectedStock &&

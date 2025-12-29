@@ -15,13 +15,14 @@ import {
   useVerifyProduct,
 } from "src/services/product.service";
 import { generateFilePath } from "src/services/url.service";
-import { useGetOrderById } from "src/services/order.service";
+import { useGetClaimById } from "src/services/claim.service";
 import { capitalize } from "lodash";
+import dayjs from "dayjs";
 
-const OrderDetailPage = () => {
+const ClaimDetailPage = () => {
   //IMPORTS
   const [searchParams] = useSearchParams();
-  const orderId = searchParams.get("_id");
+  const claimId = searchParams.get("_id");
 
   //STATE
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
@@ -48,8 +49,8 @@ const OrderDetailPage = () => {
       obj.search = search;
     }
 
-    if (orderId) {
-      obj.orderId = orderId;
+    if (claimId) {
+      obj.claimId = claimId;
     }
 
     return obj;
@@ -61,7 +62,7 @@ const OrderDetailPage = () => {
     data: order,
     isLoading: productLoading,
     error: productError,
-  } = useGetOrderById(orderId ? orderId : "", !!orderId);
+  } = useGetClaimById(claimId ? claimId : "", !!claimId);
 
   // MUTATIONS
   const { mutateAsync: updateProductStatus } = useUpdateProductStatus();
@@ -118,15 +119,15 @@ const OrderDetailPage = () => {
   return (
     <>
       <Breadcrumb
-        current={"Order Details"}
+        current={"Claim Details"}
         paths={[
           {
             name: "Dashboard",
             url: "/dashboard",
           },
           {
-            name: "Order Details",
-            url: `/orders/detail?_id=${orderId}`,
+            name: "Claim Details",
+            url: `/claims/detail?_id=${claimId}`,
           },
         ]}
       />
@@ -147,9 +148,9 @@ const OrderDetailPage = () => {
                     <Row>
                       <Col lg={4}>
                         <div>
-                          <h6>OrderId</h6>
+                          <h6>ClaimId</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {order?.orderId}
+                            {order?.claimId}
                           </h5>
                         </div>
                         <div>
@@ -173,19 +174,19 @@ const OrderDetailPage = () => {
                         <div>
                           <h6>Total Price</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {order?.totalPrice}AED
+                            {order?.orderDetails?.totalPrice}AED
                           </h5>
                         </div>
                         <div>
                           <h6>Payment Status</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {order?.paymentStatus}
+                            {order?.orderDetails?.paymentStatus}
                           </h5>
                         </div>
                       </Col>
                       <Col lg={4}>
                         <div>
-                          <h6>Order By</h6>
+                          <h6>Claim Requested By</h6>
                           <h5 className=" text-dark font-weight-500 ">
                             {order?.userDetails?.userName}
                           </h5>
@@ -222,16 +223,29 @@ const OrderDetailPage = () => {
                             className=" text-dark font-weight-500 "
                             style={{ width: "90%" }}
                           >
-                            {order?.price}AED
+                            {order?.orderDetails?.price}AED
                           </h5>
                         </div>
+
                         <div>
                           <h6>Quantity</h6>
                           <h5
                             className=" text-dark font-weight-500 "
                             style={{ width: "90%" }}
                           >
-                            {order?.quantity}
+                            {order?.orderDetails?.quantity}
+                          </h5>
+
+                        </div>
+                        <div>
+                          <h6>Requested date</h6>
+                          <h5
+                            className=" text-dark font-weight-500 "
+                            style={{ width: "90%" }}
+                          >
+                            {order?.requestedDate
+                              ? dayjs(order?.requestedDate).format("DD-MM-YYYY")
+                              : "-"}
                           </h5>
 
                         </div>
@@ -255,7 +269,7 @@ const OrderDetailPage = () => {
                           </h5>
                         </div>
 
-                         <div>
+                        <div>
                           <h6>Warehouse Details</h6>
                           <h5 className=" text-dark font-weight-500 ">
                             {order?.warehouseDetails?.shop_name}
@@ -308,9 +322,9 @@ const OrderDetailPage = () => {
                       </Col> */}
                       <Col xl={12} className="px-3 mb-n3 mt-auto">
                         <div>
-                          <h6>Images</h6>
+                          <h6>User Attched Official Imgs</h6>
                           <Row>
-                            {order?.productDetails?.imageUrl?.map(
+                            {/* {order?.productDetails?.imageUrl?.map(
                               (img: any, index: number) => (
                                 <Col key={index} className="p-1 p-xl-3">
                                   <div
@@ -327,10 +341,154 @@ const OrderDetailPage = () => {
                                   </div>
                                 </Col>
                               )
-                            )}
+                            )} */}
+                            <Col className="p-1 p-xl-3">
+                              <div
+                                className="product_image_div"
+                                style={{ cursor: "default" }}
+                              >
+                                <img
+                                  src={generateFilePath(order?.userAttchedOfficialImgs?.fullTyrePicture)}
+                                  alt="product"
+                                  width="110"
+                                  height="110"
+                                // crossOrigin="anonymous"
+                                />
+                              </div>
+                            </Col>
+                            <Col className="p-1 p-xl-3">
+                              <div
+                                className="product_image_div"
+                                style={{ cursor: "default" }}
+                              >
+                                <img
+                                  src={generateFilePath(order?.userAttchedOfficialImgs?.brandName)}
+                                  alt="product"
+                                  width="110"
+                                  height="110"
+                                // crossOrigin="anonymous"
+                                />
+                              </div>
+                            </Col>
+                            <Col className="p-1 p-xl-3">
+                              <div
+                                className="product_image_div"
+                                style={{ cursor: "default" }}
+                              >
+                                <img
+                                  src={generateFilePath(order?.userAttchedOfficialImgs?.seriaNo)}
+                                  alt="product"
+                                  width="110"
+                                  height="110"
+                                // crossOrigin="anonymous"
+                                />
+                              </div>
+                            </Col>
+                            <Col className="p-1 p-xl-3">
+                              <div
+                                className="product_image_div"
+                                style={{ cursor: "default" }}
+                              >
+                                <img
+                                  src={generateFilePath(order?.userAttchedOfficialImgs?.dOT)}
+                                  alt="product"
+                                  width="110"
+                                  height="110"
+                                // crossOrigin="anonymous"
+                                />
+                              </div>
+                            </Col>
+
+                            {/* <Col  className="p-1 p-xl-3">
+                              <div
+                                className="product_image_div"
+                                style={{ cursor: "default" }}
+                              >
+                                <img
+                                  src={generateFilePath(order?.userAttchedOfficialImgs?.pattern)}
+                                  alt="product"
+                                  width="110"
+                                  height="110"
+                                // crossOrigin="anonymous"
+                                />
+                              </div>
+                            </Col> */}
                           </Row>
                         </div>
                       </Col>
+
+
+                      <Col xl={12} className="px-3 mb-n3 mt-auto">
+                        <div>
+                          <h6>User Attched Defective Imgs</h6>
+                          <Row>
+                            <Col className="p-1 p-xl-3">
+                              <div
+                                className="product_image_div"
+                                style={{ cursor: "default" }}
+                              >
+                                <img
+                                  src={generateFilePath(order?.userAttchedDefectiveImgs?.tyreTread)}
+                                  alt="product"
+                                  width="110"
+                                  height="110"
+                                // crossOrigin="anonymous"
+                                />
+                              </div>
+                            </Col>
+                             <Col className="p-1 p-xl-3">
+                              <div
+                                className="product_image_div"
+                                style={{ cursor: "default" }}
+                              >
+                                <img
+                                  src={generateFilePath(order?.userAttchedDefectiveImgs?.defectPicture1)}
+                                  alt="product"
+                                  width="110"
+                                  height="110"
+                                // crossOrigin="anonymous"
+                                />
+                              </div>
+                            </Col>
+
+                             <Col className="p-1 p-xl-3">
+                              <div
+                                className="product_image_div"
+                                style={{ cursor: "default" }}
+                              >
+                                <img
+                                  src={generateFilePath(order?.userAttchedDefectiveImgs?.defectPicture2)}
+                                  alt="product"
+                                  width="110"
+                                  height="110"
+                                // crossOrigin="anonymous"
+                                />
+                              </div>
+                            </Col>
+
+                            <Col className="p-1 p-xl-3">
+                              <div
+                                className="product_image_div"
+                                style={{ cursor: "default" }}
+                              >
+                                <img
+                                  src={generateFilePath(order?.userAttchedDefectiveImgs?.innerlinePicture)}
+                                  alt="product"
+                                  width="110"
+                                  height="110"
+                                // crossOrigin="anonymous"
+                                />
+                              </div>
+                            </Col>
+
+                           
+                          </Row>
+                        </div>
+                      </Col>
+
+
+
+
                     </Row>
                   </Col>
                 </Row>
@@ -369,4 +527,4 @@ const OrderDetailPage = () => {
   );
 };
 
-export default OrderDetailPage;
+export default ClaimDetailPage;

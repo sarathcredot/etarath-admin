@@ -201,17 +201,21 @@ const VendorsList = ({
                         }
                       >
                         <td>
-                          <Link to={`/vendors/detail?_id=${item?._id}`}>
+                          {/* <Link to={`/vendors/detail?_id=${item?._id}`}>
                             <strong>
-                              {/* {search
+                               {search
                                 ? index + 1
                                 : index +
-                                  (organisersData?.page - 1) *
-                                    organisersData?.limit +
-                                  1} */}
-                              {index + 1}
+                                  (data?.page - 1) *
+                                    limit +
+                                  1}
+                            
                             </strong>
-                          </Link>
+                          </Link> */}
+                         <td>
+                          {index+1}
+                        </td>
+
                         </td>
                         <td>
                           <Link
@@ -233,7 +237,10 @@ const VendorsList = ({
                           </Link>
                         </td>
                         <td>
-                          {item?.kycDetails?.business_name || item?.userName}
+                          <strong>
+ {item?.kycDetails?.business_name || item?.userName}
+                          </strong>
+                         
                         </td>
                         <td>
                           {item?.kycDetails?.phoneNumber || item?.phoneNumber}

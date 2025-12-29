@@ -69,6 +69,8 @@ import StockDetailPage from "src/components/pages/products/stock/StockDetailPage
 import KycsPage from "src/components/pages/kycs/KycsPage";
 import TokenList from "src/components/pages/customer-supports/TokenList";
 import OrderDetailPage from "src/components/pages/orders/OrderDetailPage";
+import ClaimDetailPage from "src/components/pages/claims/ClaimDetailPage";
+
 import AddVendorPage from "src/components/pages/vendors/forms/add-vendor/AddVendorPage";
 import AddRetailerPage from "src/components/pages/retailers/forms/add-retailer/AddRetailerPage";
 import EditVendorPage from "src/components/pages/vendors/forms/edit-vendor/EditVendorPage";
@@ -129,6 +131,14 @@ const adminRoutes: Array<RouteProps> = [
     path: "/orders/detail",
     component: <OrderDetailPage />,
   },
+
+  // claims
+
+   {
+    path: "/claims/detail",
+    component: <ClaimDetailPage />,
+  },
+
 
   // Subscriptions
 

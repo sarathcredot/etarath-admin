@@ -7,9 +7,9 @@ import { generateFilePath } from "src/services/url.service";
 import dayjs from "dayjs";
 import Pagination from "src/components/common/Pagination";
 
-const VendorOrdersList = ({
-  orders,
-  ordersLoading = false,
+const VendorClaimList = ({
+  claims,
+  claimsLoading = false,
  setPage = () => { },
   setSearch = () => { }, // fallback so debounce doesn’t break
   setLimit,
@@ -18,8 +18,8 @@ const VendorOrdersList = ({
   search = "",
 }: {
   vendorId: string;
-  orders: any;
-  ordersLoading: boolean;
+  claims: any;
+  claimsLoading: boolean;
    setPage?: Dispatch<React.SetStateAction<number>>;
   setLimit?: Dispatch<React.SetStateAction<number>>;
   setSearch?: Dispatch<React.SetStateAction<any>>;
@@ -34,8 +34,8 @@ const VendorOrdersList = ({
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
  
-  const totalRecords = orders?.total || 0;
-  const totalPages = orders?.totalPages || 0;
+  const totalRecords = claims?.total || 0;
+  const totalPages = claims?.totalPages || 0;
 
    const debouncedHandleSearch = useCallback(
         debounce((text) => {
@@ -60,7 +60,7 @@ const VendorOrdersList = ({
                 <Row className="align-items-lg-center justify-content-end mb-3">
                   <Col>
                     <h5 className="m-0 card-title h5 font-weight-bold">
-                      Orders
+                     Claims
                     </h5>
                   </Col>
 
@@ -116,7 +116,7 @@ const VendorOrdersList = ({
               >
                 <thead>
                   <tr>
-                    <th style={{ width: "30px" }}>Order ID</th>
+                    <th style={{ width: "30px" }}>Claim ID</th>
                     <th
                       // className="text-center"
                       style={{ width: "80px" }}
@@ -127,7 +127,7 @@ const VendorOrdersList = ({
                     <th>Customer</th>
                     {/* <th>Quantity</th> */}
                     <th>Total Price</th>
-                    <th>Order Date</th>
+                    <th>Claim Date</th>
                     <th>Status</th>
                     {/* <th className="text-center" style={{ width: "80px" }}>
                         Actions
@@ -135,17 +135,17 @@ const VendorOrdersList = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {ordersLoading ? (
+                  {claimsLoading ? (
                     <tr>
                       <td colSpan={9}>
                         <Loader />
                       </td>
                     </tr>
-                  ) : !ordersLoading && orders && orders?.result?.length > 0 ? (
-                    orders?.result?.map((item: any, index: number) => (
+                  ) : !claimsLoading && claims && claims?.result?.length > 0 ? (
+                    claims?.result?.map((item: any, index: number) => (
                       <tr
                         onClick={() =>
-                          navigate(`/orders/detail?_id=${item?._id}`)
+                          navigate(`/claims/detail?_id=${item?._id}`)
                         }
                         key={index}
                         style={{cursor:"pointer"}}
@@ -161,14 +161,14 @@ const VendorOrdersList = ({
                           </Link> */}
 
                           <strong  style={{ whiteSpace: "nowrap" }}>
-                            {item?.orderId}
+                            {item?.claimId}
                           </strong>
                         </td>
                         <td>
                           <Link
                             style={{ width: "50px", height: "50px" }}
                             className="d-flex align-items-center justify-content-center"
-                            to={`/products/detail?_id=${item?.productDetails?._id}`}
+                            to={`/products/detail?_id=${claims?.productDetails?._id}`}
                             onClick={(e) => e.stopPropagation()}
                           >
                             <img
@@ -176,7 +176,7 @@ const VendorOrdersList = ({
                               src={generateFilePath(
                                 item?.productDetails?.imageUrl[0]
                               )}
-                              // src={item?.imageUrl[0]}
+                              // src={claims?.imageUrl[0]}
                               alt="product"
                               width="40"
                               height="40"
@@ -198,10 +198,10 @@ const VendorOrdersList = ({
                         
                         </td>
                         {/* <td>{item?.quantity || 0} </td> */}
-                        <td>{item?.totalPrice.toFixed(2) || 0} AED</td>
+                        <td>{item?.orderDetails?.totalPrice?.toFixed(2) || 0} AED</td>
                         <td>
-                          {item?.orderDate
-                            ? dayjs(item?.orderDate).format("DD-MM-YYYY")
+                          {item?.requestedDate
+                            ? dayjs(item?.requestedDate).format("DD-MM-YYYY")
                             : "-"}
                         </td>
                         <td>
@@ -210,7 +210,7 @@ const VendorOrdersList = ({
                           </div>
                         </td>
                         {/* <td onClick={(e) => e.stopPropagation()}>
-                            <div className="d-flex align-items-center justify-content-around">
+                            <div className="d-flex align-claimss-center justify-content-around">
                               {isEditOpen &&
                               selectedStock &&
                               selectedStock?._id === item?._id ? (
@@ -281,4 +281,4 @@ const VendorOrdersList = ({
   );
 };
 
-export default VendorOrdersList;
+export default VendorClaimList;

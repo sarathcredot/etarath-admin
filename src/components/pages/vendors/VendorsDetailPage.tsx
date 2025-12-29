@@ -13,6 +13,8 @@ import {
   useGetStocksByVendorId,
   useGetVendorById,
   useUpdateVendorStatus,
+  useGetClaimByVendorId
+  
 } from "src/services/vendor.service";
 import { User } from "src/types/types";
 import { generateFilePath } from "src/services/url.service";
@@ -27,6 +29,9 @@ import {
 } from "src/utils/formats";
 import SalesExecutivesList from "./SalesExecutivesList";
 import VendorOrdersList from "./VendorOrdersList";
+import VendorClaimsList from "./VendorClaimList";
+
+
 import { useGetPreferenceByUserId } from "src/services/preference.service";
 import { useGetSubscriptionOrderById } from "src/services/subscription-orders";
 import VendorWarehousesList from "./VendorWarehousesList";
@@ -47,13 +52,22 @@ const VendorsDetailPage = () => {
   const [is_kyc_reject_open, set_is_kyc_reject_open] = useState<boolean>(false);
   const [isKycOpen, setKycOpen] = useState<boolean>(false);
   //pagination
-  const [page, setPage] = useState<number>(1);
   const [orderPage, setOrderPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(10);
-  const [search, setSearch] = useState<string>("");
+  const [orderLimit, setOrderLimit] = useState<number>(10);
   const [orderSearch, setOrderSearch] = useState<string>("");
+  
+  const [stockPage, setStockPage] = useState<number>(1);
+  const [stockLimit, setStockLimit] = useState<number>(10);
+  const [stockSearch, setStockSearch] = useState<string>("");
+ 
 
-  //USE MEMO
+  const [claimPage, setClaimPage] = useState<number>(1);
+  const [claimLimit, setClaimLimit] = useState<number>(10);
+  const [claimSearch, setClaimSearch] = useState<string>("");
+ 
+
+ 
+  //order USE MEMO
   const orderQueryObj = useMemo(() => {
     const obj: any = {};
 
@@ -61,8 +75,8 @@ const VendorsDetailPage = () => {
       obj.page = orderPage;
     }
 
-    if (limit) {
-      obj.limit = limit;
+    if (orderLimit) {
+      obj.limit = orderLimit;
     }
 
     if (orderSearch) {
@@ -74,16 +88,77 @@ const VendorsDetailPage = () => {
     }
 
     return obj;
-  }, [orderPage, limit, orderSearch, vendorID]);
+  }, [orderPage, orderLimit, orderSearch, vendorID]);
+
+
+// stock use memo
+
+ const stockQueryObj = useMemo(() => {
+    const obj: any = {};
+
+    if (stockPage) {
+      obj.page = stockPage;
+    }
+
+    if (stockLimit) {
+      obj.limit = stockLimit;
+    }
+
+    if (stockSearch) {
+      obj.search = stockSearch;
+    }
+
+    if (vendorID) {
+      obj.vendorID = vendorID;
+    }
+
+    return obj;
+  }, [stockPage, stockLimit, stockSearch, vendorID]);
+
+
+// claim use memo
+
+ const claimQueryObj = useMemo(() => {
+    const obj: any = {};
+
+    if (claimPage) {
+      obj.page = claimPage;
+    }
+
+    if (claimLimit) {
+      obj.limit = claimLimit;
+    }
+
+    if (claimSearch) {
+      obj.search = claimSearch;
+    }
+
+    if (vendorID) {
+      obj.vendorID = vendorID;
+    }
+
+    return obj;
+  }, [claimPage, claimLimit, claimSearch, vendorID]);
+
+
+
 
   // QUERIES
   const { data: stocks, isLoading: stocksLoading } = useGetStocksByVendorId(
     vendorID ? vendorID : "",
-    !!vendorID
+    !!vendorID,
+    stockQueryObj
+    
   );
   const { data: orders, isLoading: ordersLoading } = useGetOrdersByVendorId(
     vendorID ? vendorID : "",
-    !!vendorID
+    !!vendorID,
+    orderQueryObj
+  );
+   const { data: claims, isLoading: claimLoading } = useGetClaimByVendorId(
+    vendorID ? vendorID : "",
+    !!vendorID,
+    claimQueryObj
   );
   const { data: agents, isLoading: agentsLoading } = useGetAgentsByVendorId(
     vendorID ? vendorID : "",
@@ -199,7 +274,7 @@ const VendorsDetailPage = () => {
           style={{ borderRadius: "5px", marginTop: "20px", overflow: "hidden" }}
         >
           <Tabs className="nav-justified">
-            <Tab eventKey="profile" title="Profile Details">
+            <Tab eventKey="profile" title="Business Details">
               <Row className="px-3" style={{ gap: 15 }}>
                 {vendor?.kyc && (
                   <Col lg={4} className="p-0 ">
@@ -263,7 +338,7 @@ const VendorsDetailPage = () => {
                     style={{ border: "1px solid #ddd " }}
                   >
                     <Card.Header className="d-flex align-items-center justify-content-between">
-                      <Card.Title>Profile Details</Card.Title>
+                      <Card.Title>Business Details</Card.Title>
                       {vendor?.kyc ? (
                         <div
                           className="d-flex align-items-center"
@@ -353,7 +428,7 @@ const VendorsDetailPage = () => {
                             </h5>
                           </div>
                           <div>
-                            <h6>Trade License Registration Date</h6>
+                            <h6>Trade License Expiry Date</h6>
                             <h5 className=" text-dark font-weight-500 ">
                               {formatDate(vendor?.kyc?.tradeLicenseExpiryDate)}
                             </h5>
@@ -901,6 +976,12 @@ const VendorsDetailPage = () => {
                 vendorId={vendorID ? vendorID : ""}
                 stocks={stocks}
                 stocksLoading={stocksLoading}
+                 setPage={setStockPage}
+                 setLimit={setStockLimit}
+                 setSearch={setStockSearch}
+                 page={stockPage}
+                 limit={stockLimit}
+                 search={stockSearch}
               />
             </Tab>
             <Tab eventKey="orders" title="Orders">
@@ -908,6 +989,25 @@ const VendorsDetailPage = () => {
                 vendorId={vendorID ? vendorID : ""}
                 orders={orders}
                 ordersLoading={ordersLoading}
+                setPage={setOrderPage}
+                setLimit={setOrderLimit}
+                setSearch={setOrderSearch}
+                page={orderPage}
+                limit={orderLimit}
+                search={orderSearch}
+              />
+            </Tab>
+            <Tab eventKey="claims" title="Claims">
+              <VendorClaimsList
+                vendorId={vendorID ? vendorID : ""}
+                claims={claims}
+                claimsLoading={claimLoading}
+                setPage={setClaimPage}
+                setLimit={setClaimLimit}
+                setSearch={setClaimSearch}
+                page={claimPage}
+                limit={claimLimit}
+                search={claimSearch}
               />
             </Tab>
             <Tab eventKey="warehouses" title="Warehouses">
