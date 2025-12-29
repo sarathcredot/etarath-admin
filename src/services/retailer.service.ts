@@ -5,14 +5,19 @@ import axiosAuth from "./axios.service";
 const baseUrl = `${url}/admin/users`;
 
 // GET ALL RETAILERS
-export const getAllRetailers = async () => {
-  return await axiosAuth.get(`${baseUrl}/?role=retailer`);
+export const getAllRetailers = async (queryParams: any) => {
+  return await axiosAuth.get(`${baseUrl}`,{
+    params: {
+      role: 'retailer',
+      ...queryParams
+    }
+  });
 };
 
-export const useGetAllRetailers = (enabled: boolean = true) => {
+export const useGetAllRetailers = (enabled: boolean = true, queryParams: any) => {
   return useQuery({
-    queryKey: ["retailers"],
-    queryFn: () => getAllRetailers().then((res) => res?.data?.data),
+    queryKey: ["retailers", queryParams],
+    queryFn: () => getAllRetailers(queryParams).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };

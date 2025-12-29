@@ -1,19 +1,40 @@
+
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Card, Form, Button } from 'react-bootstrap';
 import withRouter from '../../common/WithRouter';
 import { useNavigate } from 'react-router-dom';
-import { useFormik } from 'formik';
-import { LoginValidationSchema } from 'src/validations/validationSchemas';
 import { Formik, Field } from 'formik';
+import { LoginValidationSchema } from 'src/validations/validationSchemas';
 import { useLogin } from 'src/services/auth.service';
 import { toast, ToastContainer } from 'react-toastify';
+
 function SignIn(props) {
     const navigate = useNavigate();
-    const { mutateAsync: login, isLoading } = useLogin();
+    const { mutateAsync: login } = useLogin();
 
     const [rememberMe, setRememberMe] = useState(false);
+    const [initialValues, setInitialValues] = useState({
+        emailOrPhoneNumber: "",
+        password: "",
+        role: "admin",
+    });
 
+    // Load remembered credentials
     useEffect(() => {
+        const savedCredentials = localStorage.getItem("rememberMeCredentials");
+
+        if (savedCredentials) {
+            const parsed = JSON.parse(savedCredentials);
+
+            setInitialValues({
+                emailOrPhoneNumber: parsed.emailOrPhoneNumber || "",
+                password: parsed.password || "",
+                role: "admin",
+            });
+
+            setRememberMe(true);
+        }
+
         const body = document.querySelector('body');
         body.classList.add('loaded');
 
@@ -23,17 +44,28 @@ function SignIn(props) {
     }, []);
 
     const handleSubmitForm = async (values, { setSubmitting }) => {
-        console.log("Form values:", values);
         try {
             const res = await login(values);
-            console.log("RES = ", res);
+
             if (res?.status === 200) {
+
+                if (rememberMe) {
+                    localStorage.setItem(
+                        "rememberMeCredentials",
+                        JSON.stringify({
+                            emailOrPhoneNumber: values.emailOrPhoneNumber,
+                            password: values.password,
+                        })
+                    );
+                } else {
+                    localStorage.removeItem("rememberMeCredentials");
+                }
 
                 toast(res?.data?.message, {
                     containerId: "default",
                     className: "no-icon notification-success",
                 });
-                // navigate("/dashboard");
+
                 navigate("/");
             } else {
                 toast(res?.data?.message, {
@@ -46,18 +78,13 @@ function SignIn(props) {
                 containerId: "default",
                 className: "no-icon notification-danger",
             });
-            console.log("ERROR = ", error?.response?.data?.message);
         }
 
         setSubmitting(false);
-
     };
 
-
     const handleRememberMe = (event) => {
-        event.preventDefault();
-        // Handle remember me functionality
-
+        setRememberMe(event.target.checked);
     };
 
     return (
@@ -66,80 +93,99 @@ function SignIn(props) {
                 <Card className="card-sign">
                     <Card.Body>
                         <h2 className="sign-title">Sign In</h2>
+
                         <Formik
-                            initialValues={{
-                                emailOrPhoneNumber: "",
-                                password: "",
-                                role: "admin",
-                            }}
+                            enableReinitialize
+                            initialValues={initialValues}
                             validationSchema={LoginValidationSchema}
                             onSubmit={handleSubmitForm}
                         >
                             {({ errors, touched, handleChange, values, handleSubmit, isSubmitting }) => (
                                 <Form onSubmit={handleSubmit}>
+
+                                    {/* Email */}
                                     <Form.Group className="form-custom-group">
-                                        <Form.Label>Email Address <span className="required">*</span></Form.Label>
+                                        <Form.Label>
+                                            Email Address <span className="required">*</span>
+                                        </Form.Label>
+
                                         <Field
                                             as={Form.Control}
                                             type="text"
                                             name="emailOrPhoneNumber"
                                             value={values.emailOrPhoneNumber}
                                             onChange={handleChange}
-                                            className={errors.emailOrPhoneNumber && touched.emailOrPhoneNumber ? "is-invalid" : ""}
+                                            className={
+                                                errors.emailOrPhoneNumber && touched.emailOrPhoneNumber
+                                                    ? "is-invalid"
+                                                    : ""
+                                            }
                                         />
+
                                         {errors.emailOrPhoneNumber && touched.emailOrPhoneNumber && (
-                                            <p style={{ color: "red" }}>{errors.emailOrPhoneNumber}</p>
+                                            <p style={{ color: "red" }}>
+                                                {errors.emailOrPhoneNumber}
+                                            </p>
                                         )}
                                     </Form.Group>
 
+                                    {/* Password */}
                                     <Form.Group className="form-custom-group">
-                                        <Form.Label className="float-left">Password <span className="required">*</span></Form.Label>
+                                        <Form.Label>
+                                            Password <span className="required">*</span>
+                                        </Form.Label>
+
                                         <Field
                                             as={Form.Control}
                                             type="password"
                                             name="password"
                                             value={values.password}
                                             onChange={handleChange}
-                                            className={errors.password && touched.password ? "is-invalid" : ""}
+                                            className={
+                                                errors.password && touched.password
+                                                    ? "is-invalid"
+                                                    : ""
+                                            }
                                         />
+
                                         {errors.password && touched.password && (
-                                            <p style={{ color: "red" }}>{errors.password}</p>
+                                            <p style={{ color: "red" }}>
+                                                {errors.password}
+                                            </p>
                                         )}
                                     </Form.Group>
+
+                                    {/* Remember Me */}
                                     <Row className="mb-3">
                                         <Col sm={8}>
                                             <Form.Check
-                                                custom
-                                                required
-                                                id="agree"
-                                                label={
-                                                    <> <span onClick={e => e.preventDefault()}>Remember me</span>
-                                                    </>
-                                                }
+                                                type="checkbox"
+                                                id="rememberMe"
+                                                label="Remember me"
+                                                checked={rememberMe}
+                                                onChange={handleRememberMe}
                                             />
-                                        </Col>
-
-                                        <Col sm={4} className="text-right">
                                         </Col>
                                     </Row>
 
-
-
+                                    {/* Submit */}
                                     <Button
                                         type="submit"
                                         className="btn-login mt-3"
-                                        variant=""
                                         block
                                         disabled={isSubmitting}
                                     >
                                         {isSubmitting ? 'Signing in...' : 'Sign In'}
                                     </Button>
+
                                 </Form>
                             )}
                         </Formik>
+
                     </Card.Body>
                 </Card>
             </div>
+
             <ToastContainer
                 className="ui-pnotify"
                 closeButton={false}

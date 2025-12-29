@@ -24,6 +24,7 @@ import { useUpdateVendorStatus } from "src/services/vendor.service";
 type Props = {
   header?: boolean;
   vendors: any;
+  data:any
   isLoading: boolean;
   setPage: Dispatch<React.SetStateAction<number>>;
   setLimit: Dispatch<React.SetStateAction<number>>;
@@ -36,10 +37,11 @@ type Props = {
 const VendorsList = ({
   header = false,
   vendors,
+  data,
   isLoading,
-  setPage = () => {},
+  setPage = () => { },
   setLimit,
-  setSearch = () => {}, // fallback so debounce doesn’t break
+  setSearch = () => { }, // fallback so debounce doesn’t break
   page = 1,
   limit = 10,
   search = "",
@@ -94,8 +96,13 @@ const VendorsList = ({
     []
   );
 
-  const totalRecords = vendors?.length || 0;
-  const totalPages = Math.ceil(totalRecords / limit);
+  // const totalRecords = vendors?.length || 0;
+  // const totalPages = Math.ceil(totalRecords / limit);
+
+  const totalRecords = data?.total || 0;
+  const totalPages = data?.totalPages || 0;
+
+
   return (
     <>
       <div>
@@ -123,7 +130,7 @@ const VendorsList = ({
                           onChange={(e: any) =>
                             debouncedHandleSearch(e.target.value)
                           }
-                          // value={search}
+                        // value={search}
                         />
                       </InputGroup>
                     </div>
@@ -165,7 +172,7 @@ const VendorsList = ({
                     </th>
                   </tr>
                 </thead>
-                <tbody style={{ borderBottom: "1px solid #dee2e6" }}>
+                <tbody  style={{ borderBottom: "1px solid #dee2e6",cursor:"pointer" }}>
                   {isLoading && (
                     <tr>
                       <td colSpan={9}>
@@ -221,7 +228,7 @@ const VendorsList = ({
                               width="50"
                               height="50"
                               style={{ objectFit: "cover" }}
-                              // crossOrigin="anonymous"
+                            // crossOrigin="anonymous"
                             />
                           </Link>
                         </td>
@@ -297,7 +304,7 @@ const VendorsList = ({
                 </tbody>
               </Table>
             </div>
-            {/* {totalPages > 1 && !search && (
+            {(
               <Pagination
                 currentPage={page}
                 setCurrentPage={setPage}
@@ -305,7 +312,7 @@ const VendorsList = ({
                 totalPages={totalPages}
                 style={{ marginTop: "20px" }}
               />
-            )} */}
+            )}
           </Col>
         </Row>
       </div>

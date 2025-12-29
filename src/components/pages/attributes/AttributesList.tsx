@@ -1,4 +1,4 @@
-import React, { Dispatch, useEffect, useState } from "react";
+import React, { Dispatch, useCallback, useEffect, useState } from "react";
 import { Button, Col, Form, InputGroup, Row, Table } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -12,6 +12,8 @@ import {
   useUpdateAttributeStatus,
 } from "src/services/attribute.service";
 import PtSwitch from "src/components/features/elements/switch";
+import { debounce } from "lodash";
+
 
 // Type definition
 type Brand = {
@@ -25,13 +27,14 @@ const AttributesList = ({
   header = false,
   attributesData,
   isLoading,
-  setPage = () => {},
+  setPage = () => { },
   setLimit,
-  setSearch,
+  setSearch = () => { }, // fallback so debounce doesn’t break
   page = 1,
   limit = 10,
   search = "",
   type,
+  data
 }: {
   header?: boolean;
   attributesData?: any;
@@ -43,6 +46,7 @@ const AttributesList = ({
   limit?: number;
   search?: string;
   type: string;
+  data: any
 }) => {
   const navigate = useNavigate();
 
@@ -77,7 +81,7 @@ const AttributesList = ({
       console.log("error deleting attribute :", error);
       toast(
         error?.response?.data?.message ||
-          "Something went wrong while deleting the attribute.",
+        "Something went wrong while deleting the attribute.",
         {
           containerId: "default",
           className: "no-icon notification-danger",
@@ -99,12 +103,12 @@ const AttributesList = ({
           className: "no-icon notification-success",
         });
       }
-      console.log('RES = ',res)
+      console.log('RES = ', res)
     } catch (error: any) {
       console.log("error updating attribute :", error);
       toast(
         error?.response?.data?.message ||
-          "Something went wrong while updating the attribute status.",
+        "Something went wrong while updating the attribute status.",
         {
           containerId: "default",
           className: "no-icon notification-danger",
@@ -113,8 +117,19 @@ const AttributesList = ({
     }
   };
 
-  const totalRecords = attributesData?.total || 0;
-  const totalPages = attributesData?.pagination?.totalPages || 0;
+  const debouncedHandleSearch = useCallback(
+
+    debounce((text) => {
+      try {
+        setSearch(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
+  const totalRecords = data?.total || 0;
+  const totalPages = data?.totalPages || 0;
 
   useEffect(() => {
     console.log(attributesData, "ATTRIBUTES DATA");
@@ -128,7 +143,7 @@ const AttributesList = ({
             {/* <Card.Body> */}
             <div className="datatables-header-footer-wrapper">
               <div className="datatable-header">
-                <Row className="align-items-lg-center justify-content-end mb-3">
+                <Row className="align-items-lg-center justify-content-between mb-3">
                   {header && (
                     <Col>
                       <h5 className="m-0 card-title h5 font-weight-bold">
@@ -136,6 +151,22 @@ const AttributesList = ({
                       </h5>
                     </Col>
                   )}
+                  <Col className="col-auto pl-lg-2">
+                    <div className="search search-style-1 mx-lg-auto w-auto">
+                      <InputGroup>
+                        <Form.Control
+                          type="text"
+                          className="search-term"
+                          placeholder="Search Retailer"
+                          style={{ width: "250px" }}
+                          onChange={(e: any) =>
+                            debouncedHandleSearch(e.target.value)
+                          }
+                        // value={search}
+                        />
+                      </InputGroup>
+                    </div>
+                  </Col>
                   <Col xl="auto" className="mb-2 mb-xl-0">
                     <Button
                       className="font-weight-semibold"
@@ -285,13 +316,13 @@ const AttributesList = ({
                 </tbody>
               </Table>
             </div>
-            {/* <Pagination
+            <Pagination
               currentPage={page}
               setCurrentPage={setPage}
               totalButtonsToShow={3}
               totalPages={totalPages}
               style={{ marginTop: "20px" }}
-            /> */}
+            />
             {/* </Card.Body>
             </Card> */}
           </Col>

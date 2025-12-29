@@ -10,8 +10,7 @@ const VendorsPage = () => {
   const [limit, setLimit] = useState<number>(10);
   const [search, setSearch] = useState<string>("");
 
-  // QUERY
-  const { data, isLoading, error } = useGetAllRetailers();
+
 
   //USE MEMO
   const queryObj = useMemo(() => {
@@ -32,6 +31,10 @@ const VendorsPage = () => {
     return obj;
   }, [page, limit, search]);
 
+  // QUERY
+  const { data, isLoading, error } = useGetAllRetailers(undefined, queryObj);
+
+
   return (
     <>
       <Breadcrumb
@@ -50,7 +53,8 @@ const VendorsPage = () => {
       <Card>
         <Card.Body className="bg-white">
           <RetailersList
-            retailers={data}
+            retailers={data?.result || []}
+            data={data}
             isLoading={isLoading}
             setPage={setPage}
             setLimit={setLimit}

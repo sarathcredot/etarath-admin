@@ -30,18 +30,20 @@ type Props = {
   page: number;
   limit: number;
   search: string;
+  data: any
 };
 
 const RetailersList = ({
   header = false,
   retailers,
   isLoading,
-  setPage = () => {},
+  setPage = () => { },
   setLimit,
-  setSearch = () => {}, // fallback so debounce doesn’t break
+  setSearch = () => { }, // fallback so debounce doesn’t break
   page = 1,
   limit = 10,
   search = "",
+  data
 }: Props) => {
   const navigate = useNavigate();
   //STATE
@@ -93,8 +95,10 @@ const RetailersList = ({
     []
   );
 
-  const totalRecords = retailers?.length || 0;
-  const totalPages = Math.ceil(totalRecords / limit);
+  const totalRecords = data?.total || 0;
+  const totalPages = data?.totalPages || 0;
+
+
   return (
     <>
       <div>
@@ -122,7 +126,7 @@ const RetailersList = ({
                           onChange={(e: any) =>
                             debouncedHandleSearch(e.target.value)
                           }
-                          // value={search}
+                        // value={search}
                         />
                       </InputGroup>
                     </div>
@@ -133,7 +137,7 @@ const RetailersList = ({
                       variant="dark"
                       // style={{ background: "#000" }}
                       onClick={() => navigate("/retailers/add-retailer")}
-                      // onClick={() => setAddOpen(true)}
+                    // onClick={() => setAddOpen(true)}
                     >
                       + Add Retailer
                     </Button>
@@ -161,7 +165,7 @@ const RetailersList = ({
                     </th>
                   </tr>
                 </thead>
-                <tbody style={{ borderBottom: "1px solid #dee2e6" }}>
+                <tbody style={{ borderBottom: "1px solid #dee2e6", cursor: "pointer" }}>
                   {isLoading && (
                     <tr>
                       <td colSpan={9}>
@@ -214,14 +218,17 @@ const RetailersList = ({
                               alt="profile"
                               width="50"
                               height="50"
-                              // crossOrigin="anonymous"
+                            // crossOrigin="anonymous"
                             />
                           </Link>
                         </td>
                         <td>
-                          <Link to={`/retailers/detail?_id=${item?._id}`}>
+                          {/* <Link to={`/retailers/detail?_id=${item?._id}`}>
                             {item?.userName}
-                          </Link>
+                          </Link> */}
+                          <td>
+                            {item?.userName}
+                          </td>
                         </td>
                         <td>{item?.phoneNumber}</td>
                         <td>{item?.email}</td>
@@ -290,7 +297,7 @@ const RetailersList = ({
                 </tbody>
               </Table>
             </div>
-            {/* {totalPages > 1 && !search && (
+            {(
               <Pagination
                 currentPage={page}
                 setCurrentPage={setPage}
@@ -298,7 +305,7 @@ const RetailersList = ({
                 totalPages={totalPages}
                 style={{ marginTop: "20px" }}
               />
-            )} */}
+            )}
           </Col>
         </Row>
       </div>

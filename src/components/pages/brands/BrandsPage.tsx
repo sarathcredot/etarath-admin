@@ -26,6 +26,7 @@ const BrandPage = () => {
     }
 
     if (search) {
+      console.log('SEARCH = ', search);
       obj.search = search;
     }
 
@@ -34,15 +35,15 @@ const BrandPage = () => {
 
   //QUERY
 
-  const {data:brands,isLoading,error} = useGetAllBrands()
+  const { data: brands, isLoading, error } = useGetAllBrands(undefined, queryObj);
 
-  console.log('BRANDS = ',brands);
+  console.log('BRANDS = ', brands);
 
-  useEffect(()=>{
-    if(brands){
-      setPage(brands?.currentPage||1);
+  useEffect(() => {
+    if (brands) {
+      setPage(brands?.currentPage || 1);
     }
-  },[brands])
+  }, [brands])
 
   useEffect(() => {
     if (error) {

@@ -1,5 +1,5 @@
 import { add, capitalize } from "lodash";
-import React, { Dispatch, useEffect, useState } from "react";
+import React, { Dispatch, useCallback, useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -19,6 +19,8 @@ import { formatDate } from "src/utils/formats";
 import PtSwitch from "src/components/features/elements/switch";
 import AddBrand from "./popups/AddBrand";
 import EditBrand from "./popups/EditBrand";
+import { debounce } from "lodash";
+
 import {
   useDeleteBrand,
   useUpdateBrandStatus,
@@ -41,9 +43,9 @@ const BrandsList = ({
   header = false,
   brandsData,
   isLoading,
-  setPage = () => {},
+  setPage = () => { },
+  setSearch = () => { }, // fallback so debounce doesn’t break
   setLimit,
-  setSearch,
   page = 1,
   limit = 10,
   search = "",
@@ -94,7 +96,7 @@ const BrandsList = ({
       console.log("error deleting brand :", error);
       toast(
         error?.response?.data?.message ||
-          "Something went wrong while deleting the brand.",
+        "Something went wrong while deleting the brand.",
         {
           containerId: "default",
           className: "no-icon notification-danger",
@@ -124,7 +126,7 @@ const BrandsList = ({
       console.log("error changing status of brand :", error);
       toast(
         error?.response?.data?.message ||
-          "Something went wrong while changing status of the brand.",
+        "Something went wrong while changing status of the brand.",
         {
           containerId: "default",
           className: "no-icon notification-danger",
@@ -132,6 +134,19 @@ const BrandsList = ({
       );
     }
   };
+
+
+  const debouncedHandleSearch = useCallback(
+    debounce((text) => {
+      try {
+        setSearch(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
+
 
   const totalRecords = brandsData?.total || 0;
   const totalPages = brandsData?.totalPages || 0;
@@ -148,7 +163,7 @@ const BrandsList = ({
             {/* <Card.Body> */}
             <div className="datatables-header-footer-wrapper">
               <div className="datatable-header">
-                <Row className="align-items-lg-center justify-content-end mb-3">
+                <Row className="align-items-lg-center justify-content-between mb-3">
                   {header && (
                     <Col>
                       <h5 className="m-0 card-title h5 font-weight-bold">
@@ -156,6 +171,22 @@ const BrandsList = ({
                       </h5>
                     </Col>
                   )}
+                  <Col className="col-auto pl-lg-2">
+                    <div className="search search-style-1 mx-lg-auto w-auto">
+                      <InputGroup>
+                        <Form.Control
+                          type="text"
+                          className="search-term"
+                          placeholder="Search Retailer"
+                          style={{ width: "250px" }}
+                          onChange={(e: any) =>
+                            debouncedHandleSearch(e.target.value)
+                          }
+                        // value={search}
+                        />
+                      </InputGroup>
+                    </div>
+                  </Col>
                   <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
                     <Button
                       className="font-weight-semibold"
@@ -191,32 +222,7 @@ const BrandsList = ({
                           </Button>
                         </div>
                       </Col> */}
-                  {search && (
-                    <Col className="col-auto pl-lg-1">
-                      <div className="search search-style-1 mx-lg-auto w-auto">
-                        <InputGroup>
-                          <Form.Control
-                            type="text"
-                            className="search-term"
-                            placeholder="Search by Name"
-                            style={{ width: "250px" }}
-                            value={search}
-                            onChange={(e) =>
-                              setSearch && setSearch(e.target.value)
-                            }
-                          />
-                          {/* <InputGroup.Append> */}
-                          {/* <Button
-                              variant="default"
-                              type="submit"
-                            >
-                              <i className="bx bx-search"></i>
-                            </Button> */}
-                          {/* </InputGroup.Append> */}
-                        </InputGroup>
-                      </div>
-                    </Col>
-                  )}
+                
                 </Row>
               </div>
               <Table
@@ -269,7 +275,7 @@ const BrandsList = ({
                               src={generateFilePath(item?.imageUrl)}
                               // src={"/assets/images/brands/CEAT.svg"}
                               alt="logo"
-                              // crossOrigin="anonymous"
+                            // crossOrigin="anonymous"
                             />
                           </Link>
                         </td>
@@ -279,7 +285,7 @@ const BrandsList = ({
                           </Link>
                         </td>
                         <td>{item?.priority || "-"}</td>
-                        <td>{item?.productCount }</td>
+                        <td>{item?.productCount}</td>
 
                         <td>
                           <div
@@ -335,13 +341,13 @@ const BrandsList = ({
                 </tbody>
               </Table>
             </div>
-            {/* <Pagination
+            <Pagination
               currentPage={page}
               setCurrentPage={setPage}
               totalButtonsToShow={3}
               totalPages={totalPages}
               style={{ marginTop: "20px" }}
-            /> */}
+            />
             {/* </Card.Body>
             </Card> */}
           </Col>

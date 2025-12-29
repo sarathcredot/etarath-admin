@@ -5,14 +5,18 @@ import axiosAuth from "./axios.service";
 const baseUrl = `${url}/admin/brand`;
 
 // GET ALL BRANDS
-export const getAllBrands = async () => {
-  return await axiosAuth.get(`${baseUrl}/`);
+export const getAllBrands = async (queryParams?: any) => {
+  return await axiosAuth.get(`${baseUrl}/`, {
+    params: {
+      ...queryParams
+    }
+  });
 };
 
-export const useGetAllBrands = (enabled: boolean = true) => {
+export const useGetAllBrands = (enabled: boolean = true, queryParams?: any) => {
   return useQuery({
-    queryKey: ["brands"],
-    queryFn: () => getAllBrands().then((res) => res?.data?.data),
+    queryKey: ["brands", queryParams],
+    queryFn: () => getAllBrands(queryParams).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };

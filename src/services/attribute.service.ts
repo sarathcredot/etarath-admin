@@ -5,14 +5,18 @@ import axiosAuth from "./axios.service";
 const baseUrl = `${url}/admin/attributes`;
 
 // GET ALL ATTRIBUTES
-export const getAllAttributes = async () => {
-  return await axiosAuth.get(`${baseUrl}/`);
+export const getAllAttributes = async (queryParams?: any) => {
+  return await axiosAuth.get(`${baseUrl}/`, {
+    params: {
+      ...queryParams
+    }
+  });
 };
 
-export const useGetAllAttributes = (enabled: boolean) => {
+export const useGetAllAttributes = (enabled: boolean, queryParams?: any) => {
   return useQuery({
-    queryKey: ["attributes"],
-    queryFn: () => getAllAttributes().then((res) => res?.data?.data),
+    queryKey: ["attributes", queryParams],
+    queryFn: () => getAllAttributes(queryParams).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };

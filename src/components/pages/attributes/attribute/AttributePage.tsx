@@ -22,7 +22,7 @@ const AttributePage = () => {
 
   //STATE
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState<number>(10);
+  const [limit, setLimit] = useState<number>(3);
   const [search, setSearch] = useState<string>("");
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
@@ -47,12 +47,23 @@ const AttributePage = () => {
     return obj;
   }, [page, limit, search]);
 
+
+  if (attribute === "origin") {
+
+    queryObj.attribute = "origin"
+
+  } else {
+
+    queryObj.attribute = "yearOfManufacturer"
+  }
+
+
   // QUERY;
   const {
     data: attributes,
     isLoading: isLoading,
     error,
-  } = useGetAllAttributes(!!attribute);
+  } = useGetAllAttributes(!!attribute, queryObj);
 
   console.log("AAAAAAAAA = ", attributes);
 
@@ -87,12 +98,13 @@ const AttributePage = () => {
             attributesData={
               attributes && attribute
                 ? attribute === "origin"
-                  ? attributes[0]?.origin
+                  ? attributes?.result
                   : attribute === "year_of_manufacture"
-                  ? attributes[0]?.yearOfManufacturer
-                  : []
+                    ? attributes?.result
+                    : []
                 : []
             }
+            data={attributes}
             isLoading={isLoading}
             setPage={setPage}
             setLimit={setLimit}
@@ -104,8 +116,8 @@ const AttributePage = () => {
               attribute === "origin"
                 ? attribute
                 : attribute === "year_of_manufacture"
-                ? "yearOfManufacturer"
-                : ""
+                  ? "yearOfManufacturer"
+                  : ""
             }
           />
         </Card.Body>

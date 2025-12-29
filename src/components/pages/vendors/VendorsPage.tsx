@@ -11,7 +11,6 @@ const VendorsPage = () => {
   const [search, setSearch] = useState<string>("");
 
   // QUERY
-  const { data, isLoading, error } = useGetAllVendors();
 
   //USE MEMO
   const queryObj = useMemo(() => {
@@ -25,12 +24,18 @@ const VendorsPage = () => {
       obj.limit = limit;
     }
 
-    if (search) {
-      obj.search = search;
+    if (search?.trim()) {
+      console.log("searching", search);
+      obj.search = search.trim()
     }
 
     return obj;
   }, [page, limit, search]);
+
+  const { data, isLoading, error } = useGetAllVendors(undefined, queryObj);
+
+  console.log("Vendors data", data);
+
 
   return (
     <>
@@ -50,7 +55,8 @@ const VendorsPage = () => {
       <Card>
         <Card.Body className="bg-white">
           <VendorsList
-            vendors={data}
+            vendors={data?.result || []}
+            data={data}
             isLoading={isLoading}
             setPage={setPage}
             setLimit={setLimit}

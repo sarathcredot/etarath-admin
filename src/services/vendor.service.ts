@@ -5,14 +5,19 @@ import axiosAuth from "./axios.service";
 const baseUrl = `${url}/admin/users`;
 
 // GET ALL VENDORS
-export const getAllVendors = async () => {
-  return await axiosAuth.get(`${baseUrl}/?role=vendor`);
+export const getAllVendors = async (queryParams?: any) => {
+  return await axiosAuth.get(`${baseUrl}`,{
+    params: {
+      role: 'vendor',
+      ...queryParams
+    }
+  });
 };
 
-export const useGetAllVendors = (enabled: boolean = true) => {
+export const useGetAllVendors = (enabled: boolean = true, queryParams?: any) => {
   return useQuery({
-    queryKey: ["vendors"],
-    queryFn: () => getAllVendors().then((res) => res?.data?.data),
+    queryKey: ["vendors", queryParams],
+    queryFn: () => getAllVendors(queryParams).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };
