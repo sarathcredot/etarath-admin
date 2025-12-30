@@ -6,7 +6,7 @@ const baseUrl = `${url}/admin/users`;
 
 // GET ALL RETAILERS
 export const getAllRetailers = async (queryParams: any) => {
-  return await axiosAuth.get(`${baseUrl}`,{
+  return await axiosAuth.get(`${baseUrl}`, {
     params: {
       role: 'retailer',
       ...queryParams
@@ -104,19 +104,45 @@ export const useUpdateRetailerStatus = () => {
 
 // GET ALL RETAILER ORDERS
 
-export const getOrdersByRetailerId = async (retailerId: string) => {
+export const getOrdersByRetailerId = async (retailerId: string, queryParams?: any) => {
   if (!retailerId) throw new Error("No retailer id provided");
-  return await axiosAuth.get(`${baseUrl}/retailer/${retailerId}/all-orders`);
+  return await axiosAuth.get(`${baseUrl}/retailer/${retailerId}/all-orders`, {
+    params: {
+      ...queryParams
+    }
+  });
 };
 
 export const useGetOrdersByRetailerId = (
   retailerId: string,
-  enabled: boolean
+  enabled: boolean,
+  queryParams?: any
 ) => {
   return useQuery({
-    queryKey: ["retailer-orders", retailerId],
+    queryKey: ["retailer-orders", retailerId, queryParams],
     queryFn: () =>
-      getOrdersByRetailerId(retailerId).then((res) => res?.data?.data),
+      getOrdersByRetailerId(retailerId,queryParams).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };
+
+
+// GET ALL VENDOR Claims
+
+export const getClaimByRetailerId = async (retailerId: string, queryParams?: any) => {
+  if (!retailerId) throw new Error("No vendor id provided");
+  return await axiosAuth.get(`${baseUrl}/retailer/${retailerId}/all-claims`, {
+    params: {
+      ...queryParams
+    }
+  });
+};
+
+export const useGetClaimByRetailerId = (retailerId: string, enabled: boolean, queryParams?: any) => {
+  return useQuery({
+    queryKey: ["retailer-claims", retailerId, queryParams],
+    queryFn: () => getClaimByRetailerId(retailerId, queryParams).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};
+

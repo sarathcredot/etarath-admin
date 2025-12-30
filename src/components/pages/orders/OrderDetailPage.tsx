@@ -17,6 +17,7 @@ import {
 import { generateFilePath } from "src/services/url.service";
 import { useGetOrderById } from "src/services/order.service";
 import { capitalize } from "lodash";
+import dayjs from "dayjs";
 
 const OrderDetailPage = () => {
   //IMPORTS
@@ -116,6 +117,8 @@ const OrderDetailPage = () => {
   };
 
   return (
+
+
     <>
       <Breadcrumb
         current={"Order Details"}
@@ -130,8 +133,39 @@ const OrderDetailPage = () => {
           },
         ]}
       />
+
       <div>
         <Row>
+          {/* <Col
+                lg={12}
+                className=" "
+              >
+                <div className="banner_section">
+                  <div className="w-100 banner_image_div">
+                    <img
+                      className="banner_image"
+                      src="/assets/images/banner/banner_1.png"
+                      alt=""
+                    />
+                    <div className="edit-icon" >
+                      <div onClick={()=> setEditBannerOpen(true)}>
+    
+                     <i className="bx bxs-edit fa " ></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="content" style={{zIndex:1000}}>
+                    <div className="logo_div" >
+                      <img
+                        className="logo_img"
+                        src="/assets/images/banner/Pepsi_IPL_logo 1.png"
+                        alt=""
+                      />
+                    </div>
+                    <h1>Pepsi Indian Premier League</h1>
+                  </div>
+                </div>
+              </Col> */}
           <Col
             lg={12}
           // className="mt-5"
@@ -139,233 +173,338 @@ const OrderDetailPage = () => {
             <Card className="card-modern">
               <Card.Header className="d-flex align-items-center justify-content-between">
                 <Card.Title>Details</Card.Title>
-
+                {/* <div
+                  className="action_btn "
+                  onClick={() => {
+                    setSelectedProductId(product?._id ? product?._id : "");
+                    setEditOpen(true);
+                  }}
+                >
+                  <i className="fas fa-pencil-alt"></i>
+                </div> */}
               </Card.Header>
               <Card.Body>
                 <Row>
-                  <Col xl={6}>
-                    <Row>
-                      <Col lg={4}>
-                        <div>
-                          <h6>OrderId</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.orderId}
-                          </h5>
-                        </div>
-                        <div>
-                          <h6>Product Name</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.productDetails?.productName}-{" "}
-                            {`${order?.productDetails?.width}${order?.productDetails?.height
-                              ? `/${order?.productDetails?.height}`
-                              : ""
-                              } R${order?.productDetails?.size}`}
-                          </h5>
-                        </div>
-                        {/* <div>
-                      <h6>Category</h6>
+                  <Col md={6} xl={4}>
+                    <div>
+                      <h6>OrderId</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                      {product?.category}
+                        {order?.orderId}
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Product Name</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {order?.productDetails?.productName}-{" "}
+                        {`${order?.productDetails?.width}${order?.productDetails?.height
+                          ? `/${order?.productDetails?.height}`
+                          : ""
+                          } R${order?.productDetails?.size}`}
+                      </h5>
+                    </div>
+                    <div>
+
+                    </div>
+                  </Col>
+                  <Col lg={3}>
+                    {/* <div>
+                          <h6>Available order</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {stock?.stock}
+                          </h5>
+                        </div> */}
+                    <div>
+                      <h6>Total Price </h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {order?.totalPrice} AED
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Quantity </h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {order?.quantity}
+                      </h5>
+                    </div>
+                  </Col>
+                  <Col md={3} xl={2}>
+                    {/* <div>
+                          <h6>Verification</h6>
+                          <span
+                            className={`ecommerce-status ${
+                              stock?.isVerified === "approved"
+                                ? "completed"
+                                : stock?.isVerified === "rejected"
+                                ? "failed"
+                                : "on-hold"
+                            } text-dark font-weight-500`}
+                          >
+                            {stock?.isVerified}
+                          </span>
+                        </div> */}
+
+                    <div>
+                      <h6 className="mb-0">Status</h6>
+                      <div
+                      // className="d-flex align-items-center"
+                      // onClick={() => {
+                      //   handlestatusChange(
+                      //     product ? product?._id : "",
+                      //     !product?.isSuspend
+                      //   );
+                      // }}
+                      >
+                        {/* <PtSwitch
+                               className="mr-2"
+                               on={!product?.isSuspend}
+                               size="sm"
+                               variant="success"
+                             /> */}
+                        {/* <h5 className="text-dark font-weight-500">
+                               {order?.status
+                                 ? order.status.charAt(0).toUpperCase() + order.status.slice(1)
+                                 : ""}
+                             </h5> */}
+
+                        <div className={`ecommerce-status ${order?.status}`}>
+                          {capitalize(order?.status)}
+                        </div>
+                      </div>
+                      <div>
+                        <h6>Requested date</h6>
+                        <h5
+                          className=" text-dark font-weight-500 "
+                          style={{ width: "90%" }}
+                        >
+                          {order?.orderDate
+                            ? dayjs(order?.orderDate).format("DD-MM-YYYY")
+                            : "-"}
+                        </h5>
+
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+                <Card.Header className="d-flex align-items-center justify-content-between m-0 p-0 mt-5 mb-4">
+                  <Card.Title>Stock Details</Card.Title>
+                </Card.Header>
+                <Row>
+                  <Col md={6} xl={3}>
+                    <div>
+                      <h6>Product Name</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {order?.productDetails?.productName}
+                      </h5>
+                    </div>
+                    <div>
+                      {/* <h6>Brand</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {product?.brand?.name}
+                      </h5> */}
+                    </div>
+                    <div>
+                      <h6>price</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {order?.price}
+                      </h5>
+                    </div>
+                  </Col>
+
+                  <Col md={3} xl={3}>
+                    <div>
+                      <h6>Vendor</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {order?.vendorDetails?.business_name}
+                      </h5>
+                    </div>
+
+                    <div>
+                      <h6>Phone Number</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {order?.vendorDetails?.phoneNumber}
+                      </h5>
+                    </div>
+                     {/* <Col lg={4}> */}
+                    <div>
+                      <h6>Warehouse</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {order?.warehouseDetails?.shop_name}
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Location</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {order?.warehouseDetails?.location}
+                      </h5>
+                    </div>
+                  {/* </Col> */}
+                  </Col>
+                 
+
+                  <Col xl={6} className="px-3 mb-n3 ">
+                    <div>
+                      <h6>Images</h6>
+                      <Row>
+                        {order?.productDetails?.imageUrl?.map((img: any, index: number) => (
+                          <Col key={index} className="p-1 p-xl-3">
+                            <div
+                              className="product_image_div"
+                              style={{ cursor: "default" }}
+                            >
+                              <img
+                                src={generateFilePath(img)}
+                                alt="product"
+                                width="110"
+                                height="110"
+                              // crossOrigin="anonymous"
+                              />
+                            </div>
+                          </Col>
+                        ))}
+                      </Row>
+                    </div>
+                  </Col>
+                </Row>
+                <Card.Header className="d-flex align-items-center justify-content-between m-0 p-0 mt-5 mb-4">
+                  <Card.Title>Orderd By</Card.Title>
+                </Card.Header>
+                <Row>
+                  <Col md={6} xl={3}>
+                    <div>
+                      <h6>Retailer Name</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {order?.userDetails?.userName}
+                      </h5>
+                    </div>
+                    <div>
+                      {/* <h6>Brand</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {product?.brand?.name}
+                      </h5> */}
+                    </div>
+                    <div>
+                      <h6>Phone Number</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {order?.userDetails?.phoneNumber}
+                      </h5>
+                    </div>
+                    {/* <div>
+                      <h6>Phone Number</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {order?.phoneNumber}
                       </h5>
                     </div> */}
-                      </Col>
-                      <Col lg={4}>
-                        <div>
-                          <h6>Total Price</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.totalPrice}AED
-                          </h5>
-                        </div>
-                        <div>
-                          <h6>Payment Status</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.paymentStatus}
-                          </h5>
-                        </div>
-                      </Col>
-                      <Col lg={4}>
-                        <div>
-                          <h6>Order By</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.userDetails?.userName}
-                          </h5>
-                        </div>
-                        <div>
-                          <h6>Phone Number</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.userDetails?.phoneNumber}
-                          </h5>
-                        </div>
-                        {/* <div>
-                          <h6>Vendor</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.vendorDetails?.business_name}
-                          </h5>
-                        </div>
-                         <div>
-                          <h6>Phone Number</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.vendorDetails?.phoneNumber}
-                          </h5>
-                        </div> */}
-                        {/* <div>
-                          <h6>Warehouse Details</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.warehouseDetails?.shop_name}
-                          </h5>
-                        </div> */}
-                      </Col>
-                      <Col lg={12}>
-                        <div>
-                          <h6>Price</h6>
-                          <h5
-                            className=" text-dark font-weight-500 "
-                            style={{ width: "90%" }}
-                          >
-                            {order?.price}AED
-                          </h5>
-                        </div>
-                        <div>
-                          <h6>Quantity</h6>
-                          <h5
-                            className=" text-dark font-weight-500 "
-                            style={{ width: "90%" }}
-                          >
-                            {order?.quantity}
-                          </h5>
-
-                        </div>
-                      </Col>
-                    </Row>
                   </Col>
-                  <Col xl={6} className="px-3 ">
-                    <Row className="h-100">
-                      <Col>
-
+                  {/* <Col md={3} xl={2}>
                         <div>
-                          <h6>Vendor</h6>
+                          <h6>Origin</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {order?.vendorDetails?.business_name}
+                            {product?.origin}
                           </h5>
                         </div>
                         <div>
-                          <h6>Phone Number</h6>
+                          <h6>Year</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {order?.vendorDetails?.phoneNumber}
+                            {product?.yearOfManufacturer}
                           </h5>
                         </div>
+                      </Col> */}
+                  <Col md={3} xl={3}>
+                    <div>
+                      <h6>Location</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {order?.userDetailsKyc?.location} , {order?.userDetailsKyc?.business_address}
+                      </h5>
+                    </div>
 
-                         <div>
-                          <h6>Warehouse Details</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.warehouseDetails?.shop_name}
-                          </h5>
-                        </div>
-
-
-
-
-                        <div>
+                    {/* <div>
+                      <h6>Phone Number</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {order?.vendorDetails?.phoneNumber}
+                      </h5>
+                    </div> */}
+                    {/* <div>
                           <h6 className="mb-0">Status</h6>
                           <div
                             className="d-flex align-items-center"
-                          // onClick={() => {
-                          //   handlestatusChange(
-                          //     product ? product?._id : "",
-                          //     !product?.isSuspend
-                          //   );
-                          // }}
+                            onClick={() => {
+                              handlestatusChange(
+                                product ? product?._id : "",
+                                !product?.isSuspend
+                              );
+                            }}
                           >
-                            {/* <PtSwitch
+                            <PtSwitch
                               className="mr-2"
                               on={!product?.isSuspend}
                               size="sm"
                               variant="success"
-                            /> */}
-                            {/* <h5 className="text-dark font-weight-500">
-                              {order?.status
-                                ? order.status.charAt(0).toUpperCase() + order.status.slice(1)
-                                : ""}
-                            </h5> */}
+                            />
+                            <h5 className=" text-dark font-weight-500 ">
+                              {!product?.isSuspend ? "Active" : "Blocked"}
+                            </h5>
+                          </div>
+                        </div> */}
 
-                            <div className={`ecommerce-status ${order?.status}`}>
-                              {capitalize(order?.status)}
+                    {/* <h5 className="text-dark font-weight-500">
+                      {order?.status
+                        ? order.status.charAt(0).toUpperCase() + order.status.slice(1)
+                        : ""}
+                    </h5> */}
+                  </Col>
+                  <Col xl={6} className="px-3 mb-n3 ">
+                    {/* <div>
+                      <h6>Images</h6>
+                      <Row>
+                        {order?.productDetails?.imageUrl?.map((img: any, index: number) => (
+                          <Col key={index} className="p-1 p-xl-3">
+                            <div
+                              className="product_image_div"
+                              style={{ cursor: "default" }}
+                            >
+                              <img
+                                src={generateFilePath(img)}
+                                alt="product"
+                                width="110"
+                                height="110"
+                              // crossOrigin="anonymous"
+                              />
                             </div>
-                          </div>
-                        </div>
-                      </Col>
-                      {/* <Col>
-                        <div>
-                          <h6>Verification</h6>
-                          <div
-                            className={`ecommerce-status ${product?.isVerified}`}
-                          >
-                            {product?.isVerified
-                              ? capitalCase(product?.isVerified)
-                              : ""}
-                          </div>
-                        </div>
-                      </Col> */}
-                      <Col xl={12} className="px-3 mb-n3 mt-auto">
-                        <div>
-                          <h6>Images</h6>
-                          <Row>
-                            {order?.productDetails?.imageUrl?.map(
-                              (img: any, index: number) => (
-                                <Col key={index} className="p-1 p-xl-3">
-                                  <div
-                                    className="product_image_div"
-                                    style={{ cursor: "default" }}
-                                  >
-                                    <img
-                                      src={generateFilePath(img)}
-                                      alt="product"
-                                      width="110"
-                                      height="110"
-                                    // crossOrigin="anonymous"
-                                    />
-                                  </div>
-                                </Col>
-                              )
-                            )}
-                          </Row>
-                        </div>
-                      </Col>
-                    </Row>
+                          </Col>
+                        ))}
+                      </Row>
+                    </div> */}
                   </Col>
                 </Row>
               </Card.Body>
             </Card>
           </Col>
+          {/* <Col lg={12} className="mt-4">
+                <Card className="card-modern">
+                  <Card.Body>
+                    <StocksList
+                      productId={productId ? productId : ""}
+                    />
+                  </Card.Body>
+                </Card>
+              </Col> */}
         </Row>
-        {/* <div
-          className="tabs"
-          style={{ borderRadius: "5px", marginTop: "20px", overflow: "hidden" }}
-        >
-          <Tabs className="nav-justified">
-            <Tab eventKey="vendors" title="Vendors">
-              <StocksList productId={productId ? productId : ""} />
-            </Tab>
-            <Tab eventKey="orders" title="Orders">
-              <ProductOrdersList
-                orders={orders}
-                ordersLoading={ordersLoading}
-                page={page}
-                setPage={setPage}
-                productId={productId ? productId : ""}
-              />
-            </Tab>
-          </Tabs>
-        </div> */}
-        {/* <Col lg={12} className="mt-4">
-          <Card className="card-modern">
-            <Card.Body>
-              <StocksList productId={productId ? productId : ""} />
-            </Card.Body>
-          </Card>
-        </Col> */}
-      </div>
+      </div >
+      {/* <ConfirmationPopup
+            // submit={() => handleChangeStatus(organiser?.isActive)}
+            submit={() =>
+              toast("Status Update", {
+                containerId: "default",
+                className: "no-icon notification-success",
+              })
+            }
+            isOpen={isStatusOpen}
+            toggle={() => setStatusOpen(!isStatusOpen)}
+            text={
+              "Are you sure that you want to change the status of this product?"
+            }
+          /> */}
     </>
+
   );
 };
 

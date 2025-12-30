@@ -90,7 +90,7 @@ const ProductsPage = () => {
       console.log("error status updation :", error);
       toast(
         error?.response?.data?.message ||
-          "Something went wrong while updating the status.",
+        "Something went wrong while updating the status.",
         {
           containerId: "default",
           className: "no-icon notification-danger",
@@ -120,7 +120,7 @@ const ProductsPage = () => {
       console.log("error deleting product :", error);
       toast(
         error?.response?.data?.message ||
-          "Something went wrong while deleting the product.",
+        "Something went wrong while deleting the product.",
         {
           containerId: "default",
           className: "no-icon notification-danger",
@@ -258,58 +258,68 @@ const ProductsPage = () => {
                       ) : !isProductsLoading && products?.result?.length > 0 ? (
                         products?.result?.map(
                           (item: Product, index: number) => (
-                            <tr key={index}>
+                            <tr key={index}
+                              style={{ cursor: "pointer" }}
+                            >
                               <td>
-                                <Link to={`/products/detail?_id=${item?._id}`}>
-                                  <strong>
-                                    {/* {index +
+                                {/* <Link to={`/products/detail?_id=${item?._id}`}> */}
+                                {/* <strong> */}
+                                {/* {index +
                                   (productsData?.pagination?.page - 1) *
                                     productsData?.pagination?.limit +
                                   1} */}
-                                    {index + 1}
+                                {index + 1}
+                                {/* </strong> */}
+                                {/* </Link> */}
+                              </td>
+                              <td>
+                                {/* <Link
+                                  style={{ width: "50px", height: "50px" }}
+                                  className="d-flex align-items-center justify-content-center"
+                                  to={`/products/detail?_id=${item?._id}`}
+                                > */}
+                                <img
+                                  className="mr-1"
+                                  src={generateFilePath(item?.imageUrl[0])}
+                                  // src={item?.imageUrl[0]}
+                                  alt="product"
+                                  width="40"
+                                  height="40"
+                                // crossOrigin="anonymous"
+                                />
+                                {/* </Link> */}
+                              </td>
+                              <td>
+                                <Link to={`/products/detail?_id=${item?._id}`}
+                                  style={{ textDecoration: "none", color: "inherit" }}
+                                >
+                                  <strong>
+                                    {item?.productName} -{" "}
+                                    {`${item?.width}${item?.height ? `/${item.height}` : ""
+                                      } R${item?.size}`}
                                   </strong>
                                 </Link>
                               </td>
                               <td>
                                 <Link
-                                  style={{ width: "50px", height: "50px" }}
-                                  className="d-flex align-items-center justify-content-center"
-                                  to={`/products/detail?_id=${item?._id}`}
-                                >
-                                  <img
-                                    className="mr-1"
-                                    src={generateFilePath(item?.imageUrl[0])}
-                                    // src={item?.imageUrl[0]}
-                                    alt="product"
-                                    width="40"
-                                    height="40"
-                                    // crossOrigin="anonymous"
-                                  />
-                                </Link>
-                              </td>
-                              <td>
-                                <Link to={`/products/detail?_id=${item?._id}`}>
-                                  {item?.productName} -{" "}
-                                  {`${item?.width}${
-                                    item?.height ? `/${item.height}` : ""
-                                  } R${item?.size}`}
-                                </Link>
-                              </td>
-                              <td>
-                                <Link
                                   to={`/brands/detail?_id=${item?.brand?._id}`}
+                                  style={{ textDecoration: "none", color: "inherit" }}
                                 >
                                   {item?.brand?.name}
                                 </Link>
                               </td>
                               {/* <td>{item?.category}</td> */}
                               <td>
-                                <Link to={`/attributes/origin`}>
+                                <Link to={`/attributes/origin`}
+                                  style={{ textDecoration: "none", color: "inherit" }}
+                                >
                                   {item?.originDetails?.origin?.value}
                                 </Link>
                               </td>
                               <td>
-                                <Link to={`/attributes/year_of_manufacture`}>
+                                <Link to={`/attributes/year_of_manufacture`}
+                                  style={{ textDecoration: "none", color: "inherit" }}
+                                >
                                   {
                                     item?.yearOfManufacturerDetails
                                       ?.yearOfManufacturer?.value

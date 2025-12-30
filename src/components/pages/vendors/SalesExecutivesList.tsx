@@ -1,5 +1,5 @@
-import _, { capitalize } from "lodash";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import _, { capitalize, debounce } from "lodash";
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { Button, Col, Form, InputGroup, Row, Table } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -17,17 +17,25 @@ import AddStock from "./popups/AddStock";
 import dayjs from "dayjs";
 
 const SalesExecutivesList = ({
-  orders,
-  ordersLoading = false,
+  agents,
+  agentsLoading = false,
   vendorId,
+  setPage = () => { },
+  setSearch = () => { }, // fallback so debounce doesn’t break
+  setLimit,
   page = 1,
-  setPage,
+  limit = 10,
+  search = "",
 }: {
   vendorId: string;
-  orders: any;
-  ordersLoading: boolean;
-  page: number;
-  setPage: Dispatch<SetStateAction<number>>;
+  agents: any;
+  agentsLoading: boolean;
+  setPage?: Dispatch<React.SetStateAction<number>>;
+  setLimit?: Dispatch<React.SetStateAction<number>>;
+  setSearch?: Dispatch<React.SetStateAction<any>>;
+  page?: number;
+  limit?: number;
+  search?: string;
 }) => {
   const navigate = useNavigate();
 
@@ -36,7 +44,7 @@ const SalesExecutivesList = ({
   const [isAddOpen, setAddOpen] = useState<boolean>(false);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [selectedStock, setSelectedStock] = useState<any>(null);
-  const [search, setSearch] = useState<string>("");
+  // const [search, setSearch] = useState<string>("");
 
   // MUTATION
   // const { mutateAsync: deleteStock } = useDeleteStock();
@@ -110,8 +118,8 @@ const SalesExecutivesList = ({
   //   }
   // };
 
-  const totalRecords = orders?.total || 0;
-  const totalPages = orders?.totalPages || 0;
+  const totalRecords = agents?.total || 0;
+  const totalPages = agents?.totalPages || 0;
 
   useEffect(() => {
     if (isEditOpen && selectedStock) {
@@ -127,6 +135,17 @@ const SalesExecutivesList = ({
       });
     }
   }, [isEditOpen, selectedStock]);
+
+  const debouncedHandleSearch = useCallback(
+    debounce((text) => {
+      try {
+        setSearch(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
   return (
     <>
       <div className="">
@@ -178,7 +197,7 @@ const SalesExecutivesList = ({
                           style={{ width: "250px" }}
                           value={search}
                           onChange={(e) =>
-                            setSearch && setSearch(e.target.value)
+                            debouncedHandleSearch(e.target.value)
                           }
                         />
                       </InputGroup>
@@ -200,62 +219,61 @@ const SalesExecutivesList = ({
                       <th style={{ width: "80px" }}>Executive</th>
                       <th></th>
                       <th>Contact Number</th>
+                      <th>Email</th>
                       <th>Created Date</th>
                       <th>Status</th>
-                      <th className="text-center" style={{ width: "80px" }}>
+                      {/* <th className="text-center" style={{ width: "80px" }}>
                         Actions
-                      </th>
+                      </th> */}
                     </tr>
                   </thead>
                   <tbody>
-                    {ordersLoading ? (
+                    {agentsLoading ? (
                       <tr>
                         <td colSpan={9}>
                           <Loader />
                         </td>
                       </tr>
-                    ) : !ordersLoading &&
-                      orders &&
-                      orders?.result?.length > 0 ? (
-                      orders?.result?.map((item: any, index: number) => (
-                        <tr key={index}>
+                    ) : !agentsLoading &&
+                      agents &&
+                      agents?.result?.length > 0 ? (
+                      agents?.result?.map((item: any, index: number) => (
+                        <tr style={{ cursor: "pointer" }} key={index}>
                           <td>
-                            <Link
+                            {/* <Link
                               to={`/sales-executives/detail?_id=${index + 1}`}
                               style={{ whiteSpace: "nowrap" }}
-                            >
-                              {/* {index +
-                                  (productsData?.pagination?.page - 1) *
-                                    productsData?.pagination?.limit +
-                                  1} */}
-                              {index + 1}
-                            </Link>
+                            > */}
+
+                            {index + 1}
+                            {/* </Link> */}
                           </td>
                           <td>
-                            <Link
+                            {/* <Link
                               style={{ width: "50px", height: "50px" }}
                               className="d-flex align-items-center justify-content-center"
                               to={`/products/detail?_id=${item?.product?._id}`}
-                            >
-                              <img
-                                className="mr-1"
-                                src={generateFilePath(item?.imgUrl)}
-                                // src={item?.imageUrl[0]}
-                                alt="product"
-                                width="40"
-                                height="40"
-                                // crossOrigin="anonymous"
-                              />
-                            </Link>
+                            > */}
+                            <img
+                              className="mr-1"
+                              src={generateFilePath(item?.imgUrl)}
+                              // src={item?.imageUrl[0]}
+                              alt="product"
+                              width="40"
+                              height="40"
+                            // crossOrigin="anonymous"
+                            />
+                            {/* </Link> */}
                           </td>
                           <td>
-                            <Link
+                            {/* <Link
                               to={`/stock/detail?_id=${item?.stockIdByVendor}`}
-                            >
-                              {item?.userName}
-                            </Link>
+                            > */}
+                            <strong> {item?.userName} </strong>
+                            {/* </Link> */}
                           </td>
                           <td>{item?.phoneNumber || "-"}</td>
+                          <td>{item?.email || "-"}</td>
                           <td>
                             {item?.createdAt
                               ? dayjs(item?.createdAt).format("DD-MM-YYYY")
@@ -263,24 +281,17 @@ const SalesExecutivesList = ({
                           </td>
                           <td>
                             <div
-                              // onClick={() => {
-                              //   setStatusOpen(true);
-                              //   setSelectedVendor(item);
-                              // }}
+                              className={`ecommerce-status ${item?.issuspended ? "failed" : "completed"
+                                }`}
                             >
-                              <PtSwitch
-                                className="mr-1"
-                                on={!item?.isSuspend}
-                                size="sm"
-                                variant="success"
-                              />
+                              {item?.issuspended ? "Suspended" : "Active"}
                             </div>
                           </td>
-                          <td>
+                          {/* <td>
                             <div className="d-flex align-items-center justify-content-around">
                               {isEditOpen &&
-                              selectedStock &&
-                              selectedStock?._id === item?._id ? (
+                                selectedStock &&
+                                selectedStock?._id === item?._id ? (
                                 <>
                                   <button className="action_btn" type="submit">
                                     <i className="fas fa-check"></i>
@@ -319,7 +330,7 @@ const SalesExecutivesList = ({
                                 </>
                               )}
                             </div>
-                          </td>
+                          </td> */}
                         </tr>
                       ))
                     ) : (

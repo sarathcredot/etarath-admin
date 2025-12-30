@@ -1,5 +1,5 @@
-import _, { capitalize } from "lodash";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import _, { capitalize, debounce } from "lodash";
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { Button, Col, Form, InputGroup, Row, Table } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -19,14 +19,23 @@ const RetailerOrdersList = ({
   orders,
   ordersLoading = false,
   retailerId,
+  setPage = () => { },
+  setSearch = () => { }, // fallback so debounce doesn’t break
+  setLimit,
   page = 1,
-  setPage,
+  limit = 10,
+  search = "",
 }: {
   retailerId: string;
   orders: any;
   ordersLoading: boolean;
-  page: number;
-  setPage: Dispatch<SetStateAction<number>>;
+  setPage?: Dispatch<React.SetStateAction<number>>;
+  setLimit?: Dispatch<React.SetStateAction<number>>;
+  setSearch?: Dispatch<React.SetStateAction<any>>;
+  page?: number;
+  limit?: number;
+  search?: string;
+
 }) => {
   const navigate = useNavigate();
 
@@ -35,7 +44,7 @@ const RetailerOrdersList = ({
   const [isAddOpen, setAddOpen] = useState<boolean>(false);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [selectedStock, setSelectedStock] = useState<any>(null);
-  const [search, setSearch] = useState<string>("");
+  // const [search, setSearch] = useState<string>("");
 
   // MUTATION
   // const { mutateAsync: deleteStock } = useDeleteStock();
@@ -126,6 +135,18 @@ const RetailerOrdersList = ({
       });
     }
   }, [isEditOpen, selectedStock]);
+
+  const debouncedHandleSearch = useCallback(
+    debounce((text) => {
+      try {
+        setSearch(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
+
   return (
     <>
       <div className="">
@@ -177,7 +198,7 @@ const RetailerOrdersList = ({
                           style={{ width: "250px" }}
                           value={search}
                           onChange={(e) =>
-                            setSearch && setSearch(e.target.value)
+                            debouncedHandleSearch(e.target.value)
                           }
                         />
                       </InputGroup>
@@ -227,57 +248,58 @@ const RetailerOrdersList = ({
                         <tr
                           key={index}
                           onClick={() =>
-                            navigate(`/orders/detail?=_id${item?._id}`)
+                            navigate(`/orders/detail?_id=${item?._id}`)
                           }
+                          style={{ cursor: "pointer" }}
                         >
                           <td>
-                            <Link
+                            {/* <Link
                               to={`/orders/detail?_id=${index + 1}`}
                               style={{ whiteSpace: "nowrap" }}
-                            >
+                            > */}
+                            <strong style={{ whiteSpace: "nowrap" }}>
                               {item?.orderId}
-                            </Link>
+                            </strong>
+                            {/* </Link> */}
                           </td>
                           <td>
-                            <Link
+                            {/* <Link
                               style={{ width: "50px", height: "50px" }}
                               className="d-flex align-items-center justify-content-center"
                               to={`/stock/detail?_id=${item?.stockIdByVendor}`}
                               onClick={(e) => e.stopPropagation()}
-                            >
-                              <img
-                                className="mr-1"
-                                src={generateFilePath(
-                                  item?.productDetails?.imageUrl[0]
-                                )}
-                                // src={item?.imageUrl[0]}
-                                alt="product"
-                                width="40"
-                                height="40"
-                                // crossOrigin="anonymous"
-                              />
-                            </Link>
+                            > */}
+                            <img
+                              className="mr-1"
+                              src={generateFilePath(
+                                item?.productDetails?.imageUrl[0]
+                              )}
+                              // src={item?.imageUrl[0]}
+                              alt="product"
+                              width="40"
+                              height="40"
+                            // crossOrigin="anonymous"
+                            />
+                            {/* </Link> */}
                           </td>
                           <td>
-                            <Link
+                            {/* <Link
                               to={`/stock/detail?_id=${item?.stockIdByVendor}`}
                               onClick={(e) => e.stopPropagation()}
-                            >
-                              {`${item?.productDetails?.productName} - ${
-                                item?.productDetails?.width
-                              }${
-                                item?.productDetails?.height
-                                  ? `/${item?.productDetails?.height}`
-                                  : ""
+                            > */}
+                            {`${item?.productDetails?.productName} - ${item?.productDetails?.width
+                              }${item?.productDetails?.height
+                                ? `/${item?.productDetails?.height}`
+                                : ""
                               } R${item?.productDetails?.size}`}
-                            </Link>
+                            {/* </Link> */}
                           </td>
                           <td>
                             <Link
                               to={`/vendors/detail?_id=${item?.vendorId}`}
                               onClick={(e) => e.stopPropagation()}
                             >
-                              {item?.kycDetails?.business_name||item?.vendorDetails?.userName}
+                              {item?.kycDetails?.business_name || item?.vendorDetails?.userName}
                             </Link>
                           </td>
                           {/* <td>{item?.quantity || 0} </td> */}

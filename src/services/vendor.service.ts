@@ -155,15 +155,19 @@ export const useGetClaimByVendorId = (vendorId: string, enabled: boolean,queryPa
 
 // GET ALL VENDOR SALES AGENTS
 
-export const getAgentsByVendorId = async (vendorId: string) => {
+export const getAgentsByVendorId = async (vendorId: string,queryParams?:any) => {
   if (!vendorId) throw new Error("No vendor id provided");
-  return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/sales-agents`);
+  return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/sales-agents`,{
+   params:{
+    ...queryParams
+   }
+  });
 };
 
-export const useGetAgentsByVendorId = (vendorId: string, enabled: boolean) => {
+export const useGetAgentsByVendorId = (vendorId: string, enabled: boolean,queryParams?:any) => {
   return useQuery({
-    queryKey: ["sales-agents", vendorId],
-    queryFn: () => getAgentsByVendorId(vendorId).then((res) => res?.data?.data),
+    queryKey: ["sales-agents", vendorId,queryParams],
+    queryFn: () => getAgentsByVendorId(vendorId,queryParams).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };

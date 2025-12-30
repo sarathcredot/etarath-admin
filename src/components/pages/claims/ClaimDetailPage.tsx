@@ -163,12 +163,7 @@ const ClaimDetailPage = () => {
                               } R${order?.productDetails?.size}`}
                           </h5>
                         </div>
-                        {/* <div>
-                      <h6>Category</h6>
-                      <h5 className=" text-dark font-weight-500 ">
-                      {product?.category}
-                      </h5>
-                    </div> */}
+                        
                       </Col>
                       <Col lg={4}>
                         <div>
@@ -186,45 +181,7 @@ const ClaimDetailPage = () => {
                       </Col>
                       <Col lg={4}>
                         <div>
-                          <h6>Claim Requested By</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.userDetails?.userName}
-                          </h5>
-                        </div>
-                        <div>
-                          <h6>Phone Number</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.userDetails?.phoneNumber}
-                          </h5>
-                        </div>
-                        {/* <div>
-                          <h6>Vendor</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.vendorDetails?.business_name}
-                          </h5>
-                        </div>
-                         <div>
-                          <h6>Phone Number</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.vendorDetails?.phoneNumber}
-                          </h5>
-                        </div> */}
-                        {/* <div>
-                          <h6>Warehouse Details</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.warehouseDetails?.shop_name}
-                          </h5>
-                        </div> */}
-                      </Col>
-                      <Col lg={12}>
-                        <div>
-                          <h6>Price</h6>
-                          <h5
-                            className=" text-dark font-weight-500 "
-                            style={{ width: "90%" }}
-                          >
-                            {order?.orderDetails?.price}AED
-                          </h5>
+                        
                         </div>
 
                         <div>
@@ -238,7 +195,7 @@ const ClaimDetailPage = () => {
 
                         </div>
                         <div>
-                          <h6>Requested date</h6>
+                          {/* <h6>Requested date</h6>
                           <h5
                             className=" text-dark font-weight-500 "
                             style={{ width: "90%" }}
@@ -246,7 +203,7 @@ const ClaimDetailPage = () => {
                             {order?.requestedDate
                               ? dayjs(order?.requestedDate).format("DD-MM-YYYY")
                               : "-"}
-                          </h5>
+                          </h5> */}
 
                         </div>
                       </Col>
@@ -257,23 +214,28 @@ const ClaimDetailPage = () => {
                       <Col>
 
                         <div>
-                          <h6>Vendor</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {order?.vendorDetails?.business_name}
+                          <h6>Requested date</h6>
+                          <h5
+                            className=" text-dark font-weight-500 "
+                            style={{ width: "90%" }}
+                          >
+                            {order?.requestedDate
+                              ? dayjs(order?.requestedDate).format("DD-MM-YYYY")
+                              : "-"}
                           </h5>
                         </div>
                         <div>
-                          <h6>Phone Number</h6>
+                          {/* <h6>Phone Number</h6>
                           <h5 className=" text-dark font-weight-500 ">
                             {order?.vendorDetails?.phoneNumber}
-                          </h5>
+                          </h5> */}
                         </div>
 
                         <div>
-                          <h6>Warehouse Details</h6>
+                          {/* <h6>Warehouse Details</h6>
                           <h5 className=" text-dark font-weight-500 ">
                             {order?.warehouseDetails?.shop_name}
-                          </h5>
+                          </h5> */}
                         </div>
 
 
@@ -436,7 +398,7 @@ const ClaimDetailPage = () => {
                                 />
                               </div>
                             </Col>
-                             <Col className="p-1 p-xl-3">
+                            <Col className="p-1 p-xl-3">
                               <div
                                 className="product_image_div"
                                 style={{ cursor: "default" }}
@@ -451,7 +413,7 @@ const ClaimDetailPage = () => {
                               </div>
                             </Col>
 
-                             <Col className="p-1 p-xl-3">
+                            <Col className="p-1 p-xl-3">
                               <div
                                 className="product_image_div"
                                 style={{ cursor: "default" }}
@@ -481,7 +443,7 @@ const ClaimDetailPage = () => {
                               </div>
                             </Col>
 
-                           
+
                           </Row>
                         </div>
                       </Col>
@@ -492,6 +454,214 @@ const ClaimDetailPage = () => {
                     </Row>
                   </Col>
                 </Row>
+                <Card.Header className="d-flex align-items-center justify-content-between m-0 p-0 mt-5 mb-4">
+                  <Card.Title>Stock Details</Card.Title>
+                </Card.Header>
+                <Row>
+                  <Col xl={6}>
+                    <Row>
+                      <Col lg={4}>
+                        <div>
+
+                        </div>
+                        <div>
+                          <h6>Product Name</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {order?.productDetails?.productName}-{" "}
+                            {`${order?.productDetails?.width}${order?.productDetails?.height
+                              ? `/${order?.productDetails?.height}`
+                              : ""
+                              } R${order?.productDetails?.size}`}
+                          </h5>
+                        </div>
+                        <div>
+                          <h6>Price</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {order?.orderDetails?.price}
+                          </h5>
+                        </div>
+                      </Col>
+                      <Col lg={4}>
+                        <div>
+                          <h6>Vendor</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {order?.vendorDetails?.business_name}
+                          </h5>
+                        </div>
+                        <div>
+                          <h6>Phone Number</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {order?.vendorDetails?.phoneNumber}
+                          </h5>
+                        </div>
+                      </Col>
+                      <Col lg={4}>
+                        <div>
+                          <h6>Warehouse</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {order?.warehouseDetails?.shop_name}
+                          </h5>
+                        </div>
+                        <div>
+                          <h6>Location</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {order?.warehouseDetails?.location}
+                          </h5>
+                        </div>
+                      </Col>
+
+                    </Row>
+                  </Col>
+                  <Col xl={6} className="px-3 ">
+                    <Row className="h-100">
+                      <Col>
+
+                        <div>
+                          {/* <h6>Requested date</h6>
+                          <h5
+                            className=" text-dark font-weight-500 "
+                            style={{ width: "90%" }}
+                          >
+                            {order?.requestedDate
+                              ? dayjs(order?.requestedDate).format("DD-MM-YYYY")
+                              : "-"}
+                          </h5> */}
+                        </div>
+                        <div>
+                          {/* <h6>Phone Number</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {order?.vendorDetails?.phoneNumber}
+                          </h5> */}
+                        </div>
+
+                        <div>
+                          {/* <h6>Warehouse Details</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {order?.warehouseDetails?.shop_name}
+                          </h5> */}
+                        </div>
+
+
+
+
+                        <div>
+                          {/* <h6 className="mb-0">Status</h6> */}
+                          <div
+                            className="d-flex align-items-center"
+                          // onClick={() => {
+                          //   handlestatusChange(
+                          //     product ? product?._id : "",
+                          //     !product?.isSuspend
+                          //   );
+                          // }}
+                          >
+                            {/* <PtSwitch
+                              className="mr-2"
+                              on={!product?.isSuspend}
+                              size="sm"
+                              variant="success"
+                            /> */}
+                            {/* <h5 className="text-dark font-weight-500">
+                              {order?.status
+                                ? order.status.charAt(0).toUpperCase() + order.status.slice(1)
+                                : ""}
+                            </h5> */}
+
+                            {/* <div className={`ecommerce-status ${order?.status}`}>
+                              {capitalize(order?.status)}
+                            </div> */}
+                          </div>
+                        </div>
+                      </Col>
+                      {/* <Col>
+                        <div>
+                          <h6>Verification</h6>
+                          <div
+                            className={`ecommerce-status ${product?.isVerified}`}
+                          >
+                            {product?.isVerified
+                              ? capitalCase(product?.isVerified)
+                              : ""}
+                          </div>
+                        </div>
+                      </Col> */}
+                    </Row>
+                  </Col>
+                </Row>
+                <Card.Header className="d-flex align-items-center justify-content-between m-0 p-0 mt-5 mb-4">
+                  <Card.Title>Claim Requested By</Card.Title>
+                </Card.Header>
+
+                <Row>
+                  <Col xl={6}>
+                    <Row>
+                      <Col lg={4}>
+                        <div>
+
+                        </div>
+                        <div>
+                          <h6>Retailer Name</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {order?.userDetails?.userName}
+                          </h5>
+                        </div>
+                        <div>
+                          <h6>Phone Number</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {order?.userDetails?.phoneNumber}
+                          </h5>
+                        </div>
+                      </Col>
+                      <Col lg={4}>
+                        <div>
+                          <h6>Location</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {order?.userDetailsKyc?.location} , {order?.userDetailsKyc?.business_address}
+                          </h5>
+                        </div>
+                        <div>
+                          {/* <h6>Phone Number</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {order?.vendorDetails?.phoneNumber}
+                          </h5> */}
+                        </div>
+                      </Col>
+
+                    </Row>
+                  </Col>
+                  <Col xl={6} className="px-3 ">
+                    <Row className="h-100">
+                      <Col>
+
+                        <div>
+
+                        </div>
+                        <div>
+
+                        </div>
+
+                        <div>
+
+                        </div>
+
+
+
+
+                        <div>
+
+                          <div
+
+                          >
+
+                          </div>
+                        </div>
+                      </Col>
+
+                    </Row>
+                  </Col>
+                </Row>
+
+
               </Card.Body>
             </Card>
           </Col>

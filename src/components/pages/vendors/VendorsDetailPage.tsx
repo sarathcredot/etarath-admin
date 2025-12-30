@@ -14,7 +14,7 @@ import {
   useGetVendorById,
   useUpdateVendorStatus,
   useGetClaimByVendorId
-  
+
 } from "src/services/vendor.service";
 import { User } from "src/types/types";
 import { generateFilePath } from "src/services/url.service";
@@ -55,18 +55,22 @@ const VendorsDetailPage = () => {
   const [orderPage, setOrderPage] = useState<number>(1);
   const [orderLimit, setOrderLimit] = useState<number>(10);
   const [orderSearch, setOrderSearch] = useState<string>("");
-  
+
   const [stockPage, setStockPage] = useState<number>(1);
   const [stockLimit, setStockLimit] = useState<number>(10);
   const [stockSearch, setStockSearch] = useState<string>("");
- 
+
 
   const [claimPage, setClaimPage] = useState<number>(1);
   const [claimLimit, setClaimLimit] = useState<number>(10);
   const [claimSearch, setClaimSearch] = useState<string>("");
- 
 
- 
+  const [agentPage, setAgentPage] = useState<number>(1);
+  const [agentLimit, setAgentLimit] = useState<number>(10);
+  const [agentSearch, setAgentSearch] = useState<string>("");
+
+
+
   //order USE MEMO
   const orderQueryObj = useMemo(() => {
     const obj: any = {};
@@ -91,9 +95,9 @@ const VendorsDetailPage = () => {
   }, [orderPage, orderLimit, orderSearch, vendorID]);
 
 
-// stock use memo
+  // stock use memo
 
- const stockQueryObj = useMemo(() => {
+  const stockQueryObj = useMemo(() => {
     const obj: any = {};
 
     if (stockPage) {
@@ -116,9 +120,9 @@ const VendorsDetailPage = () => {
   }, [stockPage, stockLimit, stockSearch, vendorID]);
 
 
-// claim use memo
+  // claim use memo
 
- const claimQueryObj = useMemo(() => {
+  const claimQueryObj = useMemo(() => {
     const obj: any = {};
 
     if (claimPage) {
@@ -141,6 +145,31 @@ const VendorsDetailPage = () => {
   }, [claimPage, claimLimit, claimSearch, vendorID]);
 
 
+   // agent use memo
+
+  const agentQueryObj = useMemo(() => {
+    const obj: any = {};
+
+    if (agentPage) {
+      obj.page = agentPage;
+    }
+
+    if (agentLimit) {
+      obj.limit = agentLimit;
+    }
+
+    if (agentSearch) {
+      obj.search = agentSearch;
+    }
+
+    if (vendorID) {
+      obj.vendorID = vendorID;
+    }
+
+    return obj;
+  }, [agentPage, agentLimit, agentSearch, vendorID]);
+
+
 
 
   // QUERIES
@@ -148,21 +177,23 @@ const VendorsDetailPage = () => {
     vendorID ? vendorID : "",
     !!vendorID,
     stockQueryObj
-    
+
   );
   const { data: orders, isLoading: ordersLoading } = useGetOrdersByVendorId(
     vendorID ? vendorID : "",
     !!vendorID,
     orderQueryObj
   );
-   const { data: claims, isLoading: claimLoading } = useGetClaimByVendorId(
+  const { data: claims, isLoading: claimLoading } = useGetClaimByVendorId(
     vendorID ? vendorID : "",
     !!vendorID,
     claimQueryObj
   );
   const { data: agents, isLoading: agentsLoading } = useGetAgentsByVendorId(
     vendorID ? vendorID : "",
-    !!vendorID
+    !!vendorID,
+    agentQueryObj
+    
   );
   const { data: vendor, isLoading: isVendorLoading } = useGetVendorById(
     vendorID ? vendorID : "",
@@ -483,13 +514,12 @@ const VendorsDetailPage = () => {
                             <h6>Verification Status</h6>
                             {vendor?.kyc ? (
                               <span
-                                className={`ecommerce-status ${
-                                  vendor?.kyc?.kycStatus === "approved"
-                                    ? "completed"
-                                    : vendor?.kyc?.kycStatus === "rejected"
+                                className={`ecommerce-status ${vendor?.kyc?.kycStatus === "approved"
+                                  ? "completed"
+                                  : vendor?.kyc?.kycStatus === "rejected"
                                     ? "failed"
                                     : "on-hold"
-                                } text-dark font-weight-500`}
+                                  } text-dark font-weight-500`}
                                 style={{ textTransform: "capitalize" }}
                               >
                                 {vendor?.kyc?.kycStatus}
@@ -638,12 +668,12 @@ const VendorsDetailPage = () => {
                         <h6>Preferred Brands</h6>
                         <h5
                           className=" text-dark font-weight-500 "
-                          // style={{ textTransform: "capitalize" }}
+                        // style={{ textTransform: "capitalize" }}
                         >
                           {vendorPreferences?.brands?.length > 0
                             ? vendorPreferences.brands
-                                .map((brand: any) => brand?.brandId?.name)
-                                .join(", ")
+                              .map((brand: any) => brand?.brandId?.name)
+                              .join(", ")
                             : "-"}
                         </h5>
                       </div>
@@ -651,12 +681,12 @@ const VendorsDetailPage = () => {
                         <h6>Authorised Brands</h6>
                         <h5
                           className=" text-dark font-weight-500 "
-                          // style={{ textTransform: "capitalize" }}
+                        // style={{ textTransform: "capitalize" }}
                         >
                           {vendorPreferences?.authorised_brands?.length > 0
                             ? vendorPreferences.authorised_brands
-                                .map((brand: any) => brand?.brandId?.name)
-                                .join(", ")
+                              .map((brand: any) => brand?.brandId?.name)
+                              .join(", ")
                             : "-"}
                         </h5>
                       </div>
@@ -664,7 +694,7 @@ const VendorsDetailPage = () => {
                         <h6>Preferred Payment Method</h6>
                         <h5
                           className=" text-dark font-weight-500 "
-                          // style={{ textTransform: "capitalize" }}
+                        // style={{ textTransform: "capitalize" }}
                         >
                           {vendorPreferences?.paymentMethod || "-"}
                         </h5>
@@ -674,7 +704,7 @@ const VendorsDetailPage = () => {
                           <h6>Credit Period </h6>
                           <h5
                             className=" text-dark font-weight-500 "
-                            // style={{ textTransform: "capitalize" }}
+                          // style={{ textTransform: "capitalize" }}
                           >
                             {vendorPreferences?.creditDays
                               ? `${vendorPreferences.creditDays} Days`
@@ -727,7 +757,7 @@ const VendorsDetailPage = () => {
                         <h6>Subscription Order ID</h6>
                         <h5
                           className=" text-dark font-weight-500 "
-                          // style={{ textTransform: "capitalize" }}
+                        // style={{ textTransform: "capitalize" }}
                         >
                           {vendorActivePlan?.subId || "-"}
                         </h5>
@@ -821,13 +851,12 @@ const VendorsDetailPage = () => {
                         <h6>Payment Status</h6>
                         {vendorActivePlan?.paymentStatus ? (
                           <span
-                            className={`ecommerce-status ${
-                              vendorActivePlan?.paymentStatus === "paid"
-                                ? "completed"
-                                : vendorActivePlan?.paymentStatus === "failed"
+                            className={`ecommerce-status ${vendorActivePlan?.paymentStatus === "paid"
+                              ? "completed"
+                              : vendorActivePlan?.paymentStatus === "failed"
                                 ? "failed"
                                 : "on-hold"
-                            } text-dark font-weight-500`}
+                              } text-dark font-weight-500`}
                             style={{ textTransform: "capitalize" }}
                           >
                             {vendorActivePlan?.paymentStatus}
@@ -976,12 +1005,12 @@ const VendorsDetailPage = () => {
                 vendorId={vendorID ? vendorID : ""}
                 stocks={stocks}
                 stocksLoading={stocksLoading}
-                 setPage={setStockPage}
-                 setLimit={setStockLimit}
-                 setSearch={setStockSearch}
-                 page={stockPage}
-                 limit={stockLimit}
-                 search={stockSearch}
+                setPage={setStockPage}
+                setLimit={setStockLimit}
+                setSearch={setStockSearch}
+                page={stockPage}
+                limit={stockLimit}
+                search={stockSearch}
               />
             </Tab>
             <Tab eventKey="orders" title="Orders">
@@ -1012,6 +1041,19 @@ const VendorsDetailPage = () => {
             </Tab>
             <Tab eventKey="warehouses" title="Warehouses">
               <VendorWarehousesList vendorId={vendorID ? vendorID : ""} />
+            </Tab>
+            <Tab eventKey="salesExecutive" title="Sales Executive">
+              <SalesExecutivesList
+                vendorId={vendorID ? vendorID : ""}
+                agents={agents}
+                agentsLoading={agentsLoading}
+                setPage={setAgentPage}
+                setLimit={setAgentLimit}
+                setSearch={setAgentSearch}
+                page={agentPage}
+                limit={agentLimit}
+                search={agentSearch}
+              />
             </Tab>
           </Tabs>
         </div>

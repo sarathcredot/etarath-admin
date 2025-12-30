@@ -136,6 +136,19 @@ const VendorWarehousesList = ({
                         key={index}
                       >
                         <td>{index + 1}</td>
+                        <td>
+
+                          <img
+                            className="mr-1"
+                            src={generateFilePath(item?.imgUrl)}
+                            // src={item?.imageUrl[0]}
+                            alt="warehouses"
+                            width="40"
+                            height="40"
+                          // crossOrigin="anonymous"
+                          />
+                          {/* </Link> */}
+                        </td>
                         <td>{item?.shop_name}</td>
                         <td>{item?.location || "-"}</td>
                         <td>
@@ -145,9 +158,8 @@ const VendorWarehousesList = ({
                         </td>
                         <td>
                           <div
-                            className={`ecommerce-status ${
-                              item?.issuspended ? "failed" : "completed"
-                            }`}
+                            className={`ecommerce-status ${item?.issuspended ? "failed" : "completed"
+                              }`}
                           >
                             {item?.issuspended ? "Suspended" : "Active"}
                           </div>

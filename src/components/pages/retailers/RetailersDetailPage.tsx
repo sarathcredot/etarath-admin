@@ -14,8 +14,10 @@ import {
   useGetOrdersByRetailerId,
   useGetRetailerById,
   useUpdateRetailerStatus,
+  useGetClaimByRetailerId
 } from "src/services/retailer.service";
 import RetailerOrdersList from "./RetailerOrdersList";
+import RetailerClaimList from "./RetailerClaimList";
 import {
   formatCurrency,
   formatDate,
@@ -44,6 +46,13 @@ const RetailersDetailPage = () => {
   const [limit, setLimit] = useState<number>(10);
   const [search, setSearch] = useState<string>("");
 
+  // Claim
+
+  const [claimPage, setClaimPage] = useState<number>(1);
+  const [claimLimit, setClaimLimit] = useState<number>(10);
+  const [claimSearch, setClaimSearch] = useState<string>("");
+
+
   //USE MEMO
   const queryObj = useMemo(() => {
     const obj: any = {};
@@ -67,6 +76,31 @@ const RetailersDetailPage = () => {
     return obj;
   }, [page, limit, search]);
 
+  // claims
+
+  const claimQueryObj = useMemo(() => {
+    const obj: any = {};
+
+    if (claimPage) {
+      obj.page = claimPage;
+    }
+
+    if (claimLimit) {
+      obj.limit = claimLimit;
+    }
+
+    if (claimSearch) {
+      obj.search = claimSearch;
+    }
+
+    if (retailerID) {
+      obj.retailerID = retailerID;
+    }
+
+    return obj;
+  }, [claimPage, claimLimit, claimSearch]);
+
+
   // QUERIES
   const { data: retailer, isLoading: isRetailerLoading } = useGetRetailerById(
     retailerID ? retailerID : "",
@@ -84,7 +118,15 @@ const RetailersDetailPage = () => {
 
   const { data: orders, isLoading: ordersLoading } = useGetOrdersByRetailerId(
     retailerID ? retailerID : "",
-    !!retailerID
+    !!retailerID,
+    queryObj
+  );
+
+
+  const { data: claims, isLoading: claimLoading } = useGetClaimByRetailerId(
+    retailerID ? retailerID : "",
+    !!retailerID,
+    claimQueryObj
   );
 
   //MUTATIONS
@@ -276,13 +318,12 @@ const RetailersDetailPage = () => {
                       <div className="pt-2">
                         <h6>Verification Status</h6>
                         <span
-                          className={`ecommerce-status ${
-                            retailer?.isVerified === "approved"
-                              ? "completed"
-                              : retailer?.isVerified === "rejected"
+                          className={`ecommerce-status ${retailer?.isVerified === "approved"
+                            ? "completed"
+                            : retailer?.isVerified === "rejected"
                               ? "failed"
                               : "on-hold"
-                          } text-dark font-weight-500`}
+                            } text-dark font-weight-500`}
                           style={{ textTransform: "capitalize" }}
                         >
                           {retailer?.isVerified}
@@ -516,13 +557,12 @@ const RetailersDetailPage = () => {
                             <h6>Verification Status</h6>
                             {retailer?.kyc ? (
                               <span
-                                className={`ecommerce-status ${
-                                  retailer?.kyc?.kycStatus === "approved"
-                                    ? "completed"
-                                    : retailer?.kyc?.kycStatus === "rejected"
+                                className={`ecommerce-status ${retailer?.kyc?.kycStatus === "approved"
+                                  ? "completed"
+                                  : retailer?.kyc?.kycStatus === "rejected"
                                     ? "failed"
                                     : "on-hold"
-                                } text-dark font-weight-500`}
+                                  } text-dark font-weight-500`}
                                 style={{ textTransform: "capitalize" }}
                               >
                                 {retailer?.kyc?.kycStatus}
@@ -584,12 +624,12 @@ const RetailersDetailPage = () => {
                         <h6>Preferred Brands</h6>
                         <h5
                           className=" text-dark font-weight-500 "
-                          // style={{ textTransform: "capitalize" }}
+                        // style={{ textTransform: "capitalize" }}
                         >
                           {retailerPreferences?.brands?.length > 0
                             ? retailerPreferences.brands
-                                .map((brand: any) => brand?.brandId?.name)
-                                .join(", ")
+                              .map((brand: any) => brand?.brandId?.name)
+                              .join(", ")
                             : "-"}
                         </h5>
                       </div>
@@ -598,7 +638,7 @@ const RetailersDetailPage = () => {
                           <h6>Average Monthly Purchase Volume</h6>
                           <h5
                             className=" text-dark font-weight-500 "
-                            // style={{ textTransform: "capitalize" }}
+                          // style={{ textTransform: "capitalize" }}
                           >
                             {retailerPreferences?.averageMonthlyVolume}
                           </h5>
@@ -608,25 +648,25 @@ const RetailersDetailPage = () => {
                         <h6>Preferred Payment Method</h6>
                         <h5
                           className=" text-dark font-weight-500 "
-                          // style={{ textTransform: "capitalize" }}
+                        // style={{ textTransform: "capitalize" }}
                         >
                           {retailerPreferences?.paymentMethod || "-"}
                         </h5>
                       </div>
                       {retailerPreferences?.paymentMethod ===
                         "Credit Terms" && (
-                        <div>
-                          <h6>Credit Period </h6>
-                          <h5
-                            className=" text-dark font-weight-500 "
+                          <div>
+                            <h6>Credit Period </h6>
+                            <h5
+                              className=" text-dark font-weight-500 "
                             // style={{ textTransform: "capitalize" }}
-                          >
-                            {retailerPreferences?.creditDays
-                              ? `${retailerPreferences.creditDays} Days`
-                              : "-"}
-                          </h5>
-                        </div>
-                      )}
+                            >
+                              {retailerPreferences?.creditDays
+                                ? `${retailerPreferences.creditDays} Days`
+                                : "-"}
+                            </h5>
+                          </div>
+                        )}
                     </Col>
                   </Row>
                 </Col>
@@ -676,7 +716,7 @@ const RetailersDetailPage = () => {
                         <h6>Subscription Order ID</h6>
                         <h5
                           className=" text-dark font-weight-500 "
-                          // style={{ textTransform: "capitalize" }}
+                        // style={{ textTransform: "capitalize" }}
                         >
                           {retailerActivePlan?.subId || "-"}
                         </h5>
@@ -775,13 +815,12 @@ const RetailersDetailPage = () => {
                         <h6>Payment Status</h6>
                         {retailerActivePlan?.paymentStatus ? (
                           <span
-                            className={`ecommerce-status ${
-                              retailerActivePlan?.paymentStatus === "paid"
-                                ? "completed"
-                                : retailerActivePlan?.paymentStatus === "failed"
+                            className={`ecommerce-status ${retailerActivePlan?.paymentStatus === "paid"
+                              ? "completed"
+                              : retailerActivePlan?.paymentStatus === "failed"
                                 ? "failed"
                                 : "on-hold"
-                            } text-dark font-weight-500`}
+                              } text-dark font-weight-500`}
                             style={{ textTransform: "capitalize" }}
                           >
                             {retailerActivePlan?.paymentStatus}
@@ -930,9 +969,26 @@ const RetailersDetailPage = () => {
               <RetailerOrdersList
                 orders={orders}
                 ordersLoading={ordersLoading}
-                page={page}
-                setPage={setPage}
                 retailerId={retailerID ? retailerID : ""}
+                setPage={setPage}
+                setLimit={setLimit}
+                setSearch={setSearch}
+                page={page}
+                limit={limit}
+                search={search}
+              />
+            </Tab>
+            <Tab eventKey="claims" title="Claims">
+              <RetailerClaimList
+                retailerID={retailerID ? retailerID : ""}
+                claims={claims}
+                claimsLoading={claimLoading}
+                setPage={setClaimPage}
+                setLimit={setClaimLimit}
+                setSearch={setClaimSearch}
+                page={claimPage}
+                limit={claimLimit}
+                search={claimSearch}
               />
             </Tab>
           </Tabs>

@@ -241,15 +241,15 @@ const ProductsList = ({
                       (item: Product, index: number) => (
                         <tr key={index}>
                           <td>
-                            <Link to={`/products/detail?_id=${index + 1}`}>
-                              <strong>
+                            {/* <Link to={`/products/detail?_id=${index + 1}`}> */}
+                              {/* <strong> */}
                                 {/* {index +
                                   (productsData?.pagination?.page - 1) *
                                     productsData?.pagination?.limit +
                                   1} */}
                                 {index + 1}
-                              </strong>
-                            </Link>
+                              {/* </strong> */}
+                            {/* </Link> */}
                           </td>
                           <td>
                             <div
@@ -268,9 +268,9 @@ const ProductsList = ({
                             </div>
                           </td>
                           <td>
-                            <Link to={`/products/detail?_id=${index + 1}`}>
+                            {/* <Link to={`/products/detail?_id=${index + 1}`}> */}
                               {item?.productName}
-                            </Link>
+                            {/* </Link> */}
                           </td>
                           <td>{item?.brand}</td>
                           {/* <td>{capitalize(item?.category)}</td> */}
