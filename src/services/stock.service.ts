@@ -7,21 +7,28 @@ const baseUrl = `${url}/admin/product`;
 // GET ALL STOCKS BY PRODUCT ID
 export const getStocksByProductId = async ({
   productId,
+  queryParams
 }: {
   productId: string;
+  queryParams?: any
 }) => {
   if (!productId) throw new Error("Product Id is required");
-  return await axiosAuth.get(`${baseUrl}/${productId}/product-stocks`);
+  return await axiosAuth.get(`${baseUrl}/${productId}/product-stocks`, {
+    params: {
+      ...queryParams
+    }
+  });
 };
 
 export const useGetStocksByProductId = (
   productId: string,
-  enabled: boolean
+  enabled: boolean,
+  queryParams?: any
 ) => {
   return useQuery({
-    queryKey: ["stocks", productId],
+    queryKey: ["stocks", productId, queryParams],
     queryFn: () =>
-      getStocksByProductId({ productId }).then((res) => res.data.data),
+      getStocksByProductId({ productId, queryParams }).then((res) => res.data.data),
     enabled: enabled,
   });
 };
@@ -54,6 +61,103 @@ export const useGetStockById = (
     enabled: enabled,
   });
 };
+
+
+
+// GET  STOCK waerhouse BY ID
+export const getStockwaerehouseById = async ({
+  productId,
+  stockId,
+}: {
+  productId?: string | undefined;
+  stockId: string | undefined;
+}, queryParams?: any) => {
+  // if (!productId) throw new Error("Product Id is required");
+  if (!stockId) throw new Error("Stock Id is required");
+  return await axiosAuth.get(
+    `${baseUrl}/${productId}/product-stock/${stockId}/all-waerehouses`, {
+    params: {
+      ...queryParams
+    }
+  }
+  );
+};
+
+export const usegetStockwaerehouseById = (
+  IDs: {
+    productId?: string | undefined;
+    stockId: string | undefined;
+  },
+  enabled: boolean,
+  queryParams?: any
+) => {
+  return useQuery({
+    queryKey: ["stock-waerehouses", IDs, queryParams],
+    queryFn: () => getStockwaerehouseById(IDs, queryParams).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};
+
+
+// update stock status in waerhouse
+export const UpdateWaerehouseStockStatus = async ({
+  productId,
+  waerehousesId,
+  status,
+}: {
+  productId: string;
+  waerehousesId:any
+  status: any;
+}) => {
+  if (!productId) throw new Error("Product Id is required");
+  return await axiosAuth.put(
+    `${baseUrl}/${productId}/product-stock/${productId}/waerehouse/${waerehousesId}/update-status`, {status} )
+};
+
+export const useUpdateWaerehouseStockStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: UpdateWaerehouseStockStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["stock-waerehouses"] });
+      queryClient.invalidateQueries({ queryKey: ["stock-waerehouses"] });
+    },
+  });
+};
+
+
+
+// update stock qt in waerhouse
+export const UpdateWaerehouseStockQt = async ({
+  productId,
+  waerehousesId,
+  stock,
+}: {
+  productId: string;
+  waerehousesId:any
+  stock: any;
+}) => {
+  if (!productId) throw new Error("Product Id is required");
+  return await axiosAuth.put(
+    `${baseUrl}/${productId}/product-stock/${productId}/waerehouse/${waerehousesId}/update-quantity`, {stock} )
+};
+
+export const useUpdateWaerehouseStockQt = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: UpdateWaerehouseStockQt,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["stock-waerehouses"] });
+      queryClient.invalidateQueries({ queryKey: ["stock-waerehouses"] });
+    },
+  });
+};
+
+
+
+
+
+
 
 // CREATE NEW STOCK
 export const createStock = async ({

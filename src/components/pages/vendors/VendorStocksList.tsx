@@ -38,9 +38,9 @@ const VendorStocksList = ({
   page = 1,
   limit = 10,
   search = "",
-  
+
 }: {
-  vendorId: string;
+  vendorId?: any;
   stocks: any;
   stocksLoading: boolean;
   setPage?: Dispatch<React.SetStateAction<number>>;
@@ -49,7 +49,7 @@ const VendorStocksList = ({
   page?: number;
   limit?: number;
   search?: string;
- 
+
 }) => {
   const navigate = useNavigate();
 
@@ -58,7 +58,7 @@ const VendorStocksList = ({
   const [isAddOpen, setAddOpen] = useState<boolean>(false);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [selectedStock, setSelectedStock] = useState<any>(null);
- 
+
 
   // MUTATION
   const { mutateAsync: deleteStock } = useDeleteStock();
@@ -124,7 +124,7 @@ const VendorStocksList = ({
       console.log("error deleting stock :", error);
       toast(
         error?.response?.data?.message ||
-          "Something went wrong while deleting the stock.",
+        "Something went wrong while deleting the stock.",
         {
           containerId: "default",
           className: "no-icon notification-danger",
@@ -158,15 +158,15 @@ const VendorStocksList = ({
 
 
   const debouncedHandleSearch = useCallback(
-      debounce((text) => {
-        try {
-          setSearch(text);
-        } catch (error) {
-          console.log(error, "error in the debounce function");
-        }
-      }, 1000),
-      []
-    );
+    debounce((text) => {
+      try {
+        setSearch(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
 
 
 
@@ -236,14 +236,16 @@ const VendorStocksList = ({
                     </div>
                   </Col>
                   <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
-                    <Button
-                      className="font-weight-semibold"
-                      variant="dark"
-                      //   size="md"
-                      onClick={() => setAddOpen(true)}
-                    >
-                      + Add
-                    </Button>
+                    {
+                      vendorId && <Button
+                        className="font-weight-semibold"
+                        variant="dark"
+                        //   size="md"
+                        onClick={() => setAddOpen(true)}
+                      >
+                        + Add
+                      </Button>
+                    }
                   </Col>
                 </Row>
               </div>
@@ -271,7 +273,7 @@ const VendorStocksList = ({
                       <th>Warranty Period</th>
                       {/* <th>Verification </th> */}
 
-                      <th>Status</th>
+                      {/* <th>Status</th> */}
                       <th className="text-center" style={{ width: "80px" }}>
                         Actions
                       </th>
@@ -294,11 +296,11 @@ const VendorStocksList = ({
                             !isEditOpen &&
                             navigate(`/stock/detail?_id=${item?._id}`)
                           }
-                          style={{cursor:"pointer"}}
+                          style={{ cursor: "pointer" }}
                         >
                           <td>
 
-                            {index+1}
+                            {index + 1}
                             {/* <Link to={`/stock/detail?_id=${item?._id}`}>
                               <strong>
                                
@@ -322,7 +324,7 @@ const VendorStocksList = ({
                                 alt="product"
                                 width="40"
                                 height="40"
-                                // crossOrigin="anonymous"
+                              // crossOrigin="anonymous"
                               />
                             </Link>
                           </td>
@@ -332,14 +334,13 @@ const VendorStocksList = ({
                               to={`/products/detail?_id=${item?.product?._id}`}
                             > */}
 
-                             <strong>
-                               {item?.product?.productName}-{" "}
-                              {`${item?.product?.width}${
-                                item?.product?.height
+                            <strong>
+                              {item?.product?.productName}-{" "}
+                              {`${item?.product?.width}${item?.product?.height
                                   ? `/${item.product?.height}`
                                   : ""
-                              } R${item?.product?.size}`}
-                             </strong>
+                                } R${item?.product?.size}`}
+                            </strong>
 
 
                             {/* </Link> */}
@@ -397,8 +398,8 @@ const VendorStocksList = ({
                             </td>
                           )} */}
                           {isEditOpen &&
-                          selectedStock &&
-                          selectedStock?._id === item?._id ? (
+                            selectedStock &&
+                            selectedStock?._id === item?._id ? (
                             <td onClick={(e) => e.stopPropagation()}>
                               <div style={{ width: "90%" }}>
                                 <Form.Group
@@ -426,8 +427,8 @@ const VendorStocksList = ({
                             <td>{item?.price_normal_customer} AED</td>
                           )}
                           {isEditOpen &&
-                          selectedStock &&
-                          selectedStock?._id === item?._id ? (
+                            selectedStock &&
+                            selectedStock?._id === item?._id ? (
                             <td onClick={(e) => e.stopPropagation()}>
                               <div style={{ width: "90%" }}>
                                 <Form.Group
@@ -456,8 +457,8 @@ const VendorStocksList = ({
                             <td>{item?.price_loyal_customer} AED</td>
                           )}
                           {isEditOpen &&
-                          selectedStock &&
-                          selectedStock?._id === item?._id ? (
+                            selectedStock &&
+                            selectedStock?._id === item?._id ? (
                             <td onClick={(e) => e.stopPropagation()}>
                               <div
                                 style={{
@@ -538,12 +539,12 @@ const VendorStocksList = ({
                             </div>
                           </td> */}
 
-                          <td onClick={(e) => e.stopPropagation()}>
+                          {/* <td onClick={(e) => e.stopPropagation()}>
                             <div
                               className="d-flex align-items-center"
-                              // onClick={() => {
-                              //   setStatusOpen(true);
-                              // }}
+                            // onClick={() => {
+                            //   setStatusOpen(true);
+                            // }}
                             >
                               <PtSwitch
                                 className="mr-2"
@@ -552,12 +553,12 @@ const VendorStocksList = ({
                                 variant="success"
                               />
                             </div>
-                          </td>
+                          </td> */}
                           <td onClick={(e) => e.stopPropagation()}>
                             <div className="d-flex align-items-center justify-content-around">
                               {isEditOpen &&
-                              selectedStock &&
-                              selectedStock?._id === item?._id ? (
+                                selectedStock &&
+                                selectedStock?._id === item?._id ? (
                                 <>
                                   <button className="action_btn" type="submit">
                                     <i className="fas fa-check"></i>

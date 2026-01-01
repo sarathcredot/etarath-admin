@@ -388,7 +388,7 @@ const SalesExecutivesList = ({ header = false }) => {
         text={"Are you sure that you want to change the status of this sales executive?"}
       />
       <EditSalesExecutive
-        organiserId={organiser?._id}
+        agentId={organiser?._id}
         isOpen={isEditOpen}
         toggle={() => {
           setEditOpen(!isEditOpen);

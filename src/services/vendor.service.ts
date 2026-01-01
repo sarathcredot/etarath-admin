@@ -96,7 +96,7 @@ export const useUpdateVendorStatus = () => {
 
 // GET ALL VENDOR STOCKS
 
-export const getStocksByVendorId = async (vendorId: string, queryParams?:any) => {
+export const getStocksByVendorId = async (vendorId: any, queryParams?:any) => {
   if (!vendorId) throw new Error("No vendor id provided");
   return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/all-stocks`,{
     params:{
@@ -105,7 +105,7 @@ export const getStocksByVendorId = async (vendorId: string, queryParams?:any) =>
   });
 };
 
-export const useGetStocksByVendorId = (vendorId: string, enabled: boolean, queryParams?:any) => {
+export const useGetStocksByVendorId = (vendorId: any, enabled: boolean, queryParams?:any) => {
   return useQuery({
     queryKey: ["stocks", vendorId,queryParams],
     queryFn: () => getStocksByVendorId(vendorId,queryParams).then((res) => res?.data?.data),
@@ -115,7 +115,7 @@ export const useGetStocksByVendorId = (vendorId: string, enabled: boolean, query
 
 // GET ALL VENDOR ORDERS
 
-export const getOrdersByVendorId = async (vendorId: string,queryParams?:any) => {
+export const getOrdersByVendorId = async (vendorId: any,queryParams?:any) => {
   if (!vendorId) throw new Error("No vendor id provided");
   return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/all-orders`,{
     params:{
@@ -124,7 +124,7 @@ export const getOrdersByVendorId = async (vendorId: string,queryParams?:any) => 
   });
 };
 
-export const useGetOrdersByVendorId = (vendorId: string, enabled: boolean,queryParams?:any) => {
+export const useGetOrdersByVendorId = (vendorId: any, enabled: boolean,queryParams?:any) => {
   return useQuery({
     queryKey: ["vendor-orders", vendorId,queryParams],
     queryFn: () => getOrdersByVendorId(vendorId,queryParams).then((res) => res?.data?.data),
@@ -134,7 +134,7 @@ export const useGetOrdersByVendorId = (vendorId: string, enabled: boolean,queryP
 
 // GET ALL VENDOR Claims
 
-export const getClaimByVendorId = async (vendorId: string,queryParams?:any) => {
+export const getClaimByVendorId = async (vendorId: any,queryParams?:any) => {
   if (!vendorId) throw new Error("No vendor id provided");
   return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/all-claims`,{
     params:{
@@ -143,7 +143,7 @@ export const getClaimByVendorId = async (vendorId: string,queryParams?:any) => {
   });
 };
 
-export const useGetClaimByVendorId = (vendorId: string, enabled: boolean,queryParams?:any) => {
+export const useGetClaimByVendorId = (vendorId: any, enabled: boolean,queryParams?:any) => {
   return useQuery({
     queryKey: ["vendor-claims", vendorId,queryParams],
     queryFn: () => getClaimByVendorId(vendorId,queryParams).then((res) => res?.data?.data),
@@ -155,7 +155,7 @@ export const useGetClaimByVendorId = (vendorId: string, enabled: boolean,queryPa
 
 // GET ALL VENDOR SALES AGENTS
 
-export const getAgentsByVendorId = async (vendorId: string,queryParams?:any) => {
+export const getAgentsByVendorId = async (vendorId: any,queryParams?:any) => {
   if (!vendorId) throw new Error("No vendor id provided");
   return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/sales-agents`,{
    params:{
@@ -164,7 +164,7 @@ export const getAgentsByVendorId = async (vendorId: string,queryParams?:any) => 
   });
 };
 
-export const useGetAgentsByVendorId = (vendorId: string, enabled: boolean,queryParams?:any) => {
+export const useGetAgentsByVendorId = (vendorId: any, enabled: boolean,queryParams?:any) => {
   return useQuery({
     queryKey: ["sales-agents", vendorId,queryParams],
     queryFn: () => getAgentsByVendorId(vendorId,queryParams).then((res) => res?.data?.data),

@@ -5,13 +5,17 @@ import Breadcrumb from "src/components/common/breadcrumb";
 import PtSwitch from "src/components/features/elements/switch";
 import { toast } from "react-toastify";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
-
+import { useGetSalesAgentById, useGetSalesAgentallOrdersById, useGetSalesAgentallClaimsById, useUpdateagentStatus } from "src/services/salesAgent.service";
 import EditVendor from "./Popups/EditSalesExecutive";
+import { generateFilePath } from "src/services/url.service";
+import VendorOrdersList from "../vendors/VendorOrdersList";
+import VendorClaimsList from "../vendors/VendorClaimList";
+
 
 const SalesExecutivesDetailPage = () => {
   //IMPORTS
   const [searchParams] = useSearchParams();
-  const organizerID = searchParams.get("_id");
+  const agentId = searchParams.get("_id");
 
   //STATE
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
@@ -20,6 +24,15 @@ const SalesExecutivesDetailPage = () => {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [search, setSearch] = useState<string>("");
+
+
+  const [orderPage, setOrderPage] = useState<number>(1);
+  const [orderLimit, setOrderLimit] = useState<number>(10);
+  const [orderSearch, setOrderSearch] = useState<string>("");
+
+  const [claimPage, setClaimPage] = useState<number>(1);
+  const [claimLimit, setClaimLimit] = useState<number>(10);
+  const [claimSearch, setClaimSearch] = useState<string>("");
 
   //USE MEMO
   const queryObj = useMemo(() => {
@@ -37,28 +50,80 @@ const SalesExecutivesDetailPage = () => {
       obj.search = search;
     }
 
-    if (organizerID) {
-      obj.organiserId = organizerID;
+    if (agentId) {
+      obj.organiserId = agentId;
     }
 
     return obj;
   }, [page, limit, search]);
+
+
+  //order USE MEMO
+  const orderQueryObj = useMemo(() => {
+    const obj: any = {};
+
+    if (orderPage) {
+      obj.page = orderPage;
+    }
+
+    if (orderLimit) {
+      obj.limit = orderLimit;
+    }
+
+    if (orderSearch) {
+      obj.search = orderSearch;
+    }
+
+    if (agentId) {
+      obj.agentId = agentId;
+    }
+
+    return obj;
+  }, [orderPage, orderLimit, orderSearch, agentId]);
+
+
+  // claim use memo
+
+  const claimQueryObj = useMemo(() => {
+    const obj: any = {};
+
+    if (claimPage) {
+      obj.page = claimPage;
+    }
+
+    if (claimLimit) {
+      obj.limit = claimLimit;
+    }
+
+    if (claimSearch) {
+      obj.search = claimSearch;
+    }
+
+    if (agentId) {
+      obj.agentId = agentId;
+    }
+
+    return obj;
+  }, [claimPage, claimLimit, claimSearch, agentId]);
 
   //HANDLERS
   const handleChangeStatus = async (isActive: boolean) => {
     try {
       if (typeof isActive !== "boolean")
         throw new Error("Unexpected Active status!");
+      const resp = await updateAgentStatus({
+        id: agentId,
+        isActive: !isActive,
+      });
 
-      // const resp = await updateOrganiser({
-      //   id: organizerID,
-      //   isActive: !isActive,
-      // });
-      // toast(resp?.data?.message, {
-      //   containerId: "default",
-      //   className: "no-icon notification-success",
-      // });
       setStatusOpen(false);
+      toast(resp?.data?.message, {
+        containerId: "default",
+        className: !isActive
+          ? "no-icon notification-warning" // when activated
+          : "no-icon notification-success", // when deactivated
+      });
+
     } catch (error) {
       toast("Can't update Organiser right now, please try later!", {
         containerId: "default",
@@ -67,6 +132,17 @@ const SalesExecutivesDetailPage = () => {
       setStatusOpen(false);
     }
   };
+
+
+
+  const { data: agent, isLoading: agentsLoading } = useGetSalesAgentById(agentId, !!agentId)
+  const { data: orders, isLoading: ordersLoading } = useGetSalesAgentallOrdersById(agentId, !!agentId, orderQueryObj)
+  const { data: claims, isLoading: claimsLoading } = useGetSalesAgentallClaimsById(agentId, !!agentId, claimQueryObj)
+
+  const { mutateAsync: updateAgentStatus } = useUpdateagentStatus();
+
+
+  console.log("agent", agent)
 
   return (
     <>
@@ -83,7 +159,7 @@ const SalesExecutivesDetailPage = () => {
           },
           {
             name: "sales-executive",
-            url: `/sales-executives/detail?_id=${organizerID}`,
+            url: `/sales-executives/detail?_id=${agentId}`,
           },
         ]}
       />
@@ -121,7 +197,7 @@ const SalesExecutivesDetailPage = () => {
           </Col> */}
           <Col
             lg={12}
-            // className="mt-5"
+          // className="mt-5"
           >
             <Card className="card-modern">
               <Card.Header className="d-flex align-items-center justify-content-between">
@@ -136,35 +212,73 @@ const SalesExecutivesDetailPage = () => {
                 </div>
               </Card.Header>
               <Card.Body>
+
                 <Row>
+
+                  <Col className="text-center">
+                    <div>
+                      <div>
+                        <img
+                          src={generateFilePath(
+                            agent?.imgUrl
+                          )}
+                          width={150}
+                          height={150}
+                          alt="profile"
+                          style={{
+                            borderRadius: "50%",
+                            marginBottom: 20,
+                            objectFit: "cover",
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                  </Col>
                   <Col>
                     <div>
                       <h6>Full Name</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                       Full Name
+                        {agent?.userName}
                       </h5>
                     </div>
                     <div>
                       <h6>Phone Number</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        Phone Number
+                        {agent?.phoneNumber}
                       </h5>
                     </div>
                   </Col>
+
                   <Col>
                     <div>
+                      <h6>Email</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {agent?.email}
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Location</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {agent?.location}
+                      </h5>
+                    </div>
+                  </Col>
+
+
+
+
+                  <Col>
+                    {/* <div>
                       <h6>Verification Status</h6>
                       <span
-                        className={`ecommerce-status ${
-                          true ? "completed" : "pending"
-                        } text-dark font-weight-500`}
+                        className={`ecommerce-status ${true ? "completed" : "pending"
+                          } text-dark font-weight-500`}
                       >
                         {true ? "Completed" : "Pending"}
                       </span>
-                      {/* <span className={`ecommerce-status ${item?.isVerified ? "completed" : "on-hold"}`}>
-                              {item?.isVerified ? "Completed" : "Pending"}
-                            </span> */}
-                    </div>
+                    
+                    </div> */}
                     <div>
                       <h6 className="mb-0">Status</h6>
                       <div
@@ -175,12 +289,12 @@ const SalesExecutivesDetailPage = () => {
                       >
                         <PtSwitch
                           className="mr-2"
-                          on={true}
+                          on={!agent?.isSuspend}
                           size="sm"
                           variant="success"
                         />
                         <h5 className=" text-dark font-weight-500 ">
-                          {true ? "Active" : "Blocked"}
+                          {agent?.isSuspend ? "Blocked" : "Active"}
                         </h5>
                       </div>
                     </div>
@@ -207,9 +321,44 @@ const SalesExecutivesDetailPage = () => {
             </Card>
           </Col>
         </Row>
+        <div
+          className="tabs"
+          style={{ borderRadius: "5px", marginTop: "20px", overflow: "hidden" }}
+        >
+          <Tabs className="nav-justified">
+            <Tab eventKey="orders" title="Orders">
+              <VendorOrdersList
+                vendorId={agentId ? agentId : ""}
+                orders={orders}
+                ordersLoading={ordersLoading}
+                setPage={setOrderPage}
+                setLimit={setOrderLimit}
+                setSearch={setOrderSearch}
+                page={orderPage}
+                limit={orderLimit}
+                search={orderSearch}
+              />
+            </Tab>
+            <Tab eventKey="claims" title="Claims">
+              <VendorClaimsList
+                vendorId={agentId ? agentId : ""}
+                claims={claims}
+                claimsLoading={claimsLoading}
+                setPage={setClaimPage}
+                setLimit={setClaimLimit}
+                setSearch={setClaimSearch}
+                page={claimPage}
+                limit={claimLimit}
+                search={claimSearch}
+              />
+            </Tab>
+
+
+          </Tabs>
+        </div>
       </div>
       <ConfirmationPopup
-        submit={() => handleChangeStatus(true)}
+        submit={() => handleChangeStatus(agent?.isSuspend)}
         isOpen={isStatusOpen}
         toggle={() => setStatusOpen(!isStatusOpen)}
         text={
@@ -219,7 +368,8 @@ const SalesExecutivesDetailPage = () => {
       <EditVendor
         isOpen={isEditOpen}
         toggle={() => setEditOpen(!isEditOpen)}
-        organiserId={organizerID}
+        agentId={agentId}
+        data={agent}
       />
     </>
   );

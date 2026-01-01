@@ -5,6 +5,7 @@ import Breadcrumb from "src/components/common/breadcrumb";
 import PtSwitch from "src/components/features/elements/switch";
 import { toast } from "react-toastify";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
+import WarehousesList from "./WarehousesList";
 
 import MediaThumb from "src/components/features/media-thumb";
 import ImgPreview from "src/components/features/elements/ImgPreview";
@@ -16,7 +17,7 @@ import {
 import { generateFilePath } from "src/services/url.service";
 
 import { Product } from "../ProductsList";
-import { useGetStockById } from "src/services/stock.service";
+import { useGetStockById, usegetStockwaerehouseById } from "src/services/stock.service";
 
 const StockDetailPage = () => {
   //IMPORTS
@@ -32,6 +33,12 @@ const StockDetailPage = () => {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [search, setSearch] = useState<string>("");
+
+
+  const [waerPage, setWaerPage] = useState<number>(1);
+  const [waerLimit, setWaerLimit] = useState<number>(10);
+  const [waerSearch, setWaerSearch] = useState<string>("");
+
 
   //USE MEMO
   const queryObj = useMemo(() => {
@@ -58,6 +65,30 @@ const StockDetailPage = () => {
 
   //QUERIES
 
+  const waerQueryObj = useMemo(() => {
+    const obj: any = {};
+
+    if (waerPage) {
+      obj.page = waerPage;
+    }
+
+    if (waerLimit) {
+      obj.limit = waerLimit;
+    }
+
+    if (waerSearch) {
+      obj.search = waerSearch;
+    }
+
+    if (stockId) {
+      obj.stockId = stockId;
+    }
+
+    return obj;
+  }, [waerPage, waerLimit, waerSearch, stockId]);
+
+
+
   const {
     data: product,
     isLoading: productLoading,
@@ -72,6 +103,9 @@ const StockDetailPage = () => {
     isLoading: stockLoading,
     error: stockError,
   } = useGetStockById({ stockId: stockId ? stockId : undefined }, !!stockId);
+
+
+  const { data: warehouses, isLoading: warehousesIsloading } = usegetStockwaerehouseById({ stockId: stockId ? stockId : undefined }, !!stockId, waerQueryObj)
 
   // MUTATIONS
   const { mutateAsync: updateProductStatus } = useUpdateProductStatus();
@@ -92,7 +126,7 @@ const StockDetailPage = () => {
       console.log("error status updation :", error);
       toast(
         error?.response?.data?.message ||
-          "Something went wrong while updating the status.",
+        "Something went wrong while updating the status.",
         {
           containerId: "default",
           className: "no-icon notification-danger",
@@ -160,7 +194,7 @@ const StockDetailPage = () => {
           </Col> */}
           <Col
             lg={12}
-            // className="mt-5"
+          // className="mt-5"
           >
             <Card className="card-modern">
               <Card.Header className="d-flex align-items-center justify-content-between">
@@ -181,19 +215,19 @@ const StockDetailPage = () => {
                     <div>
                       <h6>Vendor Name</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        {stock?.requestedBy?.userName}
+                        {stock?.kycDetails?.business_name}
                       </h5>
                     </div>
                     <div>
                       <h6> Email</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        {stock?.requestedBy?.email}
+                        {stock?.kycDetails?.email}
                       </h5>
                     </div>
                     <div>
                       <h6>Phone Number</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        {stock?.requestedBy?.phoneNumber}
+                        {stock?.kycDetails?.phoneNumber}
                       </h5>
                     </div>
                   </Col>
@@ -205,9 +239,15 @@ const StockDetailPage = () => {
                       </h5>
                     </div> */}
                     <div>
-                      <h6>Sale Price </h6>
+                      <h6>General Sale Price </h6>
                       <h5 className=" text-dark font-weight-500 ">
                         {stock?.price_normal_customer} AED
+                      </h5>
+                    </div>
+                    <div>
+                      <h6>Loyal Customer Price </h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {stock?.price_loyal_customer} AED
                       </h5>
                     </div>
                     <div>
@@ -237,22 +277,33 @@ const StockDetailPage = () => {
                       <h6 className="mb-0">Status</h6>
                       <div
                         className="d-flex align-items-center"
-                        onClick={() => {
-                          handlestatusChange(
-                            stock ? stock?._id : "",
-                            !stock?.isSuspend
-                          );
-                        }}
+                      // onClick={() => {
+                      //   handlestatusChange(
+                      //     stock ? stock?._id : "",
+                      //     !stock?.isSuspend
+                      //   );
+                      // }}
                       >
-                        <PtSwitch
+                        {/* <PtSwitch
                           className="mr-2"
                           on={!stock?.isSuspend}
                           size="sm"
                           variant="success"
-                        />
-                        <h5 className=" text-dark font-weight-500 ">
-                          {!stock?.isSuspend ? "Active" : "Suspended"}
-                        </h5>
+                        /> */}
+                        {/* <h5 className=" text-dark font-weight-500 ">
+                          {stock?.status}
+                        </h5> */}
+                        <span
+                          className={`ecommerce-status ${stock?.status === "Available"
+                            ? "completed"
+                            : stock?.status === "Unavailable"
+                              ? "failed"
+                              : "on-hold"
+                            } text-dark font-weight-500`}
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {stock?.status}
+                        </span>
                       </div>
                     </div>
                   </Col>
@@ -354,7 +405,7 @@ const StockDetailPage = () => {
                                 alt="product"
                                 width="110"
                                 height="110"
-                                // crossOrigin="anonymous"
+                              // crossOrigin="anonymous"
                               />
                             </div>
                           </Col>
@@ -366,6 +417,8 @@ const StockDetailPage = () => {
               </Card.Body>
             </Card>
           </Col>
+
+
           {/* <Col lg={12} className="mt-4">
             <Card className="card-modern">
               <Card.Body>
@@ -377,6 +430,31 @@ const StockDetailPage = () => {
           </Col> */}
         </Row>
       </div>
+      <div
+        className="tabs"
+        style={{ borderRadius: "5px", marginTop: "20px", overflow: "hidden" }}
+      >
+        <Tabs className="nav-justified">
+
+          <Tab eventKey="warehouses" title="Warehouses">
+
+            <WarehousesList
+              vendorId={stockId || ""}
+              warehouses={warehouses}
+              warehousesLoading={warehousesIsloading}
+              setPage={setWaerLimit}
+              setLimit={setWaerLimit}
+              setSearch={setWaerSearch}
+              page={waerPage}
+              limit={waerLimit}
+              search={waerSearch}
+            />
+
+          </Tab>
+
+        </Tabs>
+      </div>
+
       {/* <ConfirmationPopup
         // submit={() => handleChangeStatus(organiser?.isActive)}
         submit={() =>

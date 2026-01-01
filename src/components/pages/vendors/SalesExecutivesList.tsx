@@ -27,7 +27,7 @@ const SalesExecutivesList = ({
   limit = 10,
   search = "",
 }: {
-  vendorId: string;
+  vendorId: any;
   agents: any;
   agentsLoading: boolean;
   setPage?: Dispatch<React.SetStateAction<number>>;
@@ -238,7 +238,12 @@ const SalesExecutivesList = ({
                       agents &&
                       agents?.result?.length > 0 ? (
                       agents?.result?.map((item: any, index: number) => (
-                        <tr style={{ cursor: "pointer" }} key={index}>
+                        <tr
+                        onClick={() =>
+                          navigate(`/sales-executives/detail?_id=${item?._id}`)
+                        } 
+                        style={{ cursor: "pointer" }} key={index}
+                        >
                           <td>
                             {/* <Link
                               to={`/sales-executives/detail?_id=${index + 1}`}

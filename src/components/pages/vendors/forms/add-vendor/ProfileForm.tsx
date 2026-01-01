@@ -176,6 +176,12 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
           </div>
         )}
       </Col>
+   
+   
+   
+   
+   
+   
       <Col lg={6} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">

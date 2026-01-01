@@ -17,7 +17,7 @@ const VendorOrdersList = ({
   limit = 10,
   search = "",
 }: {
-  vendorId: string;
+  vendorId: any;
   orders: any;
   ordersLoading: boolean;
    setPage?: Dispatch<React.SetStateAction<number>>;

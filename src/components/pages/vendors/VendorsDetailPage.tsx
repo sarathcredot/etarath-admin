@@ -35,6 +35,7 @@ import VendorClaimsList from "./VendorClaimList";
 import { useGetPreferenceByUserId } from "src/services/preference.service";
 import { useGetSubscriptionOrderById } from "src/services/subscription-orders";
 import VendorWarehousesList from "./VendorWarehousesList";
+import { useGetAllVendorWarehouses } from "src/services/warehouse.service";
 
 const VendorsDetailPage = () => {
   //IMPORTS
@@ -68,6 +69,10 @@ const VendorsDetailPage = () => {
   const [agentPage, setAgentPage] = useState<number>(1);
   const [agentLimit, setAgentLimit] = useState<number>(10);
   const [agentSearch, setAgentSearch] = useState<string>("");
+
+  const [waerPage, setWaerPage] = useState<number>(1);
+  const [waerLimit, setWaerLimit] = useState<number>(10);
+  const [waerSearch, setWaerSearch] = useState<string>("");
 
 
 
@@ -144,8 +149,31 @@ const VendorsDetailPage = () => {
     return obj;
   }, [claimPage, claimLimit, claimSearch, vendorID]);
 
+  const waerQueryObj = useMemo(() => {
+    const obj: any = {};
 
-   // agent use memo
+    if (waerPage) {
+      obj.page = waerPage;
+    }
+
+    if (waerLimit) {
+      obj.limit = waerLimit;
+    }
+
+    if (waerSearch) {
+      obj.search = waerSearch;
+    }
+
+    if (vendorID) {
+      obj.vendorID = vendorID;
+    }
+
+    return obj;
+  }, [waerPage, waerLimit, waerSearch, vendorID]);
+
+
+
+  // agent use memo
 
   const agentQueryObj = useMemo(() => {
     const obj: any = {};
@@ -172,6 +200,21 @@ const VendorsDetailPage = () => {
 
 
 
+
+  const { data: vendor, isLoading: isVendorLoading } = useGetVendorById(
+    vendorID ? vendorID : "",
+    !!vendorID
+  ) as {
+    data: User;
+    isLoading: boolean;
+  };
+
+  const { data: vendorPreferences, isLoading: isPreferenceLoading } =
+    useGetPreferenceByUserId(vendorID ? vendorID : "", !!vendorID);
+
+  const { data: vendorActivePlan, isLoading: isActivePlanLoading } =
+    useGetSubscriptionOrderById(vendor?.active_plan);
+
   // QUERIES
   const { data: stocks, isLoading: stocksLoading } = useGetStocksByVendorId(
     vendorID ? vendorID : "",
@@ -189,25 +232,23 @@ const VendorsDetailPage = () => {
     !!vendorID,
     claimQueryObj
   );
+
+  const { data: warehouses, isLoading: warehousesLoading } = useGetAllVendorWarehouses(
+    vendorID ? vendorID : "",
+    !!vendorID,
+    waerQueryObj
+  );
+
+
+
   const { data: agents, isLoading: agentsLoading } = useGetAgentsByVendorId(
     vendorID ? vendorID : "",
     !!vendorID,
     agentQueryObj
-    
+
   );
-  const { data: vendor, isLoading: isVendorLoading } = useGetVendorById(
-    vendorID ? vendorID : "",
-    !!vendorID
-  ) as {
-    data: User;
-    isLoading: boolean;
-  };
 
-  const { data: vendorPreferences, isLoading: isPreferenceLoading } =
-    useGetPreferenceByUserId(vendorID ? vendorID : "", !!vendorID);
 
-  const { data: vendorActivePlan, isLoading: isActivePlanLoading } =
-    useGetSubscriptionOrderById(vendor?.active_plan);
 
   //MUTATIONS
   const { mutateAsync: updateVendorStatus } = useUpdateVendorStatus();
@@ -1040,7 +1081,18 @@ const VendorsDetailPage = () => {
               />
             </Tab>
             <Tab eventKey="warehouses" title="Warehouses">
-              <VendorWarehousesList vendorId={vendorID ? vendorID : ""} />
+              <VendorWarehousesList
+                vendorId={vendorID ? vendorID : ""}
+                warehouses={warehouses}
+                warehousesLoading={warehousesLoading}
+                setPage={setWaerLimit}
+                setLimit={setWaerLimit}
+                setSearch={setWaerSearch}
+                page={waerPage}
+                limit={waerLimit}
+                search={waerSearch}
+
+              />
             </Tab>
             <Tab eventKey="salesExecutive" title="Sales Executive">
               <SalesExecutivesList

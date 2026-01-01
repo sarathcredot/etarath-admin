@@ -11,7 +11,7 @@ import { useGetAllBrandsCommon } from "src/services/brand.service";
 import { useGetAllAttributesCommon } from "src/services/attribute.service";
 import {
   useGetProductById,
-  useUpdateProduct,
+  useUpdateProductAndAddToList,
 } from "src/services/product.service";
 import { useUploadMultiFile } from "src/services/fileUpload.service";
 import { errorMsg } from "src/utils/toast";
@@ -56,7 +56,7 @@ const EditProduct = ({ isOpen, toggle, productId }: Props) => {
   } = useGetProductById(productId, !!productId);
 
   // MUTATIONS
-  const { mutateAsync: updateProduct } = useUpdateProduct();
+  const { mutateAsync: updateProduct } = useUpdateProductAndAddToList();
   const { mutateAsync: uploadMultiFile } = useUploadMultiFile();
 
   //FORMINK
@@ -143,9 +143,18 @@ const EditProduct = ({ isOpen, toggle, productId }: Props) => {
   // useEffect(() => {
   //   if (productId && product) {
   //     formik.setValues(product);
-  //     formik.setFieldValue("brand", product?.brand?._id);
+  //     formik.setFieldValue("brand", product?.features);
+
+
+  //     if (product?.features.length === 0) {
+  //       console.log("empty fe")
+  //       formik.setFieldValue("features", []);
+
+  //     }
+
   //   }
   // }, [isOpen, productId, product]);
+
 
   useEffect(() => {
     if (productId && product) {
@@ -154,10 +163,11 @@ const EditProduct = ({ isOpen, toggle, productId }: Props) => {
         features: product?.features?.length
           ? product.features
           : [],
-        brand: product?.brand?._id
+          brand:product?.brand?._id
       });
     }
   }, [isOpen, productId, product]);
+
 
   console.log(formik.errors, "ERRORS");
 
@@ -166,7 +176,7 @@ const EditProduct = ({ isOpen, toggle, productId }: Props) => {
       <Modal show={isOpen} onHide={toggle} centered={true} size="xl">
         <Modal.Header>
           {/* <Modal.Title>Are you sure?</Modal.Title> */}
-          <h3 className="my-2">Edit Product</h3>
+          <h3 className="my-2">Verify or Edit Product</h3>
         </Modal.Header>
         <Form onSubmit={formik.handleSubmit}>
           <Modal.Body>
@@ -212,8 +222,8 @@ const EditProduct = ({ isOpen, toggle, productId }: Props) => {
                     images
                     <div
                       className={`product_image_div mt-1 ${formik.touched.imageUrl && formik.errors.imageUrl
-                          ? "border border-danger"
-                          : ""
+                        ? "border border-danger"
+                        : ""
                         }`}
                       onClick={() => setIsUploadOpen(true)}
                     >
@@ -451,96 +461,92 @@ const EditProduct = ({ isOpen, toggle, productId }: Props) => {
                   className=" "
                   style={{ flexDirection: "column" }}
                 >
-                  <Form.Label className="col-form-label">Features</Form.Label>
-                  {formik?.values?.features?.map(
-                    (feature: string, index: number) => {
-                      const featureError =
-                        ((formik.touched.features as boolean[] | undefined)?.[
-                          index
-                        ] &&
-                          (formik.errors.features as string[] | undefined)?.[
-                          index
-                          ]) ||
-                        "";
 
-                      return (
-                        <>
-                          <div
-                            key={index}
-                            className="d-flex  mb-1"
-                            style={{ gap: 5 }}
-                          >
-                            <Form.Control
-                              type="text"
-                              placeholder={`Feature ${index + 1}`}
-                              name={`features[${index}]`}
-                              value={feature}
-                              onChange={(e) => {
-                                const updatedFeatures = [
-                                  ...formik?.values?.features,
-                                ];
-                                updatedFeatures[index] = e.target.value;
-                                formik.setFieldValue(
-                                  "features",
-                                  updatedFeatures
-                                );
-                              }}
-                              onBlur={() =>
-                                formik.setFieldTouched(
-                                  `features[${index}]`,
-                                  true
-                                )
+
+
+
+
+                  <Form.Label className="col-form-label">Features</Form.Label>
+
+                  {/* Render feature inputs */}
+                  {formik?.values?.features?.map((feature: string, index: number) => {
+                    const featureError =
+                      ((formik.touched.features as boolean[] | undefined)?.[index] &&
+                        (formik.errors.features as string[] | undefined)?.[index]) ||
+                      "";
+
+                    return (
+                      <div key={index}>
+                        <div className="d-flex mb-1" style={{ gap: 5 }}>
+                          <Form.Control
+                            type="text"
+                            placeholder={`Feature ${index + 1}`}
+                            name={`features[${index}]`}
+                            value={feature}
+                            onChange={(e) => {
+                              const updated = [...formik.values.features];
+                              updated[index] = e.target.value;
+                              formik.setFieldValue("features", updated);
+                            }}
+                            onBlur={() =>
+                              formik.setFieldTouched(`features[${index}]`, true)
+                            }
+                            isInvalid={!!featureError}
+                          />
+
+                          {/* Add button only for last item */}
+                          {formik.values.features.length - 1 === index && (
+                            <Button
+                              variant="dark"
+                              type="button"
+                              onClick={() =>
+                                formik.setFieldValue("features", [
+                                  ...formik.values.features,
+                                  "",
+                                ])
                               }
-                              isInvalid={!!featureError}
-                            />
-                            {formik?.values?.features?.length - 1 === index && (
-                              <Button
-                                variant="dark"
-                                // style={{ background: "#000" }}
-                                type="button"
-                                onClick={() => {
-                                  formik.setFieldValue("features", [
-                                    ...formik?.values?.features,
-                                    "",
-                                  ]);
-                                }}
-                              >
-                                +
-                              </Button>
-                            )}
-                            {index !== 0 && (
-                              <Button
-                                variant="danger "
-                                // style={{ background: "#000" }}
-                                type="button"
-                                onClick={() => {
-                                  const updatedFeatures = [
-                                    ...formik?.values?.features,
-                                  ];
-                                  updatedFeatures.splice(index, 1);
-                                  formik.setFieldValue(
-                                    "features",
-                                    updatedFeatures
-                                  );
-                                }}
-                              >
-                                -
-                              </Button>
-                            )}
-                          </div>
-                          <Form.Control.Feedback type="invalid">
-                            {featureError}
-                          </Form.Control.Feedback>
-                        </>
-                      );
-                    }
+                            >
+                              +
+                            </Button>
+                          )}
+
+                          {/* Remove button */}
+                          {index !== 0 && (
+                            <Button
+                              variant="danger"
+                              type="button"
+                              onClick={() => {
+                                const updated = [...formik.values.features];
+                                updated.splice(index, 1);
+                                formik.setFieldValue("features", updated);
+                              }}
+                            >
+                              -
+                            </Button>
+                          )}
+                        </div>
+
+                        <Form.Control.Feedback type="invalid">
+                          {featureError}
+                        </Form.Control.Feedback>
+                      </div>
+                    );
+                  })}
+
+                  {/* ✅ SHOW ADD BUTTON WHEN ARRAY IS EMPTY */}
+                  {formik?.values?.features?.length === 0 && (
+                    <Button
+                      variant="dark"
+                      type="button"
+                      onClick={() => formik.setFieldValue("features", [""])}
+                    >
+                      + Add Feature
+                    </Button>
                   )}
-                  {/* For top-level array error (like empty features) */}
-                  {typeof formik.errors.features === "string" && (
-                    <div className="text-danger mt-1">
-                      {formik.errors.features}
-                    </div>
-                  )}
+
+
+
+
                 </Form.Group>
               </Col>
               <Col lg={12} className=" pb-2 px-2">
@@ -579,7 +585,7 @@ const EditProduct = ({ isOpen, toggle, productId }: Props) => {
                   // style={{ background: "#000" }}
                   type="submit"
                 >
-                  Submit
+                  add to list
                 </Button>
               </Col>
             </Row>

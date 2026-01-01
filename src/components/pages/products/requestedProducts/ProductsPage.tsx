@@ -18,19 +18,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { capitalize } from "lodash";
 import PtSwitch from "src/components/features/elements/switch";
 import Pagination from "src/components/common/Pagination";
-import AddProduct from "./popups/AddProduct";
-import EditProduct from "./popups/EditProduct";
+import AddProduct from "../popups/AddProduct";
+import EditProduct from "../popups/EditProduct";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 import {
   useDeleteProduct,
-  useGetAllProducts,
+  useGetAllRequestediProducts,
   useUpdateProductStatus,
 } from "src/services/product.service";
 import { generateFilePath } from "src/services/url.service";
-import { Product } from "./ProductsList";
+import { Product } from "../ProductsList";
 import { capitalCase } from "capital-case";
 
-const ProductsPage = () => {
+const RequestedProductsPage = () => {
   const navigate = useNavigate();
   //STATE
   const [page, setPage] = useState(1);
@@ -67,7 +67,7 @@ const ProductsPage = () => {
     data: products,
     isLoading: isProductsLoading,
     error,
-  }: any = useGetAllProducts({ query: queryObj, enabled: true });
+  }: any = useGetAllRequestediProducts({ query: queryObj, enabled: true });
 
   // MUTATIONS
   const { mutateAsync: updateProductStatus } = useUpdateProductStatus();
@@ -132,16 +132,13 @@ const ProductsPage = () => {
   return (
     <>
       <Breadcrumb
-        current={"Products"}
+        current={"Requested Products"}
         paths={[
           {
             name: "Dashboard",
             url: "/dashboard",
           },
-          {
-            name: "products",
-            url: "/products",
-          },
+
         ]}
       />
       {/* <Tabs className="nav-tabs  nav-justified">
@@ -237,11 +234,12 @@ const ProductsPage = () => {
                           Product
                         </th>
                         <th></th>
+                        <th>Vendor</th>
                         <th>Brand</th>
                         <th>Origin</th>
                         <th>Year</th>
 
-                        {/* <th>Verification</th> */}
+                        <th>Verification</th>
                         <th>Status</th>
                         <th className="text-center" style={{ width: "80px" }}>
                           Actions
@@ -257,10 +255,10 @@ const ProductsPage = () => {
                         </tr>
                       ) : !isProductsLoading && products?.result?.length > 0 ? (
                         products?.result?.map(
-                          (item: Product, index: number) => (
+                          (item: any, index: number) => (
                             <tr key={index}
-                            
-                              
+
+
                             >
                               <td>
                                 {/* <Link to={`/products/detail?_id=${item?._id}`}> */}
@@ -291,7 +289,7 @@ const ProductsPage = () => {
                                 {/* </Link> */}
                               </td>
                               <td>
-                                <Link to={`/products/detail?_id=${item?._id}`}
+                                <Link to={`/requested-products/details?_id=${item?._id}`}
                                   style={{ textDecoration: "none", color: "inherit" }}
                                 >
                                   <strong>
@@ -303,12 +301,22 @@ const ProductsPage = () => {
                               </td>
                               <td>
                                 <Link
+                                  to={`/vendors/detail?_id=${item?.created?.createdBy}`}
+                                  style={{ textDecoration: "none", color: "inherit" }}
+                                >
+                                  {item?.created?.business_name}
+                                </Link>
+                              </td>
+                              <td>
+                                <Link
                                   to={`/brands/detail?_id=${item?.brand?._id}`}
                                   style={{ textDecoration: "none", color: "inherit" }}
                                 >
                                   {item?.brand?.name}
                                 </Link>
                               </td>
+
+
                               {/* <td>{item?.category}</td> */}
                               <td>
                                 <Link to={`/attributes/origin`}
@@ -327,7 +335,7 @@ const ProductsPage = () => {
                                   }
                                 </Link>
                               </td>
-                              {/* <td>
+                              <td>
                                 <div
                                   className={`ecommerce-status ${item?.isVerified}`}
                                 >
@@ -335,7 +343,7 @@ const ProductsPage = () => {
                                     ? capitalCase(item?.isVerified)
                                     : ""}
                                 </div>
-                              </td> */}
+                              </td>
                               <td>
                                 <div
                                   className="d-flex align-items-center"
@@ -358,14 +366,14 @@ const ProductsPage = () => {
                                 <div className="d-flex align-items-center justify-content-around">
                                   <div
                                     className="action_btn"
+
                                     onClick={() => {
-                                      setSelectedProductId(item?._id);
-                                      setEditOpen(true);
+                                      navigate(`/requested-products/details?_id=${item?._id}`)
                                     }}
                                   >
-                                    <i className="fas fa-pencil-alt"></i>
+                                    <i className="far fa-eye"></i>
                                   </div>
-                                  <div
+                                  {/* <div
                                     className="action_btn"
                                     onClick={() => {
                                       setSelectedProductId(item?._id);
@@ -373,7 +381,7 @@ const ProductsPage = () => {
                                     }}
                                   >
                                     <i className="far fa-trash-alt"></i>
-                                  </div>
+                                  </div> */}
                                 </div>
                               </td>
                             </tr>
@@ -427,4 +435,4 @@ const ProductsPage = () => {
   );
 };
 
-export default ProductsPage;
+export default RequestedProductsPage;

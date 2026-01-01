@@ -1,23 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
-import { AgentValidationSchema } from "src/validations/validationSchemas";
+import { WarehouseValidationSchema } from "src/validations/validationSchemas";
 import { generateFilePath } from "src/services/url.service";
 import MediaGalleryModal from "src/components/features/modals/media-gallery-modal";
 import { uploadFile } from "src/services/fileUpload.service";
-import { useUpdateAgent } from "src/services/salesAgent.service";
+import { useUpdateWarehouse } from "src/services/warehouse.service";
+import { Country, State, City } from 'country-state-city';
+import { Select } from "antd";
 
 
 
 type Props = {
   isOpen: boolean;
   toggle: () => void;
-  agentId: any;
+  warehouseId: any;
+  vendorId: any
   data?: any
 };
 
-const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
+const EditWarehouse = ({ isOpen, toggle, vendorId, warehouseId, data }: Props) => {
   //DATA
   // const { data: organiser } = useGetOrganiserById(organiserId, !!organiserId);
 
@@ -26,22 +29,42 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
 
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
 
-  const { mutateAsync: updateAgent } = useUpdateAgent();
+  const { mutateAsync: updatewaerehouse } = useUpdateWarehouse();
+
+
+  const [locations, setLocations] = useState<{ label: string; value: string }[]>([]);
+  const uaeCountry: any = Country.getAllCountries().find(c => c.isoCode === "AE"); // UAE country code
+  const allCities: { label: string; value: string }[] = [];
+  const res = State.getStatesOfCountry(uaeCountry.isoCode)
+  useEffect(() => {
+    res?.map((state) => {
+      City.getCitiesOfState(uaeCountry.isoCode, state.isoCode).forEach((city) => {
+        // allCities.push({
+        //   label: `${city.name}, ${state.name}`, // optional: add state
+        //   value: city.name,
+        // });
+        allCities.push({ label: city.name, value: city.name })
+      });
+    })
+    console.log("loc", allCities)
+    setLocations(allCities)
+  }, [])
 
 
   //HANDLERS
   const handleEditExecutive = async (values: any) => {
     console.log("edit")
     try {
-      if (typeof values?.imgUrl !== "string") {
+      if (typeof values?.shop_photo_logo !== "string") {
         let formData = new FormData();
-        formData.append("file", values?.imgUrl.file);
+        formData.append("file", values?.shop_photo_logo.file);
         let response = await uploadFile(formData);
-        values.imgUrl = response.data.data;
+        values.shop_photo_logo = response.data.data;
       }
 
-      const res = await updateAgent({
-        id: agentId,
+      const res = await updatewaerehouse({
+        vendorId,
+        warehouseId,
         data: values
       });
 
@@ -53,7 +76,7 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
       toggle();
 
     } catch (error) {
-      toast("Can't update Sales Executive right now, please try again later!", {
+      toast("Can't update Warehouse right now, please try again later!", {
         containerId: "default",
         className: "no-icon notification-warning",
       });
@@ -64,13 +87,12 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
   //FORM
   const formik = useFormik({
     initialValues: {
-      userName: data?.userName,
-      phoneNumber: data?.phoneNumber,
-      email: data?.email,
-      isVerified: data?.isSuspend,
-      imgUrl: data?.imgUrl || " "
+      shop_name: data?.shop_name,
+      shop_photo_logo: data?.shop_photo_logo || " ",
+      location: data?.location,
+      address: data?.address
     },
-    validationSchema: AgentValidationSchema,
+    validationSchema: WarehouseValidationSchema,
     enableReinitialize: true,
     onSubmit: handleEditExecutive,
   });
@@ -94,11 +116,11 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
                 <img
                   // src={generateFilePath(img)}
                   src={
-                    typeof formik.values.imgUrl === "string"
-                      ? generateFilePath(formik.values.imgUrl)
-                      : formik.values.imgUrl.copy_link
-                        ? formik.values.imgUrl.copy_link
-                        : URL.createObjectURL(formik.values.imgUrl?.file)
+                    typeof formik.values.shop_photo_logo === "string"
+                      ? generateFilePath(formik.values.shop_photo_logo)
+                      : formik.values.shop_photo_logo.copy_link
+                        ? formik.values.shop_photo_logo.copy_link
+                        : URL.createObjectURL(formik.values.shop_photo_logo?.file)
                   }
                   alt="brand logo"
                   width={"100%"}
@@ -116,43 +138,43 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
 
               <Col lg={12} className="px-4 py-1">
                 <Form.Group as={Row} className="align-items-center">
-                  <Form.Label className="col-form-label">Full Name</Form.Label>
+                  <Form.Label className="col-form-label">Shop Name</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter full name"
+                    placeholder="Enter shop name"
                     autoFocus
-                    name="userName"
-                    value={formik.values.userName}
+                    name="shop_name"
+                    value={formik.values.shop_name}
                     onChange={formik.handleChange}
                     isInvalid={
-                      !!(formik.errors.userName && formik.touched.userName)
+                      !!(formik.errors.shop_name && formik.touched.shop_name)
                     }
                   />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.userName}
+                    {formik.errors.shop_name}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col lg={12} className="px-4 py-1">
                 <Form.Group as={Row} className="align-items-center">
                   <Form.Label className="col-form-label">
-                    Phone Number
+                    Location
                   </Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter phone number"
-                    name="phoneNumber"
-                    value={formik.values.phoneNumber}
+                    placeholder="Enter Location"
+                    name="location"
+                    value={formik.values.location}
                     onChange={formik.handleChange}
                     disabled
                     isInvalid={
                       !!(
-                        formik.errors.phoneNumber && formik.touched.phoneNumber
+                        formik.errors.location && formik.touched.location
                       )
                     }
                   />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.phoneNumber}
+                    {formik.errors.location}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
@@ -160,26 +182,61 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
               <Col lg={12} className="px-4 py-1">
                 <Form.Group as={Row} className="align-items-center">
                   <Form.Label className="col-form-label">
-                    Email
+                    Address
                   </Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter Email"
-                    name="email"
-                    value={formik.values.email}
+                    placeholder="Enter Address"
+                    name="address"
+                    value={formik.values.address}
                     onChange={formik.handleChange}
 
                     isInvalid={
                       !!(
-                        formik.errors.email && formik.touched.email
+                        formik.errors.address && formik.touched.address
                       )
                     }
                   />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.email}
+                    {formik.errors.address}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
+
+
+              {/* <Col lg={6} className="px-2 py-1">
+                <Form.Label className="col-form-label">Shop Location</Form.Label>
+
+                <Select
+                  options={locations}
+                  placeholder="Select Shop Location"
+
+                  value={
+                    locations.find(
+                      (opt) => opt.value === formik.values.location
+                    ) || null
+                  }
+
+                  onChange={(selected) => {
+                    formik.setFieldValue("location", selected?.value);
+                  }}
+
+                  onBlur={() => formik.setFieldTouched("location", true)}
+                />
+
+                {formik.touched.location && formik.errors.location && (
+                  <div className="text-danger mt-1" style={{ fontSize: "11px" }}>
+                    {formik.errors.location}
+                  </div>
+                )}
+              </Col>
+ */}
+
+
+
+
+
+
             </Row>
           </Modal.Body>
           <Modal.Footer>
@@ -204,7 +261,7 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
         isOpen={isUploadOpen}
         onClose={(files: any) => {
           if (files.length > 0) {
-            formik.setFieldValue("imgUrl", files[0]);
+            formik.setFieldValue("shop_photo_logo", files[0]);
           }
           setIsUploadOpen(!isUploadOpen);
         }}
@@ -216,4 +273,4 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
   );
 };
 
-export default EditSalesExecutive;
+export default EditWarehouse;

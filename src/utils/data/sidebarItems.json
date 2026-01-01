@@ -17,7 +17,17 @@
   {
     "name": "Products",
     "icon": "bx bx-cart",
-    "url": "/products"
+    "url": "",
+    "children": [
+      {
+        "name": "Products",
+        "url": "/products"
+      },
+      {
+        "name": "Requested Products",
+        "url": "/requested-products"
+      }
+    ]
   },
   {
     "name": "Brands",

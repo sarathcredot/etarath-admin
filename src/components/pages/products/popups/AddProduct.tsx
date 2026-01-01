@@ -8,8 +8,8 @@ import { errorMsg } from "src/utils/toast";
 import MediaGalleryModal from "src/components/features/modals/media-gallery-modal";
 import { useState } from "react";
 import { Brand } from "../../brands/BrandsList";
-import { useGetAllBrands } from "src/services/brand.service";
-import { useGetAllAttributes } from "src/services/attribute.service";
+import { useGetAllBrandsCommon } from "src/services/brand.service";
+import { useGetAllAttributesCommon } from "src/services/attribute.service";
 import { useCreateProduct } from "src/services/product.service";
 import { useUploadMultiFile } from "src/services/fileUpload.service";
 import { generateFilePath } from "src/services/url.service";
@@ -31,7 +31,7 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
     data: brands,
     isLoading: brandsLoading,
     error: brandsError,
-  } = useGetAllBrands(isOpen);
+  } = useGetAllBrandsCommon(isOpen);
   const {
     data: categories,
     isLoading: categoriesLoading,
@@ -42,7 +42,7 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
     data: attributes,
     isLoading: attributesLoading,
     error: attributesError,
-  } = useGetAllAttributes(isOpen);
+  } = useGetAllAttributesCommon(isOpen);
 
   // MUTATIONS
   const { mutateAsync: createProduct } = useCreateProduct();
@@ -324,7 +324,7 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
                     <option disabled selected hidden value="">
                       Select Brand
                     </option>
-                    {brands?.result?.map((item: any, index: number) => (
+                    {brands?.map((item: any, index: number) => (
                       <option key={index} value={item?._id}>
                         {item?.name}
                       </option>
@@ -367,7 +367,7 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
                       Select Origin
                     </option>
                     {attributes &&
-                      attributes[0]?.origin?.map((item: any, index: number) => (
+                      attributes?.origin?.map((item: any, index: number) => (
                         <option key={index} value={item?._id}>
                           {item?.value}
                         </option>
@@ -397,7 +397,7 @@ const AddProduct = ({ isOpen, toggle }: Props) => {
                       Select year
                     </option>
                     {attributes &&
-                      attributes[0]?.yearOfManufacturer?.map(
+                      attributes?.yearOfManufacturer?.map(
                         (item: any, index: number) => (
                           <option key={index} value={item?._id}>
                             {item?.value}

@@ -24,11 +24,11 @@ export const getSubscriptionOrderById = async (id: string) => {
   return await axiosAuth.get(`${baseUrl}/${id}/order/${id}`);
 };
 
-export const useGetSubscriptionOrderById = (id?: string) => {
+export const useGetSubscriptionOrderById = (id?: string, enabled?: any) => {
   return useQuery({
     queryKey: ["subscription-order", id],
     queryFn: () => getSubscriptionOrderById(id!).then((res) => res?.data?.data),
-    enabled: !!id,
+    enabled: enabled,
   });
 };
 

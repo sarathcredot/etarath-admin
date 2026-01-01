@@ -48,7 +48,12 @@ import VendorsPage from "src/components/pages/vendors/VendorsPage";
 import VendorsDetailPage from "src/components/pages/vendors/VendorsDetailPage";
 import SalesExecutivesPage from "src/components/pages/sales_executives/SalesExecutivesPage";
 import SalesExecutivesDetailPage from "src/components/pages/sales_executives/SalesExecutivesDetailPage";
+import WarehouseDetailPage from "src/components/pages/warehouse/wrehouseDetails";
+
 import ProductsPage from "src/components/pages/products/ProductsPage";
+import RequestedProductsPage from "src/components/pages/products/requestedProducts/ProductsPage";
+import RequestProductsDetailPage from "src/components/pages/products/requestedProducts/ProductsDetailPage"
+
 import BrandPage from "src/components/pages/brands/BrandsPage";
 import VendorPlans from "src/components/pages/subscriptions/vendor-plans/VendorPlans";
 import VendorPlanDetailPage from "src/components/pages/subscriptions/vendor-plans/VendorPlanDetailPage";
@@ -73,6 +78,8 @@ import ClaimDetailPage from "src/components/pages/claims/ClaimDetailPage";
 
 import AddVendorPage from "src/components/pages/vendors/forms/add-vendor/AddVendorPage";
 import AddRetailerPage from "src/components/pages/retailers/forms/add-retailer/AddRetailerPage";
+import EditRetailerPage from "src/components/pages/retailers/forms/add-retailer/EditRetailer";
+
 import EditVendorPage from "src/components/pages/vendors/forms/edit-vendor/EditVendorPage";
 
 interface RouteProps {
@@ -96,6 +103,8 @@ const adminRoutes: Array<RouteProps> = [
   { path: "/retailers", exact: true, component: <RetailersPage /> },
   { path: "/retailers/detail", component: <RetailersDetailPage /> },
   { path: "/retailers/add-retailer", component: <AddRetailerPage /> },
+    { path: "/retailers/edit-retailer", component: <EditRetailerPage /> },
+
 
   // Sales Executives
   {
@@ -107,10 +116,17 @@ const adminRoutes: Array<RouteProps> = [
     path: "/sales-executives/detail",
     component: <SalesExecutivesDetailPage />,
   },
+  {
+    path: "/warehouses/detail",
+    component: <WarehouseDetailPage />,
+  },
 
   // Products
   { path: "/products", exact: true, component: <ProductsPage /> },
   { path: "/products/detail", component: <ProductsDetailPage /> },
+
+   { path: "/requested-products", exact: true, component: <RequestedProductsPage /> },
+     { path: "/requested-products/details", exact: true, component: <RequestProductsDetailPage /> },
 
   // Stocks
   { path: "/stock/detail", component: <StockDetailPage /> },

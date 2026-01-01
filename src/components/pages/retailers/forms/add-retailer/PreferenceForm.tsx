@@ -13,7 +13,7 @@ export default function PreferenceForm({ formik }: any) {
     error: brandsError,
   } = useGetAllBrands();
 
-  console.log({ authorised_brands: formik.values.authorised_brands });
+  console.log("pref formik values R", formik.values);
 
   return (
     <Row className="px-1 px-md-3">
@@ -25,6 +25,16 @@ export default function PreferenceForm({ formik }: any) {
             value: item?._id,
             label: item?.name?.toUpperCase(),
           }))}
+          value={brands?.result
+            ?.map((item: any) => ({
+              value: item?._id,
+              label: item?.name?.toUpperCase(),
+            }))
+            .filter((opt: any) =>
+              formik.values.brands
+                .map((ab: any) => ab?.brandId)
+                .includes(opt.value)
+            )}
           isMulti={true}
           placeholder="Preferred Brands"
           // value={["english", "arabic", "german", "spanish", "french"]
@@ -56,13 +66,13 @@ export default function PreferenceForm({ formik }: any) {
           <Form.Control
             type="number"
             placeholder="Average Monthly Purchase Volume (Optional)"
-            name="shop_name"
-            value={formik.values.shop_name}
+            name="averageMonthlyVolume"
+            value={formik.values.averageMonthlyVolume}
             onChange={formik.handleChange}
-            isInvalid={!!formik.errors.shop_name && formik.touched.shop_name}
+            isInvalid={!!formik.errors.averageMonthlyVolume && formik.averageMonthlyVolume}
           />
           <Form.Control.Feedback type="invalid">
-            {formik.errors.shop_name}
+            {formik.errors.averageMonthlyVolume}
           </Form.Control.Feedback>
         </Form.Group>
       </Col>

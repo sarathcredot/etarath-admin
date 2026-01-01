@@ -53,6 +53,10 @@ export const StockEditValidationSchema = Yup.object().shape({
   warranty_type: Yup.string().required("Type is required"),
 });
 
+export const stockQtvalidation = Yup.object().shape({
+  stock: Yup.number().required("Stock is required")
+})
+
 // brand validation schema
 export const BrandValidationSchema = Yup.object().shape({
   name: Yup.string().required("Brand name is required"),
@@ -80,6 +84,20 @@ export const VendorValidationSchema = Yup.object().shape({
   eidFile: Yup.mixed().required("EID Document is required"),
   imgUrl: Yup.mixed().required("Profile is required"),
 });
+
+export const AgentValidationSchema = Yup.object().shape({
+  userName: Yup.string().required("Full Name is required"),
+  email: Yup.string()
+    .required("Email is required")
+    .email("Enter a valid email address"),
+  phoneNumber: Yup.string().required("Phone Number is required"),
+  // .min(8, "Only 10 digits required")
+  // .max(10, "Only 10 digits allowed"),
+  imgUrl: Yup.mixed().required("Profile is required"),
+});
+
+
+
 
 export const EditVendorValidationSchema = Yup.object().shape({
   userName: Yup.string().required("Full Name is required"),

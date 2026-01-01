@@ -21,6 +21,33 @@ export const useGetAllBrands = (enabled: boolean = true, queryParams?: any) => {
   });
 };
 
+const baseUrl2 = `${url}/common/brand`;
+
+
+export const getAllBrandsCommon = async (queryParams?: any) => {
+  return await axiosAuth.get(`${baseUrl2}/`, {
+    params: {
+      ...queryParams
+    }
+  });
+};
+
+export const useGetAllBrandsCommon = (enabled: boolean = true, queryParams?: any) => {
+  return useQuery({
+    queryKey: ["brands-common", queryParams],
+    queryFn: () => getAllBrandsCommon(queryParams).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};
+
+
+
+
+
+
+
+
+
 // GET SINGLE BRAND BY ID
 export const getBrandById = async (id: string | undefined) => {
   if (!id) throw new Error("Id is required");

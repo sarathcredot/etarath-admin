@@ -28,7 +28,7 @@ export default function SubscriptionForm({ formik }: any) {
     isLoading: boolean;
   };
 
-  console.log({
+  console.log("plan v",{
     planId: formik.values.planId,
     durationType: formik.values.durationType,
   });

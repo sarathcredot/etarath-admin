@@ -131,14 +131,14 @@ const AddStock = ({ isOpen, toggle, productId }: Props) => {
                 <Form.Group>
                   <Form.Label className="col-form-label">Vendor</Form.Label>
                   <Select
-                    options={vendors?.map((item: any) => ({
+                    options={vendors?.result?.map((item: any) => ({
                       value: item?._id,
                       label:
                         item?.kycDetails?.business_name ||
                         item?.userName ||
                         item?.email,
                     }))}
-                    value={vendors
+                    value={vendors?.result
                       ?.map((item: any) => ({
                         value: item?._id,
                         label:

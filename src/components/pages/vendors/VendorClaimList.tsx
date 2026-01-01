@@ -17,7 +17,7 @@ const VendorClaimList = ({
   limit = 10,
   search = "",
 }: {
-  vendorId: string;
+  vendorId: any;
   claims: any;
   claimsLoading: boolean;
    setPage?: Dispatch<React.SetStateAction<number>>;

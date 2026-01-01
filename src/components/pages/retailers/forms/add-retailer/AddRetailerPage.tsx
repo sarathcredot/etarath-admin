@@ -30,7 +30,7 @@ import SubscriptionForm from "./SubscriptionForm";
 import { usePurchasePlan } from "src/services/subscription-orders";
 import { useAddRetailer } from "src/services/retailer.service";
 
-export default function AddRetailerPage() {
+export default function EditRetailerPage() {
   const navigate = useNavigate();
 
   const [retailerId, setRetailerId] = useState<string>("");

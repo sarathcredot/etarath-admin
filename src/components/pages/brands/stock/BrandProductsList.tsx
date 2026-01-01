@@ -51,7 +51,7 @@ const BrandProductsList = ({ brandId }: { brandId?: string }) => {
       console.log("error status updation :", error);
       toast(
         error?.response?.data?.message ||
-          "Something went wrong while updating the status.",
+        "Something went wrong while updating the status.",
         {
           containerId: "default",
           className: "no-icon notification-danger",
@@ -81,7 +81,7 @@ const BrandProductsList = ({ brandId }: { brandId?: string }) => {
       console.log("error deleting product :", error);
       toast(
         error?.response?.data?.message ||
-          "Something went wrong while deleting the product.",
+        "Something went wrong while deleting the product.",
         {
           containerId: "default",
           className: "no-icon notification-danger",
@@ -208,14 +208,13 @@ const BrandProductsList = ({ brandId }: { brandId?: string }) => {
                     products?.map((item: Product, index: number) => (
                       <tr key={index}>
                         <td>
-                          <Link to={`/products/detail?_id=${item?._id}`}>
-                            <strong>
-                              {/* {index +
-                                  (productsData?.pagination?.page - 1) *
-                                    productsData?.pagination?.limit +
-                                  1} */}
-                              {index + 1}
-                            </strong>
+                          <Link to={`/products/detail?_id=${item?._id}`}
+                            style={{ textDecoration: "none", color: "inherit" }}
+                          >
+                            {/* <strong> */}
+
+                            {index + 1}
+                            {/* </strong> */}
                           </Link>
                         </td>
                         <td>
@@ -231,16 +230,19 @@ const BrandProductsList = ({ brandId }: { brandId?: string }) => {
                               alt="product"
                               width="40"
                               height="40"
-                              // crossOrigin="anonymous"
+                            // crossOrigin="anonymous"
                             />
                           </Link>
                         </td>
                         <td>
-                          <Link to={`/products/detail?_id=${item?._id}`}>
-                            {item?.productName} -{" "}
-                                  {`${item?.width}${
-                                    item?.height ? `/${item.height}` : ""
-                                  } R${item?.size}`}
+                          <Link to={`/products/detail?_id=${item?._id}`}
+                            style={{ textDecoration: "none", color: "inherit" }}
+                          >
+                            <strong>
+                              {item?.productName} -{" "}
+                              {`${item?.width}${item?.height ? `/${item.height}` : ""
+                                } R${item?.size}`}
+                            </strong>
                           </Link>
                         </td>
                         <td>

@@ -36,6 +36,44 @@ export const useGetAllProducts = ({
   });
 };
 
+
+
+// GET ALL requested PRODUCTS
+export const getAllRequestedProducts = async (query: {
+  search?: string;
+  status?: string;
+  isSuspend?: string;
+  limit?: number;
+  page?: number;
+}) => {
+  return await axiosAuth.get(`${baseUrl}/vendor-requested`, { params: query });
+};
+
+export const useGetAllRequestediProducts = ({
+  query,
+  enabled = true,
+}: {
+  enabled?: boolean;
+  query?: {
+    search?: string;
+    status?: string;
+    isSuspend?: string;
+    limit?: number;
+    page?: number;
+  };
+}) => {
+  return useQuery({
+    queryKey: ["requested-products", query],
+    queryFn: () =>
+      getAllRequestedProducts(query ? query : {}).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};
+
+
+
+
+
 // GET SINGLE PRODUCT BY ID
 export const getProductById = async (id: string | undefined) => {
   if (!id) throw new Error("Id is required");
@@ -87,6 +125,39 @@ export const useUpdateProduct = () => {
     },
   });
 };
+
+
+
+
+
+// UPDATE PRODUCT add to list
+export const updateProductAndAddToList = async ({
+  id,
+  data,
+}: {
+  id: string;
+  data: any;
+}) => {
+  if (!id) throw new Error("Id is required");
+  return await axiosAuth.put(`${baseUrl}/${id}/add-to-list`, data);
+};
+
+export const useUpdateProductAndAddToList = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateProductAndAddToList,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product"] });
+    },
+  });
+};
+
+
+
+
+
+
 
 // DELETE A PRODUCT
 export const deleteProduct = async (id: string) => {

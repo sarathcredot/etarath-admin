@@ -22,13 +22,13 @@ export const useGetAllRetailers = (enabled: boolean = true, queryParams: any) =>
   });
 };
 // GET RETAILER BY ID
-export const getRetailerById = async (id: string | undefined) => {
+export const getRetailerById = async (id: any | undefined) => {
   if (!id) throw new Error("No id provided");
   return await axiosAuth.get(`${baseUrl}/${id}`);
 };
 
 export const useGetRetailerById = (
-  id: string | undefined,
+  id: any | undefined,
   enabled: boolean
 ) => {
   return useQuery({
@@ -121,7 +121,7 @@ export const useGetOrdersByRetailerId = (
   return useQuery({
     queryKey: ["retailer-orders", retailerId, queryParams],
     queryFn: () =>
-      getOrdersByRetailerId(retailerId,queryParams).then((res) => res?.data?.data),
+      getOrdersByRetailerId(retailerId, queryParams).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };
@@ -146,3 +146,21 @@ export const useGetClaimByRetailerId = (retailerId: string, enabled: boolean, qu
   });
 };
 
+
+
+// GET RETAILER BY ID priority
+export const getRetailerPriorityById = async (id: any | undefined) => {
+  if (!id) throw new Error("No id provided");
+  return await axiosAuth.get(`${baseUrl}/${id}/priority`);
+};
+
+export const useGetRetailerPriorityByIdById = (
+  id: any | undefined,
+  enabled: boolean
+) => {
+  return useQuery({
+    queryKey: ["retailer-priority", id],
+    queryFn: () => getRetailerPriorityById(id).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};

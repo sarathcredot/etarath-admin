@@ -1,5 +1,5 @@
-import _, { capitalize } from "lodash";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import _, { capitalize, debounce } from "lodash";
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { Button, Col, Form, InputGroup, Row, Table } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import Loader from "src/components/features/loader";
@@ -9,13 +9,28 @@ import { useGetAllVendorWarehouses } from "src/services/warehouse.service";
 import AddWarehouse from "./popups/AddWarehouse";
 
 const VendorWarehousesList = ({
-  page = 1,
+
   vendorId,
-  setPage,
+  warehouses,
+  setPage = () => { },
+  setSearch = () => { }, // fallback so debounce doesn’t break
+  setLimit,
+  page = 1,
+  limit = 10,
+  search = "",
+  warehousesLoading
+
 }: {
-  vendorId: string;
+  vendorId: any;
+  warehouses: any
+  warehousesLoading: any
+  setPage?: Dispatch<React.SetStateAction<number>>;
+  setLimit?: Dispatch<React.SetStateAction<number>>;
+  setSearch?: Dispatch<React.SetStateAction<any>>;
   page?: number;
-  setPage?: Dispatch<SetStateAction<number>>;
+  limit?: number;
+  search?: string;
+
 }) => {
   const navigate = useNavigate();
 
@@ -23,14 +38,25 @@ const VendorWarehousesList = ({
   const [isAddOpen, setAddOpen] = useState<boolean>(false);
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
-  const [search, setSearch] = useState<string>("");
+
 
   // QUERIES
-  const { data: warehouses, isLoading: warehousesLoading } =
-    useGetAllVendorWarehouses(vendorId ? vendorId : "", !!vendorId);
+
 
   const totalRecords = warehouses?.total || 0;
   const totalPages = warehouses?.totalPages || 0;
+
+  const debouncedHandleSearch = useCallback(
+    debounce((text) => {
+      try {
+        setSearch(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
+
 
   return (
     <>
@@ -83,7 +109,7 @@ const VendorWarehousesList = ({
                           style={{ width: "250px" }}
                           value={search}
                           onChange={(e) =>
-                            setSearch && setSearch(e.target.value)
+                            debouncedHandleSearch(e.target.value)
                           }
                         />
                       </InputGroup>
@@ -110,6 +136,7 @@ const VendorWarehousesList = ({
                   <tr>
                     <th >#</th>
                     <th>Warehouse</th>
+                    <th></th>
                     <th>Location</th>
                     <th>Created Date</th>
                     <th>Status</th>
@@ -131,7 +158,7 @@ const VendorWarehousesList = ({
                     warehouses?.result?.map((item: any, index: number) => (
                       <tr
                         onClick={() =>
-                          navigate(`/warehouses/detail?_id=${item?._id}`)
+                          navigate(`/warehouses/detail?_id=${item?._id}&vendorId=${item?.vendorId}`)
                         }
                         key={index}
                       >
@@ -140,7 +167,7 @@ const VendorWarehousesList = ({
 
                           <img
                             className="mr-1"
-                            src={generateFilePath(item?.imgUrl)}
+                            src={generateFilePath(item?.shop_photo_logo)}
                             // src={item?.imageUrl[0]}
                             alt="warehouses"
                             width="40"

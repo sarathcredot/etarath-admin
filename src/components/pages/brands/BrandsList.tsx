@@ -261,8 +261,12 @@ const BrandsList = ({
                     brandsData?.result?.map((item: Brand, index: number) => (
                       <tr key={index}>
                         <td>
-                          <Link to={`/brands/detail?_id=${item?._id}`}>
-                            <strong>{index + 1}</strong>
+                          <Link to={`/brands/detail?_id=${item?._id}`}
+                          style={{ textDecoration: "none", color: "inherit" }}
+                          >
+                            {/* <strong> */}
+                              {index + 1}
+                              {/* </strong> */}
                           </Link>
                         </td>
                         <td>
@@ -280,8 +284,12 @@ const BrandsList = ({
                           </Link>
                         </td>
                         <td>
-                          <Link to={`/brands/detail?_id=${item?._id}`}>
-                            {item?.name || "-"}
+                          <Link to={`/brands/detail?_id=${item?._id}`}
+                            style={{ textDecoration: "none", color: "inherit" }}
+                          >
+                          <strong>
+                              {item?.name || "-"}
+                          </strong>
                           </Link>
                         </td>
                         <td>{item?.priority || "-"}</td>

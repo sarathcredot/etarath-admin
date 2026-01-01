@@ -1,5 +1,5 @@
 import _, { capitalize } from "lodash";
-import React, { Dispatch, useEffect, useMemo, useState } from "react";
+import React, { Dispatch, useCallback, useEffect, useState } from "react";
 import { Button, Col, Form, InputGroup, Row, Table } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -8,34 +8,48 @@ import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 import Loader from "src/components/features/loader";
 import PtSwitch from "src/components/features/elements/switch";
 import { generateFilePath } from "src/services/url.service";
-import { Brand } from "../../brands/BrandsList";
+import { debounce } from "lodash";
+
 import {
   useDeleteStock,
   useGetStocksByProductId,
   useUpdateStock,
 } from "src/services/stock.service";
-import AddStock from "./popups/AddStock";
-import { Product } from "../ProductsList";
 import {
   StockEditValidationSchema,
   StockValidationSchema,
 } from "src/validations/validationSchemas";
 import { useFormik } from "formik";
 import Select from "react-select";
-import { useGetAllVendors } from "src/services/vendor.service";
+import {
+  useGetAllVendors,
+  useGetStocksByVendorId,
+} from "src/services/vendor.service";
 import { errorMsg } from "src/utils/toast";
+// import AddStock from "./popups/AddStock";
 
 const StocksList = ({
-  productId,
+  stocks,
+  stocksLoading = false,
+  vendorId,
+  setPage = () => { },
+  setSearch = () => { }, // fallback so debounce doesn’t break
+  setLimit,
+  page = 1,
+  limit = 10,
+  search = "",
+
 }: {
-  productId?: string;
-  isLoading?: boolean;
+  vendorId?: any;
+  stocks: any;
+  stocksLoading: boolean;
   setPage?: Dispatch<React.SetStateAction<number>>;
   setLimit?: Dispatch<React.SetStateAction<number>>;
   setSearch?: Dispatch<React.SetStateAction<any>>;
   page?: number;
   limit?: number;
   search?: string;
+
 }) => {
   const navigate = useNavigate();
 
@@ -44,45 +58,7 @@ const StocksList = ({
   const [isAddOpen, setAddOpen] = useState<boolean>(false);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [selectedStock, setSelectedStock] = useState<any>(null);
-  const [search, setSearch] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(10)
 
-
-
-
-
-  const stockQueryObj = useMemo(() => {
-    const obj: any = {};
-
-    if (page) {
-      obj.page = page;
-    }
-
-    if (limit) {
-      obj.limit = limit;
-    }
-
-    if (search) {
-      obj.search = search;
-    }
-
-    if (productId) {
-      obj.productId = productId;
-    }
-
-    return obj;
-  }, [page, limit, search, productId]);
-
-
-
-  // QUERIES
-  const { data: stocks, isLoading: stocksLoading } = useGetStocksByProductId(
-    productId ? productId : "",
-    !!productId,
-    stockQueryObj
-  );
-  const { data: vendors, isLoading, error } = useGetAllVendors(isEditOpen);
 
   // MUTATION
   const { mutateAsync: deleteStock } = useDeleteStock();
@@ -139,16 +115,16 @@ const StocksList = ({
           setDeleteOpen(false);
         }
       } else {
-        toast("Tournament ID is missing. Unable to delete the tournament.", {
+        toast("Stock ID is missing. Unable to delete the stock.", {
           containerId: "default",
           className: "no-icon notification-danger",
         });
       }
     } catch (error: any) {
-      console.log("error deleting tournament :", error);
+      console.log("error deleting stock :", error);
       toast(
         error?.response?.data?.message ||
-        "Something went wrong while deleting the tournament.",
+        "Something went wrong while deleting the stock.",
         {
           containerId: "default",
           className: "no-icon notification-danger",
@@ -180,7 +156,20 @@ const StocksList = ({
     }
   }, [isEditOpen, selectedStock]);
 
-  console.log("stock edit formik = ", formik.values);
+
+  const debouncedHandleSearch = useCallback(
+    debounce((text) => {
+      try {
+        setSearch(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
+
+
+
   return (
     <>
       <div className="">
@@ -193,7 +182,7 @@ const StocksList = ({
                 <Row className="align-items-lg-center justify-content-end mb-3">
                   <Col>
                     <h5 className="m-0 card-title h5 font-weight-bold">
-                      Vendors
+                      Products
                     </h5>
                   </Col>
 
@@ -232,7 +221,7 @@ const StocksList = ({
                           style={{ width: "250px" }}
                           value={search}
                           onChange={(e) =>
-                            setSearch && setSearch(e.target.value)
+                            debouncedHandleSearch(e.target.value)
                           }
                         />
                         {/* <InputGroup.Append> */}
@@ -247,14 +236,16 @@ const StocksList = ({
                     </div>
                   </Col>
                   <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
-                    <Button
-                      className="font-weight-semibold"
-                      variant="dark"
-                      //   size="md"
-                      onClick={() => setAddOpen(true)}
-                    >
-                      + Add
-                    </Button>
+                    {
+                      vendorId && <Button
+                        className="font-weight-semibold"
+                        variant="dark"
+                        //   size="md"
+                        onClick={() => setAddOpen(true)}
+                      >
+                        + Add
+                      </Button>
+                    }
                   </Col>
                 </Row>
               </div>
@@ -273,7 +264,7 @@ const StocksList = ({
                         // className="text-center"
                         style={{ width: "80px" }}
                       >
-                        Vendor
+                        Product
                       </th>
                       <th></th>
                       {/* <th>Quantity</th> */}
@@ -283,9 +274,9 @@ const StocksList = ({
                       {/* <th>Verification </th> */}
 
                       {/* <th>Status</th> */}
-                      <th className="text-center" style={{ width: "80px" }}>
+                      {/* <th className="text-center" style={{ width: "80px" }}>
                         Actions
-                      </th>
+                      </th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -299,97 +290,61 @@ const StocksList = ({
                       stocks &&
                       stocks?.result?.length > 0 ? (
                       stocks?.result?.map((item: any, index: number) => (
-                        <tr key={index}
+                        <tr
+                          key={index}
+                          onClick={() =>
+                            !isEditOpen &&
+                            navigate(`/stock/detail?_id=${item?._id}`)
+                          }
                           style={{ cursor: "pointer" }}
-                        // onClick={() =>
-                        //   !isEditOpen &&
-                        //   navigate(`/stock/detail?_id=${item?._id}`)
-                        // }
                         >
                           <td>
-                            {/* <Link to={`/stock/detail?_id=${index + 1}`}> */}
-                            {/* <strong> */}
-                            {/* {index +
-                                  (productsData?.pagination?.page - 1) *
-                                    productsData?.pagination?.limit +
-                                  1} */}
+
                             {index + 1}
-                            {/* </strong> */}
-                            {/* </Link> */}
+                            {/* <Link to={`/stock/detail?_id=${item?._id}`}>
+                              <strong>
+                               
+                                {index + 1}
+                              </strong>
+                            </Link> */}
+                          </td>
+                          <td>
+                            <Link
+                              style={{ width: "50px", height: "50px" }}
+                              className="d-flex align-items-center justify-content-center"
+                              onClick={(e) => e.stopPropagation()}
+                              to={`/products/detail?_id=${item?.productDetails?._id}`}
+                            >
+                              <img
+                                className="mr-1"
+                                src={generateFilePath(
+                                  item?.productDetails?.imageUrl[0]
+                                )}
+                                // src={item?.imageUrl[0]}
+                                alt="product"
+                                width="40"
+                                height="40"
+                              // crossOrigin="anonymous"
+                              />
+                            </Link>
                           </td>
                           <td>
                             {/* <Link
-                              style={{ width: "50px", height: "50px" }}
-                              className="d-flex align-items-center justify-content-center"
-                              to={`/stock/detail?_id=${item?._id}`}
+                              onClick={(e) => e.stopPropagation()}
+                              to={`/products/detail?_id=${item?.product?._id}`}
                             > */}
-                            <img
-                              className="mr-1"
-                              src={generateFilePath(
-                                item?.requestedBy?.vendor_logo
-                              )}
-                              // src={item?.imageUrl[0]}
-                              alt="product"
-                              width="40"
-                              height="40"
-                            // crossOrigin="anonymous"
-                            />
+
+                            <strong>
+                              {item?.productDetails?.productName}-{" "}
+                              {`${item?.productDetails?.width}${item?.productDetails?.height
+                                  ? `/${item?.productDetails?.height}`
+                                  : ""
+                                } R${item?.productDetails?.size}`}
+                            </strong>
+
+
                             {/* </Link> */}
                           </td>
-                          {/* {isEditOpen &&
-                          selectedStock &&
-                          selectedStock?._id === item?._id ? (
-                            <td>
-                              <div>
-                                <Form.Group>
-                                  <Select
-                                    options={vendors?.map((item: any) => ({
-                                      value: item?._id,
-                                      label: item?.userName || item?.email,
-                                    }))}
-                                    value={vendors
-                                      ?.map((item: any) => ({
-                                        value: item?._id,
-                                        label: item?.userName || item?.email,
-                                      }))
-                                      .find(
-                                        (opt: any) =>
-                                          opt.value ===
-                                          formik.values.requestedBy
-                                      )}
-                                    onChange={(selected: any) =>
-                                      formik.setFieldValue(
-                                        "requestedBy",
-                                        selected?.value || ""
-                                      )
-                                    }
-                                    placeholder="Select Vendor"
-                                    isSearchable
-                                    classNamePrefix="react-select"
-                                  />
-                                  {formik.errors.requestedBy &&
-                                    formik.touched.requestedBy && (
-                                      <div className="invalid-feedback d-block">
-                                        {formik.errors.requestedBy}
-                                      </div>
-                                    )}
-                                </Form.Group>
-                              </div>
-                            </td>
-                          ) : ( */}
-                          <td>
-                            <Link
-                              to={`/vendors/detail?_id=${item?.requestedBy?.createdBy}`}
-                              style={{ textDecoration: "none", color: "inherit" }}
-                            >
-                              <strong>
-                                {item?.requestedBy?.business_name}
-                              </strong>
-                            </Link>
-                            <br />
-                            {/* {item?.kycDetails?.phoneNumber} */}
-                          </td>
-                          {/* )} */}
                           {/* {isEditOpen &&
                           selectedStock &&
                           selectedStock?._id === item?._id ? (
@@ -436,12 +391,16 @@ const StocksList = ({
                               </div>
                             </td>
                           ) : (
-                            <td>{item?.stock}</td>
+                            <td>
+                              <Link to={`/stock/detail?_id=${item?._id}`}>
+                                {item?.stock}
+                              </Link>
+                            </td>
                           )} */}
                           {isEditOpen &&
                             selectedStock &&
                             selectedStock?._id === item?._id ? (
-                            <td>
+                            <td onClick={(e) => e.stopPropagation()}>
                               <div style={{ width: "90%" }}>
                                 <Form.Group
                                   as={Row}
@@ -449,7 +408,7 @@ const StocksList = ({
                                 >
                                   <Form.Control
                                     type="number"
-                                    placeholder="price for normal customers"
+                                    placeholder="Enter sale price"
                                     name="price_normal_customer"
                                     value={formik.values.price_normal_customer}
                                     onChange={formik.handleChange}
@@ -457,7 +416,6 @@ const StocksList = ({
                                       !!formik.errors.price_normal_customer &&
                                       formik.touched.price_normal_customer
                                     }
-                                    step="any"
                                   />
                                   <Form.Control.Feedback type="invalid">
                                     {formik.errors.price_normal_customer}
@@ -471,7 +429,7 @@ const StocksList = ({
                           {isEditOpen &&
                             selectedStock &&
                             selectedStock?._id === item?._id ? (
-                            <td>
+                            <td onClick={(e) => e.stopPropagation()}>
                               <div style={{ width: "90%" }}>
                                 <Form.Group
                                   as={Row}
@@ -501,7 +459,7 @@ const StocksList = ({
                           {isEditOpen &&
                             selectedStock &&
                             selectedStock?._id === item?._id ? (
-                            <td>
+                            <td onClick={(e) => e.stopPropagation()}>
                               <div
                                 style={{
                                   width: "100%",
@@ -581,8 +539,22 @@ const StocksList = ({
                             </div>
                           </td> */}
 
-
-                          <td>
+                          {/* <td onClick={(e) => e.stopPropagation()}>
+                            <div
+                              className="d-flex align-items-center"
+                            // onClick={() => {
+                            //   setStatusOpen(true);
+                            // }}
+                            >
+                              <PtSwitch
+                                className="mr-2"
+                                on={!item?.isSuspend}
+                                size="sm"
+                                variant="success"
+                              />
+                            </div>
+                          </td> */}
+                          {/* <td onClick={(e) => e.stopPropagation()}>
                             <div className="d-flex align-items-center justify-content-around">
                               {isEditOpen &&
                                 selectedStock &&
@@ -604,16 +576,6 @@ const StocksList = ({
                                 </>
                               ) : (
                                 <>
-
-                                  <div
-                                    className="action_btn "
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      navigate(`/stock/detail?_id=${item?._id}`);
-                                    }}
-                                  >
-                                    <i className="far fa-eye"></i>
-                                  </div>
                                   <div
                                     className="action_btn"
                                     onClick={() => {
@@ -635,7 +597,7 @@ const StocksList = ({
                                 </>
                               )}
                             </div>
-                          </td>
+                          </td> */}
                         </tr>
                       ))
                     ) : (
@@ -670,17 +632,11 @@ const StocksList = ({
         toggle={() => setDeleteOpen(!isDeleteOpen)}
         text={"Are you sure that you want to delete this stock?"}
       />
-      {/* <EditProduct
-        productId={selectedStock}
-        isOpen={isEditOpen}
-        toggle={() => setEditOpen(!isEditOpen)}
-      /> */}
-
-      <AddStock
-        productId={productId ? productId : ""}
+      {/* <AddStock
+        vendorId={vendorId}
         isOpen={isAddOpen}
         toggle={() => setAddOpen(!isAddOpen)}
-      />
+      /> */}
     </>
   );
 };

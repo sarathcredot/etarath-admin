@@ -21,6 +21,35 @@ export const useGetAllAttributes = (enabled: boolean, queryParams?: any) => {
   });
 };
 
+
+
+
+
+const baseUrl2 = `${url}/common/attributes`;
+
+// GET ALL ATTRIBUTES
+export const getAllAttributesCommon = async (queryParams?: any) => {
+  return await axiosAuth.get(`${baseUrl2}/`, {
+    params: {
+      ...queryParams
+    }
+  });
+};
+
+export const useGetAllAttributesCommon = (enabled: boolean, queryParams?: any) => {
+  return useQuery({
+    queryKey: ["attributes-common", queryParams],
+    queryFn: () => getAllAttributesCommon(queryParams).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};
+
+
+
+
+
+
+
 // CREATE NEW ATTRIBUTE
 export const addAttribute = async (data: any) => {
   return await axiosAuth.post(`${baseUrl}/`, data);
