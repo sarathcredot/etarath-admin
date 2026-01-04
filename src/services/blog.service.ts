@@ -5,14 +5,18 @@ import axiosAuth from "./axios.service";
 const baseUrl = `${url}/admin/cms/blog`;
 
 // GET ALL BLOGS
-export const getBlogs = async () => {
-  return await axiosAuth.get(`${baseUrl}/`);
+export const getBlogs = async (queryParams?: any) => {
+  return await axiosAuth.get(`${baseUrl}/`, {
+    params: {
+      ...queryParams
+    }
+  });
 };
 
-export const useGetBlogs = (enabled: boolean = true) => {
+export const useGetBlogs = (enabled: boolean = true, queryParams?: any) => {
   return useQuery({
-    queryKey: ["blogs"],
-    queryFn: () => getBlogs().then((res) => res?.data?.data || []),
+    queryKey: ["blogs", queryParams],
+    queryFn: () => getBlogs(queryParams).then((res) => res?.data?.data || []),
     enabled: enabled,
   });
 };
@@ -51,7 +55,7 @@ export const updateBlog = async ({
   id,
   data,
 }: {
-  id: string | undefined;
+  id: any | undefined;
   data: any;
 }) => {
   return await axiosAuth.patch(`${baseUrl}/${id}`, data);
@@ -73,7 +77,7 @@ export const updateBlogStatus = async ({
   id,
   status,
 }: {
-  id: string | undefined;
+  id: any | undefined;
   status: boolean;
 }) => {
   return await axiosAuth.patch(`${baseUrl}/${id}/update-status`, { status });

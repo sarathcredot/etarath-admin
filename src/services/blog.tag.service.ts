@@ -5,14 +5,18 @@ import axiosAuth from "./axios.service";
 const baseUrl = `${url}/admin/cms/blog`;
 
 // GET ALL BLOG TAGS
-export const getAllBlogTags = async () => {
-  return await axiosAuth.get(`${baseUrl}/tag`);
+export const getAllBlogTags = async (queryParams?: any) => {
+  return await axiosAuth.get(`${baseUrl}/tag`, {
+    params: {
+      ...queryParams
+    }
+  });
 };
 
-export const useGetAllBlogTags = (enabled: boolean = true) => {
+export const useGetAllBlogTags = (enabled: boolean = true, queryParams?: any) => {
   return useQuery({
-    queryKey: ["blog-tags"],
-    queryFn: () => getAllBlogTags().then((res) => res?.data?.data),
+    queryKey: ["blog-tags", queryParams],
+    queryFn: () => getAllBlogTags(queryParams).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };

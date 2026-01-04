@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Button,
   Card,
@@ -8,7 +8,7 @@ import {
   Row,
   Table,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Pagination from "src/components/common/Pagination";
 import PtSwitch from "src/components/features/elements/switch";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
@@ -18,10 +18,12 @@ import { errorMsg } from "src/utils/toast";
 import _ from "lodash";
 import Loader from "src/components/features/loader";
 import { format } from "date-fns";
+import { useGetAllPlanOrdersById } from "src/services/subscription-orders";
 
 const RetailerPlanSubscriptions = ({ header = false, planId }: any) => {
   // STATES
   const [order, setOrder] = useState<any>(null);
+  const navigate = useNavigate()
 
   //pagination
   const [currentPage, setCurrentPage] = useState(0);
@@ -32,7 +34,49 @@ const RetailerPlanSubscriptions = ({ header = false, planId }: any) => {
   //   { planId: planId, type: ORDER_TYPES.AUCTION_PLAN },
   //   !!planId
   // );
-  const subscriptions = [];
+  // const subscriptions = [];
+
+  const [orderPage, setOrderPage] = useState<number>(1);
+  const [orderLimit, setOrderLimit] = useState<number>(10);
+  const [orderSearch, setOrderSearch] = useState<string>("");
+
+
+  const orderQueryObj = useMemo(() => {
+
+    const obj: any = {};
+
+    if (orderPage) {
+      obj.page = orderPage;
+    }
+
+    if (orderLimit) {
+      obj.limit = orderLimit;
+    }
+
+    if (orderSearch) {
+      obj.search = orderSearch;
+    }
+
+    if (planId) {
+      obj.planId = planId;
+    }
+
+    return obj;
+  }, [orderPage, orderLimit, orderSearch, planId]);
+
+
+  //DATA
+  // const { data, isLoading } = useGetAllOrders(
+  //   { planId, type: ORDER_TYPES.POSTER_PLAN },
+  //   !!planId
+  // );
+  // const subscriptions = [];
+
+  const { data: subscriptions, isLoading: subLoading } = useGetAllPlanOrdersById(planId, !!planId, orderQueryObj);
+
+  console.log("sub", subscriptions)
+
+  const totalPages = subscriptions?.totalPages || 0;
 
   //MUTATION
   // const { mutateAsync: suspendSubscription } = useSuspendOrderById();
@@ -79,8 +123,11 @@ const RetailerPlanSubscriptions = ({ header = false, planId }: any) => {
                         <Form.Control
                           type="text"
                           className="search-term"
-                          placeholder="Search by Name"
+                          placeholder="Search by Sub Id"
                           style={{ width: "250px" }}
+                          onChange={(e) =>
+                            setOrderSearch && setOrderSearch(e.target.value)
+                          }
                         />
                       </InputGroup>
                     </div>
@@ -97,12 +144,12 @@ const RetailerPlanSubscriptions = ({ header = false, planId }: any) => {
                 <thead>
                   <tr>
                     <th style={{ width: "30px" }}>#</th>
-
-                    <th>Retailer</th>
+                    <th> Subscriptions Id </th>
+                    <th>Vendor</th>
                     <th>Phone Number</th>
                     <th>Purchase Date</th>
                     <th>Validity</th>
-                    <th>Status</th>
+                    <th> Actions</th>
                     {/* <th
                       className="text-center"
                       style={{ width: "80px" }}
@@ -112,86 +159,105 @@ const RetailerPlanSubscriptions = ({ header = false, planId }: any) => {
                   </tr>
                 </thead>
                 <tbody style={{ borderBottom: "1px solid #dee2e6" }}>
-                  {false && (
+                  {subLoading && (
                     <tr>
                       <td colSpan={9}>
                         <Loader />
                       </td>
                     </tr>
                   )}
-                  {false &&
-                    (!subscriptions || subscriptions?.length === 0) && (
-                      <tr>
-                        <td
-                          colSpan={9}
-                          style={{ textAlign: "center", height: "100px" }}
-                        >
-                          No subscriptions found.
-                        </td>
-                      </tr>
-                    )}
-                  {false &&
+                  {subscriptions?.result?.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={9}
+                        style={{ textAlign: "center", height: "100px" }}
+                      >
+                        No subscriptions found.
+                      </td>
+                    </tr>
+                  )}
+                  {
                     subscriptions &&
-                    subscriptions?.length > 0 &&
-                    subscriptions?.map((item: any, index: number) => (
+                    subscriptions?.result?.length > 0 &&
+                    subscriptions?.result?.map((item: any, index: number) => (
                       <tr>
                         <td>
                           <Link to={`/organizers/detail?_id=${item?.user?._id}`}>
-                            <strong>{index + 1}</strong>
+                            {/* <strong> */}
+                            {index + 1}
+                            {/* </strong> */}
                           </Link>
                         </td>
                         <td>
-                          <Link to={`/organizers/detail?_id=${item?.user?._id}`}>
-                            {item?.user?.fullName}
-                          </Link>
-                        </td>
-                        <td>{`${item?.user?.phoneNumber}`}</td>
-                        <td>
-                          {item?.createdAt
-                            ? format(new Date(item?.createdAt), "dd/MM/yyyy")
-                            : ""}
-                        </td>
-                        <td>
-                          <span
-                            className={`ecommerce-status ${
-                              item?.isUsed ? "on-hold" : "completed"
-                            }`}
+                          <Link to={`/subscriptions/retailer/order/detail?planId=${planId}&_id=${item?._id}`}
+                            style={{ textDecoration: "none", color: "inherit" }}
                           >
-                            {item?.isUsed ? "Used" : "Not-used"}
-                          </span>
+                            <strong>
+                              {item?.subId}
+                            </strong>
+                          </Link>
                         </td>
                         <td>
+                          {/* <Link to={`/organizers/detail?_id=${item?.user?._id}`}> */}
+                          {item?.userDetails?.name}
+                          {/* </Link> */}
+                        </td>
+                        <td>
+                          {item?.userDetails?.phoneNumber}
+                        </td>
+                        <td>
+                          {item?.purchased_Date
+                            ? format(new Date(item?.purchased_Date), "dd/MM/yyyy")
+                            : ""
+                          }
+                        </td>
+                        <td>
+                          {item?.plan_end_date
+                            ? format(new Date(item?.plan_end_date), "dd/MM/yyyy")
+                            : ""
+                          }
+                        </td>
+                        <td>
+                          {/* <div
+                                            className="d-flex align-items-center"
+                                            onClick={() => {
+                                              setOrder(item);
+                                            }}
+                                          >
+                                            <PtSwitch
+                                              className="mr-1"
+                                              on={!item?.isSuspended}
+                                              size="sm"
+                                              variant="success"
+                                            />
+                                            <h5 className=" text-dark font-weight-500 ">
+                                              {item?.isSuspended ? "Suspended" : "Active"}
+                                            </h5>
+                                          </div> */}
+
                           <div
-                            className="d-flex align-items-center"
+                            className="action_btn"
                             onClick={() => {
-                              setOrder(item);
+                              navigate(`/subscriptions/retailer/order/detail?planId=${planId}&_id=${item?._id}`)
                             }}
                           >
-                            <PtSwitch
-                              className="mr-1"
-                              on={!item?.isSuspended}
-                              size="sm"
-                              variant="success"
-                            />
-                            <h5 className=" text-dark font-weight-500 ">
-                              {item?.isSuspended ? "Suspended": "Active" }
-                            </h5>
+                            <i className="far fa-eye mr-2"></i>
                           </div>
+
                         </td>
                       </tr>
                     ))}
                 </tbody>
               </Table>
             </div>
-            {20 > limit && (
-              <Pagination
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                totalButtonsToShow={3}
-                totalPages={20}
-                style={{ marginTop: "20px" }}
-              />
-            )}
+
+            <Pagination
+              currentPage={orderPage}
+              setCurrentPage={setOrderPage}
+              totalButtonsToShow={3}
+              totalPages={totalPages}
+              style={{ marginTop: "20px" }}
+            />
           </Col>
         </Row>
       </div>

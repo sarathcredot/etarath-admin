@@ -109,7 +109,7 @@ const RetailerPlans = ({ header = false }) => {
                       {header && (
                         <Col>
                           <h5 className="m-0 card-title h5 font-weight-bold">
-                            Vendor Plans
+                            Retailer Plans
                           </h5>
                         </Col>
                       )}
@@ -219,15 +219,22 @@ const RetailerPlans = ({ header = false }) => {
                             <td>
                               <Link
                                 to={`/subscriptions/retailer-plans/detail?_id=${item?._id}`}
+                                style={{ textDecoration: "none", color: "inherit" }}
                               >
-                                <strong>{index + 1}</strong>
+                                {/* <strong> */}
+                                {index + 1}
+
+                                {/* </strong> */}
                               </Link>
                             </td>
                             <td>
                               <Link
                                 to={`/subscriptions/retailer-plans/detail?_id=${item?._id}`}
+                                style={{ textDecoration: "none", color: "inherit" }}
                               >
-                                {_.capitalize(item?.plan.toLowerCase())}
+                                <strong>
+                                  {_.capitalize(item?.plan.toLowerCase())}
+                                </strong>
                               </Link>
                             </td>
                             <td>{item?.price_monthly} AED</td>

@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import MediaGalleryModal from "src/components/features/modals/media-gallery-modal";
 import { Editor } from "react-draft-wysiwyg";
 import { useGetAllBlogCategories } from "src/services/blog.category.service";
-import { useAddBlog, useGetSingleBlog } from "src/services/blog.service";
+import { useUpdateBlog, useGetSingleBlog } from "src/services/blog.service";
 import { useGetAllBlogTags } from "src/services/blog.tag.service";
 import { useUploadFile } from "src/services/fileUpload.service";
 import { useAddOffer } from "src/services/offer.service";
@@ -69,7 +69,7 @@ const EditBlog = ({ isOpen, toggle, blogId }: Props) => {
   console.log({ tags });
 
   // MUTATIONS
-  const { mutateAsync: createBlog } = useAddBlog();
+  const { mutateAsync: updateBlog } = useUpdateBlog();
   const { mutateAsync: uploadFile } = useUploadFile();
 
   //FORMINK
@@ -110,7 +110,7 @@ const EditBlog = ({ isOpen, toggle, blogId }: Props) => {
         payload.imgUrl = response.data.data;
       }
 
-      const res = await createBlog(payload);
+      const res = await updateBlog({id:blogId , data:payload});
       toast(res?.data?.message, {
         containerId: "default",
         className: "no-icon notification-success",
@@ -175,14 +175,14 @@ const EditBlog = ({ isOpen, toggle, blogId }: Props) => {
                           typeof formik.values.imgUrl === "string"
                             ? generateFilePath(formik.values.imgUrl)
                             : formik.values.imgUrl.copy_link
-                            ? formik.values.imgUrl.copy_link
-                            : URL.createObjectURL(formik.values.imgUrl?.file)
+                              ? formik.values.imgUrl.copy_link
+                              : URL.createObjectURL(formik.values.imgUrl?.file)
                         }
                         alt="blog"
                         width={"100%"}
                         height={"100%"}
                         style={{ objectFit: "fill" }}
-                        // crossOrigin="anonymous"
+                      // crossOrigin="anonymous"
                       />
                       <div
                         onClick={() => setIsUploadOpen(true)}
@@ -250,7 +250,7 @@ const EditBlog = ({ isOpen, toggle, blogId }: Props) => {
                       Select Category
                     </option>
                     {categories &&
-                      categories[0]?.categories.map(
+                      categories?.data?.[0]?.categories?.map(
                         (item: string, index: number) => (
                           <option key={index} value={item}>
                             {item}
@@ -301,20 +301,20 @@ const EditBlog = ({ isOpen, toggle, blogId }: Props) => {
                   name="tags"
                   options={
                     tags
-                      ? tags[0]?.tags.map((tag: string) => ({
-                          label: tag,
-                          value: tag,
-                        }))
+                      ? tags?.data?.[0]?.tags?.map((tag: string) => ({
+                        label: tag,
+                        value: tag,
+                      }))
                       : []
                   }
                   placeholder="Select Tags"
                   value={
                     tags
-                      ? tags[0].tags
-                          .map((tag: string) => ({ label: tag, value: tag }))
-                          .filter((opt: { label: string; value: string }) =>
-                            formik.values.tags.includes(opt.value)
-                          )
+                      ? tags?.data?.[0]?.tags
+                        .map((tag: string) => ({ label: tag, value: tag }))
+                        .filter((opt: { label: string; value: string }) =>
+                          formik.values.tags.includes(opt.value)
+                        )
                       : []
                   }
                   onChange={(selected: any) =>
@@ -352,20 +352,14 @@ const EditBlog = ({ isOpen, toggle, blogId }: Props) => {
                     format={dateFormat}
                     value={
                       formik.values.date
-                        ? dayjs(formik.values.date, dateFormat)
+                        ? dayjs(formik.values.date)
                         : null
                     }
-                    // onChange={(date) => {
-                    //   formik.setFieldValue(
-                    //     "date",
-                    //     date ? date.format("DD-MM-YYYY") : ""
-                    //   );
-                    // }}
                     onChange={(date) => {
                       requestAnimationFrame(() => {
                         formik.setFieldValue(
                           "date",
-                          date ? date.format(dateFormat) : ""
+                          date ? date.toISOString() : ""
                         );
                       });
                     }}
@@ -391,7 +385,7 @@ const EditBlog = ({ isOpen, toggle, blogId }: Props) => {
 
                   <Editor
                     editorState={formik.values.content}
-                    editorClassName="form-control"
+                   editorClassName="editor-content"
                     editorStyle={{ minHeight: "200px" }}
                     onEditorStateChange={(state: EditorState) =>
                       formik.setFieldValue("content", state)

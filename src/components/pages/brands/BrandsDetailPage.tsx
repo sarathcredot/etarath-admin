@@ -113,7 +113,7 @@ const BrandsDetailPage = () => {
             url: "/brands",
           },
           {
-            name: "Product Details",
+            name: "Brand Details",
             url: `/brands/detail?_id=${brandId}`,
           },
         ]}

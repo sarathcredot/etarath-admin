@@ -5,15 +5,19 @@ import axiosAuth from "./axios.service";
 const baseUrl = `${url}/admin/cms/blog`;
 
 // GET ALL BLOG CATAGORIES
-export const getAllBlogCategories = async () => {
-  return await axiosAuth.get(`${baseUrl}/category`);
+export const getAllBlogCategories = async (queryParams?:any) => {
+  return await axiosAuth.get(`${baseUrl}/category`,{
+     params:{
+      ...queryParams
+     }
+  });
 };
 
-export const useGetAllBlogCategories = (enabled: boolean = true) => {
+export const useGetAllBlogCategories = (enabled: boolean = true,queryParams?:any) => {
   return useQuery({
-    queryKey: ["blog-categories"],
+    queryKey: ["blog-categories",queryParams],
     queryFn: () =>
-      getAllBlogCategories().then((res) => {
+      getAllBlogCategories(queryParams).then((res) => {
         console.log('RES = ',res.data);
         return res?.data?.data;
       }),

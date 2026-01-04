@@ -65,6 +65,18 @@ export const BrandValidationSchema = Yup.object().shape({
   priority: Yup.string().required("Brand priority is required"),
 });
 
+
+export const subValidationSchema = Yup.object().shape({
+  subId: Yup.string().required("sub Id is required"),
+  endDate: Yup.string().required("subscription expired data is required "),
+
+});
+
+
+
+
+
+
 // vendor validation schema
 
 export const VendorValidationSchema = Yup.object().shape({

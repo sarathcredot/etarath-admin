@@ -90,10 +90,10 @@ const VendorPlans = ({ header = false }) => {
             name: "Dashboard",
             url: "/dashboard",
           },
-          {
-            name: "Vendor Plans",
-            url: "/subscriptions/plans",
-          },
+          // {
+          //   name: "Vendor Plans",
+          //   url: "/subscriptions/vendor-plans",
+          // },
         ]}
       />
       <div>
@@ -220,15 +220,24 @@ const VendorPlans = ({ header = false }) => {
                             <td>
                               <Link
                                 to={`/subscriptions/vendor-plans/detail?_id=${item?._id}`}
+                                style={{ textDecoration: "none", color: "inherit" }}
                               >
-                                <strong>{index + 1}</strong>
+                                {/* <strong> */}
+                                {index + 1}
+
+                                {/* </strong> */}
                               </Link>
                             </td>
                             <td>
                               <Link
                                 to={`/subscriptions/vendor-plans/detail?_id=${item?._id}`}
+                                style={{ textDecoration: "none", color: "inherit" }}
                               >
-                                {_.capitalize(item?.plan.toLowerCase())}
+                                <strong>
+                                  {_.capitalize(item?.plan?.toLowerCase())}
+
+                                </strong>
+
                               </Link>
                             </td>
                             <td>{item?.price_monthly} AED</td>
@@ -312,7 +321,7 @@ const VendorPlans = ({ header = false }) => {
       <EditPlan
         isOpen={isEditOpen}
         toggle={() => setEditOpen(!isEditOpen)}
-        plan={plan?plan:null}
+        plan={plan ? plan : null}
       />
     </>
   );

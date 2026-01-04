@@ -54,7 +54,7 @@ const AddBlog = ({ isOpen, toggle }: Props) => {
     error: tagsError,
   }: any = useGetAllBlogTags();
 
-  console.log({tags})
+  console.log({ tags })
 
   // MUTATIONS
   const { mutateAsync: createBlog } = useAddBlog();
@@ -91,6 +91,10 @@ const AddBlog = ({ isOpen, toggle }: Props) => {
         content: draftToHtml(convertToRaw(values.content.getCurrentContent())),
       };
 
+      const [day, month, year] = payload?.date.split("-");
+      const formattedDate = new Date(`${year}-${month}-${day}`);
+      payload.date = formattedDate
+
       if (typeof payload.imgUrl !== "string") {
         const formData = new FormData();
         formData.append("file", payload.imgUrl.file);
@@ -110,6 +114,7 @@ const AddBlog = ({ isOpen, toggle }: Props) => {
         },
       });
       toggle();
+
     } catch (error: any) {
       toast(_.capitalize(errorMsg(error).toLowerCase()), {
         containerId: "default",
@@ -139,14 +144,14 @@ const AddBlog = ({ isOpen, toggle }: Props) => {
                           typeof formik.values.imgUrl === "string"
                             ? generateFilePath(formik.values.imgUrl)
                             : formik.values.imgUrl.copy_link
-                            ? formik.values.imgUrl.copy_link
-                            : URL.createObjectURL(formik.values.imgUrl?.file)
+                              ? formik.values.imgUrl.copy_link
+                              : URL.createObjectURL(formik.values.imgUrl?.file)
                         }
                         alt="blog"
                         width={"100%"}
                         height={"100%"}
                         style={{ objectFit: "fill" }}
-                        // crossOrigin="anonymous"
+                      // crossOrigin="anonymous"
                       />
                       <div
                         onClick={() => setIsUploadOpen(true)}
@@ -214,7 +219,7 @@ const AddBlog = ({ isOpen, toggle }: Props) => {
                       Select Category
                     </option>
                     {categories &&
-                      categories[0]?.categories.map(
+                      categories?.data?.[0]?.categories?.map(
                         (item: string, index: number) => (
                           <option key={index} value={item}>
                             {item}
@@ -265,20 +270,20 @@ const AddBlog = ({ isOpen, toggle }: Props) => {
                   name="tags"
                   options={
                     tags
-                      ? tags[0]?.tags.map((tag: string) => ({
-                          label: tag,
-                          value: tag,
-                        }))
+                      ? tags?.data?.[0]?.tags?.map((tag: string) => ({
+                        label: tag,
+                        value: tag,
+                      }))
                       : []
                   }
                   placeholder="Select Tags"
                   value={
                     tags
-                      ? tags[0].tags
-                          .map((tag: string) => ({ label: tag, value: tag }))
-                          .filter((opt: { label: string; value: string }) =>
-                            formik.values.tags.includes(opt.value)
-                          )
+                      ? tags?.data?.[0]?.tags
+                        .map((tag: string) => ({ label: tag, value: tag }))
+                        .filter((opt: { label: string; value: string }) =>
+                          formik.values.tags.includes(opt.value)
+                        )
                       : []
                   }
                   onChange={(selected: any) =>

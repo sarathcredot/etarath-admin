@@ -10,11 +10,11 @@ export const getAllVendorWarehouses = async ({
   queryParams
 }: {
   vendorId: any;
-  queryParams?:any
+  queryParams?: any
 }) => {
   if (!vendorId) throw new Error("Product Id is required");
-  return await axiosAuth.get(`${baseUrl}/${vendorId}/warehouse`,{
-    params:{
+  return await axiosAuth.get(`${baseUrl}/${vendorId}/warehouse`, {
+    params: {
       ...queryParams
     }
   });
@@ -23,12 +23,12 @@ export const getAllVendorWarehouses = async ({
 export const useGetAllVendorWarehouses = (
   vendorId: any,
   enabled: boolean,
-  queryParams?:any
+  queryParams?: any
 ) => {
   return useQuery({
-    queryKey: ["warehouses", vendorId,queryParams],
+    queryKey: ["warehouses", vendorId, queryParams],
     queryFn: () =>
-      getAllVendorWarehouses({ vendorId ,queryParams }).then((res) => res.data.data),
+      getAllVendorWarehouses({ vendorId, queryParams }).then((res) => res.data.data),
     enabled: enabled,
   });
 };
@@ -104,7 +104,7 @@ export const updateWarehouse = async ({
   data: any;
 }) => {
   if (!warehouseId) throw new Error("waerhouse id required");
-  return await axiosAuth.put(`${baseUrl}/${vendorId}/warehouse/${warehouseId}`,data);
+  return await axiosAuth.put(`${baseUrl}/${vendorId}/warehouse/${warehouseId}`, data);
 };
 
 export const useUpdateWarehouse = () => {
@@ -175,6 +175,36 @@ export const useGetWarehouseallProductsById = (warehouseId: any | undefined, ena
   });
 };
 
+
+
+
+export const getAllVendorCustomers = async ({
+  vendorId,
+  queryParams
+}: {
+  vendorId: any;
+  queryParams?: any
+}) => {
+  if (!vendorId) throw new Error("Product Id is required");
+  return await axiosAuth.get(`${baseUrl}/${vendorId}/all-customers`, {
+    params: {
+      ...queryParams
+    }
+  });
+};
+
+export const useGetAllVendorCustomers = (
+  vendorId: any,
+  enabled: boolean,
+  queryParams?: any
+) => {
+  return useQuery({
+    queryKey: ["v-customers", vendorId, queryParams],
+    queryFn: () =>
+      getAllVendorCustomers({ vendorId, queryParams }).then((res) => res.data.data),
+    enabled: enabled,
+  });
+};
 
 
 

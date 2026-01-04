@@ -193,17 +193,12 @@ const RetailersList = ({
                         }
                       >
                         <td>
-                          <Link to={`/retailers/detail?_id=${item?._id}`}>
-                            <strong>
-                              {/* {search
-                                ? index + 1
-                                : index +
-                                  (organisersData?.page - 1) *
-                                    organisersData?.limit +
-                                  1} */}
-                              {index + 1}
-                            </strong>
-                          </Link>
+                          {/* <Link to={`/retailers/detail?_id=${item?._id}`}> */}
+                          {/* <strong> */}
+
+                          {index + 1}
+                          {/* </strong> */}
+                          {/* </Link> */}
                         </td>
                         <td>
                           <Link
@@ -227,7 +222,9 @@ const RetailersList = ({
                             {item?.userName}
                           </Link> */}
                           <td>
-                            {item?.userName}
+                            <strong>
+                              {item?.userName}
+                            </strong>
                           </td>
                         </td>
                         <td>{item?.phoneNumber}</td>

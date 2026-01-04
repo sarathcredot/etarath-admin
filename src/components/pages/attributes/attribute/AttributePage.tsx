@@ -22,7 +22,7 @@ const AttributePage = () => {
 
   //STATE
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState<number>(3);
+  const [limit, setLimit] = useState<number>(10);
   const [search, setSearch] = useState<string>("");
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 

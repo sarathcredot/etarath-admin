@@ -157,7 +157,7 @@ const AttributesList = ({
                         <Form.Control
                           type="text"
                           className="search-term"
-                          placeholder="Search Retailer"
+                          placeholder="Search Attribute"
                           style={{ width: "250px" }}
                           onChange={(e: any) =>
                             debouncedHandleSearch(e.target.value)
@@ -201,32 +201,7 @@ const AttributesList = ({
                           </Button>
                         </div>
                       </Col> */}
-                  {search && (
-                    <Col className="col-auto pl-lg-1">
-                      <div className="search search-style-1 mx-lg-auto w-auto">
-                        <InputGroup>
-                          <Form.Control
-                            type="text"
-                            className="search-term"
-                            placeholder="Search by Name"
-                            style={{ width: "250px" }}
-                            value={search}
-                            onChange={(e) =>
-                              setSearch && setSearch(e.target.value)
-                            }
-                          />
-                          {/* <InputGroup.Append> */}
-                          {/* <Button
-                              variant="default"
-                              type="submit"
-                            >
-                              <i className="bx bx-search"></i>
-                            </Button> */}
-                          {/* </InputGroup.Append> */}
-                        </InputGroup>
-                      </div>
-                    </Col>
-                  )}
+                 
                 </Row>
               </div>
               <Table

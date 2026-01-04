@@ -1,10 +1,10 @@
 import { ApexOptions } from "apexcharts";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Chart from "react-apexcharts";
 import { Reveal } from "react-awesome-reveal";
 import { Button, Card, Col, Form, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { useGetAllTopUsersAndOrders } from "src/services/dashboard.service";
+import { convertTimelineToApexSeries, useGetAllTopUsersAndOrders, usegetchartData } from "src/services/dashboard.service";
 import { User } from "src/types/types";
 import { fadeIn } from "src/utils/data/keyframes";
 const executives: any[] = [
@@ -80,7 +80,9 @@ const executives: any[] = [
   },
 ];
 const SalesExecutives = () => {
-  const [filter, setFilter] = useState<string>("MONTH");
+  const [filter, setFilter] = useState<string>("month");
+  const [chartResult, setChartResult] = useState<any[]>([]);
+
 
   // QUERIES
   const { data: topExecutives } = useGetAllTopUsersAndOrders("sales_executive");
@@ -89,13 +91,13 @@ const SalesExecutives = () => {
     const currentYear = new Date().getFullYear();
 
     switch (filterType) {
-      case "YEAR":
+      case "year":
         const startYear = 2018;
         return Array.from({ length: currentYear - startYear + 1 }, (_, i) =>
           (startYear + i).toString()
         );
 
-      case "MONTH":
+      case "month":
         return [
           "Jan",
           "Feb",
@@ -111,10 +113,10 @@ const SalesExecutives = () => {
           "Dec",
         ];
 
-      case "WEEK":
+      case "week":
         return ["Week 1", "Week 2", "Week 3", "Week 4"];
 
-      case "DAY":
+      case "day":
         return Array.from({ length: 31 }, (_, i) => i + 1);
 
       default:
@@ -212,6 +214,42 @@ const SalesExecutives = () => {
     colors: ["#0BBE05", "#FF0F0F", "#FF600F"],
   });
 
+  const agentQueryObj = useMemo(() => {
+    const obj: any = {};
+
+    obj.role = "sales_executive"
+    obj.year = "2026"
+    // obj.chartType="user"
+
+    if (filter) {
+      obj.filter = filter;
+    }
+
+    return obj;
+  }, [filter]);
+
+
+
+  const { data: chartData } = usegetchartData(true, agentQueryObj)
+
+
+  useEffect(() => {
+
+    if (!chartData?.timeline || !filter) return;
+
+    const result = convertTimelineToApexSeries(
+      chartData.timeline,
+      filter,
+      "user",
+      "vendor"
+    );
+
+    setChartResult(result);
+
+  }, [chartData, filter]);
+
+
+
   const handleFilterChange = (newFilter: string) => {
     setFilter(newFilter);
     const newCategories = getCategories(newFilter);
@@ -296,10 +334,10 @@ const SalesExecutives = () => {
                         value={filter}
                         onChange={(e) => handleFilterChange(e.target.value)}
                       >
-                        <option value="YEAR">Year</option>
-                        <option value="MONTH">Month</option>
-                        <option value="WEEK">Week</option>
-                        <option value="DAY">Day</option>
+                        <option value="year">Year</option>
+                        <option value="month">Month</option>
+                        <option value="week">Week</option>
+                        <option value="day">Day</option>
                       </Form.Control>
                     </div>
                   </Col>
@@ -308,27 +346,29 @@ const SalesExecutives = () => {
               <Card.Body className="h-100 pt-2">
                 <Row>
                   <Col className="col-auto">
-                    <strong className="text-color-dark text-6">20</strong>
+                    <strong className="text-color-dark text-6">{chartData?.summary?.thisMonth}</strong>
                     <h3 className="text-4 mt-0 mb-2">This Month</h3>
                   </Col>
                   <Col className="col-auto">
-                    <strong className="text-color-dark text-6">30</strong>
+                    <strong className="text-color-dark text-6">{chartData?.summary?.lastMonth}</strong>
                     <h3 className="text-4 mt-0 mb-2">Last Month</h3>
                   </Col>
                   <Col className="col-auto">
-                    <strong className="text-color-dark text-6">225</strong>
+                    <strong className="text-color-dark text-6">{chartData?.summary?.totalUsers}</strong>
                     <h3 className="text-4 mt-0 mb-2">Total Sales Executives</h3>
                   </Col>
                 </Row>
 
                 <Row>
                   <Col className="px-0">
-                    <Chart
-                      options={options}
-                      series={getData(filter)}
-                      type="bar"
-                      height={273}
-                    />
+                    {chartResult.length > 0 && (
+                      <Chart
+                        options={options}
+                        series={chartResult}
+                        type="bar"
+                        height={273}
+                      />
+                    )}
                   </Col>
                 </Row>
               </Card.Body>

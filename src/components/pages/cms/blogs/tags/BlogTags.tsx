@@ -57,7 +57,7 @@ const BlogTags = () => {
     data: tags,
     isLoading: isTagsLoading,
     error,
-  }: any = useGetAllBlogTags();
+  }: any = useGetAllBlogTags(true,queryObj);
 
   console.log("tags = ", tags);
 
@@ -95,6 +95,8 @@ const BlogTags = () => {
       );
     }
   };
+
+const totalPages = tags?.totalPages || 0;
 
   return (
     <>
@@ -218,8 +220,8 @@ const BlogTags = () => {
                             <Loader />
                           </td>
                         </tr>
-                      ) : !isTagsLoading && tags[0]?.tags?.length > 0 ? (
-                        tags[0]?.tags?.map((item: string, index: number) => (
+                      ) : !isTagsLoading && tags?.data?.[0]?.tags?.length > 0 ? (
+                        tags?.data?.[0]?.tags?.map((item: string, index: number) => (
                           <tr key={index}>
                             <td>
                               <strong>
@@ -262,7 +264,7 @@ const BlogTags = () => {
                   currentPage={page}
                   setCurrentPage={setPage}
                   totalButtonsToShow={3}
-                  totalPages={2}
+                  totalPages={totalPages}
                   style={{ marginTop: "20px" }}
                 />
                 {/* </Card.Body>

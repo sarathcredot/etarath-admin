@@ -65,7 +65,7 @@ const BlogCategories = () => {
     data: categories,
     isLoading: isCategoriesLoading,
     error,
-  }: any = useGetAllBlogCategories();
+  }: any = useGetAllBlogCategories(true,queryObj);
 
   // MUTATIONS
   const { mutateAsync: deleteBlogCategory } = useDeleteBlogCategory();
@@ -101,7 +101,7 @@ const BlogCategories = () => {
       );
     }
   };
-
+const totalPages = categories?.totalPages || 0;
   return (
     <>
       <Breadcrumb
@@ -225,8 +225,8 @@ const BlogCategories = () => {
                           </td>
                         </tr>
                       ) : !isCategoriesLoading &&
-                        categories[0]?.categories?.length > 0 ? (
-                        categories[0]?.categories?.map(
+                       categories?.data?.[0]?.categories?.length > 0 ? (
+                        categories?.data?.[0]?.categories?.map(
                           (item: string, index: number) => (
                             <tr key={index}>
                               <td>
@@ -267,13 +267,13 @@ const BlogCategories = () => {
                     </tbody>
                   </Table>
                 </div>
-                {/* <Pagination
+                <Pagination
                   currentPage={page}
                   setCurrentPage={setPage}
                   totalButtonsToShow={3}
-                  totalPages={2}
+                  totalPages={totalPages}
                   style={{ marginTop: "20px" }}
-                /> */}
+                />
                 {/* </Card.Body>
             </Card> */}
               </Col>

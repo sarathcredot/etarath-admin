@@ -5,17 +5,22 @@ import axiosAuth from "./axios.service";
 const baseUrl = `${url}/admin/subcription-orders`;
 
 // GET ALL SUBSCRIPTION ORDERS BY PLAN ID
-export const getAllPlanOrdersById = async (id: string) => {
-  return await axiosAuth.get(`${baseUrl}/${id}`);
+export const getAllPlanOrdersById = async (id: string, queryParams?: any) => {
+  return await axiosAuth.get(`${baseUrl}/${id}`, {
+    params: {
+      ...queryParams
+    }
+  });
 };
 
 export const useGetAllPlanOrdersById = (
   id: string,
-  enabled: boolean = true
+  enabled: boolean = true,
+  queryParams?: any
 ) => {
   return useQuery({
-    queryKey: ["subscription-orders", id],
-    queryFn: () => getAllPlanOrdersById(id).then((res) => res?.data?.data),
+    queryKey: ["subscription-orders", id, queryParams],
+    queryFn: () => getAllPlanOrdersById(id, queryParams).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };
@@ -49,3 +54,24 @@ export const usePurchasePlan = () => {
     },
   });
 };
+
+
+
+
+export const updateExpireData = async ({ id, data }: { id: string; data: any }) => {
+  return await axiosAuth.patch(`${baseUrl}/${id}/order/${id}`, data);
+};
+
+export const useUpdateExpireData = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (updateExpireData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["subscription-order"] });
+      queryClient.invalidateQueries({ queryKey: ["subscription-order"] });
+
+    },
+  });
+};
+
+

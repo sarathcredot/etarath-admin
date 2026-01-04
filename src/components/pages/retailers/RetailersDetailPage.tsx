@@ -10,6 +10,7 @@ import { User } from "src/types/types";
 import { generateFilePath } from "src/services/url.service";
 import { useKycVerification } from "src/services/kyc.service";
 import EditRetailer from "./popups/EditRetailer";
+// import EditDate from "./popups/EditDate"
 import {
   useGetOrdersByRetailerId,
   useGetRetailerById,
@@ -34,6 +35,10 @@ const RetailersDetailPage = () => {
 
   //STATE
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
+  const [isEditOpenSub, setEditOpenSub] = useState<boolean>(false);
+
+  const [isStatusOpensub, setStatusOpensub] = useState<boolean>(false);
+
   const [isKycEditOpen, setKycEditOpen] = useState<boolean>(false);
   const [isStatusOpen, setStatusOpen] = useState<boolean>(false);
   const [is_kyc_approve_open, set_is_kyc_approve_open] =
@@ -786,9 +791,16 @@ const RetailersDetailPage = () => {
                         <h6>End Date</h6>
                         <h5
                           className=" text-dark font-weight-500 "
-                          style={{ textTransform: "capitalize" }}
+                          style={{ textTransform: "capitalize", display: "flex", gap: "5px" }}
                         >
                           {formatDate(retailerActivePlan?.plan_end_date)}
+                          <div
+                            className="action_btn "
+                            onClick={() => { setStatusOpensub(true) }}
+                          >
+                            <i className="fas fa-pencil-alt"></i>
+                          </div>
+
                         </h5>
                       </div>
                       <div>
@@ -1015,8 +1027,8 @@ const RetailersDetailPage = () => {
               fontSize: 12,
               fontWeight: "bold",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-              background: "#FF600F",
-              color: "#fff",
+              background: "white",
+              color: "#000",
               flexDirection: "column",
               justifyContent: "center",
               padding: 20,
@@ -1037,16 +1049,16 @@ const RetailersDetailPage = () => {
               }}
               onClick={() => setVerifyKyc(false)}
             >
-              <i className="fas fa-xmark"></i>
+              <i style={{ color: "#000" }} className="fas fa-xmark"></i>
             </div>
 
             <div>
-              <h3 className="mt-0 p-0 " style={{ color: "#fff", fontSize: 17 }}>
+              <h3 className="mt-0 p-0 " style={{ fontSize: 17 }}>
                 Retailer Verification
               </h3>
               <p
                 className="m-0"
-                style={{ color: "#fff", fontWeight: "normal" }}
+                style={{ fontWeight: "normal" }}
               >
                 Please verify the profile details and documents before approving
                 or rejecting the retailer.
@@ -1091,6 +1103,17 @@ const RetailersDetailPage = () => {
           "Are you sure that you want to change the status of this retailer?"
         }
       />
+
+      <ConfirmationPopup
+        submit={() => { setStatusOpen(false) }}
+        isOpen={isStatusOpensub}
+        toggle={() => setStatusOpensub(!isStatusOpensub)}
+        text={
+          "Are you sure that you want to update subscription expire data?"
+        }
+      />
+
+
       <ConfirmationPopup
         submit={() => handleKycVerification(retailer?._id, "approved")}
         isOpen={is_kyc_approve_open}
@@ -1108,6 +1131,8 @@ const RetailersDetailPage = () => {
         isOpen={isEditOpen}
         toggle={() => setEditOpen(!isEditOpen)}
       />
+
+      
     </>
   );
 };

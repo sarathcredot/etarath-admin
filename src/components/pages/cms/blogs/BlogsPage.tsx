@@ -1,7 +1,7 @@
 "use client";
 
 import { posix } from "path";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Button,
   Card,
@@ -14,14 +14,14 @@ import {
 import Breadcrumb from "src/components/common/breadcrumb";
 import PtSwitch from "src/components/features/elements/switch";
 import Loader from "src/components/features/loader";
-import Pagination from "src/components/features/pagination";
+import Pagination from "src/components/common/Pagination";
 import {
   useDeleteOffer,
 } from "src/services/offer.service";
 import { generateFilePath } from "src/services/url.service";
 import { toast } from "react-toastify";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
-import { useGetBlogs, useUpdateBlogStatus } from "src/services/blog.service";
+import { useGetBlogs, useUpdateBlogStatus, useDeleteBlog } from "src/services/blog.service";
 import AddBlog from "./popups/AddBlog";
 import dayjs from "dayjs";
 import EditBlog from "./popups/EditBlog";
@@ -34,18 +34,45 @@ const BlogsPage = () => {
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
 
   // QUERIES
-  const { data: blogs, isLoading: blogsLoading } = useGetBlogs();
+  
   const isLoading = false;
 
   // MUTATIONS
   const { mutateAsync: updateBlogStatus } = useUpdateBlogStatus();
-  const { mutateAsync: deleteOffer } = useDeleteOffer();
+  const { mutateAsync: deleteBlog } = useDeleteBlog();
 
   //pagination
   const [page, setPage] = useState(1);
-  const limit = 10;
+  const [limit, setLimit] = useState<number>(10);
+
+
+
+  const queryObj = useMemo(() => {
+    const obj: any = {
+      skip: true,
+    };
+
+    if (page) {
+      obj.page = page;
+    }
+
+    if (limit) {
+      obj.limit = limit;
+    }
+
+    if (search) {
+      obj.search = search;
+    }
+
+    return obj;
+  }, [page, limit, search]);
+
+  // QUERIES
+  const { data: blogs, isLoading: blogsLoading } = useGetBlogs(true,queryObj);
+
+
   const totalRecords = blogs?.length || 0;
-  const totalPages = Math.ceil(totalRecords / 5);
+  const totalPages = blogs?.totalPages;
 
   function closeLightBox() {
     setSelectedBlog(null);
@@ -66,7 +93,7 @@ const BlogsPage = () => {
       console.log("error status updation :", error);
       toast(
         error?.response?.data?.message ||
-          "Something went wrong while updating the status.",
+        "Something went wrong while updating the status.",
         {
           containerId: "default",
           className: "no-icon notification-danger",
@@ -77,7 +104,7 @@ const BlogsPage = () => {
   const handleDeleteBlog = async (id: string) => {
     try {
       if (id) {
-        const res = await deleteOffer(id);
+        const res = await deleteBlog(id);
         if (res) {
           toast(res?.data?.message, {
             containerId: "default",
@@ -90,7 +117,7 @@ const BlogsPage = () => {
       console.log("error offer deletion :", error);
       toast(
         error?.response?.data?.message ||
-          "Something went wrong while deleting the offer.",
+        "Something went wrong while deleting the offer.",
         {
           containerId: "default",
           className: "no-icon notification-danger",
@@ -134,10 +161,10 @@ const BlogsPage = () => {
                               className="search-term"
                               placeholder="Search Blog"
                               style={{ width: "250px" }}
-                              //   onChange={(e: any) =>
-                              //     setSearch(e.target.value)
-                              //   }
-                              // value={search}
+                              onChange={(e: any) =>
+                                setSearch(e.target.value)
+                              }
+                            value={search}
                             />
                           </InputGroup>
                         </div>
@@ -176,14 +203,14 @@ const BlogsPage = () => {
                       </tr>
                     </thead>
                     <tbody style={{ borderBottom: "1px solid #dee2e6" }}>
-                      {isLoading && (
+                      {blogsLoading && (
                         <tr>
                           <td colSpan={9}>
                             <Loader />
                           </td>
                         </tr>
                       )}
-                      {!isLoading &&
+                      {!blogsLoading &&
                         (!blogs || blogs?.result?.length === 0) && (
                           <tr>
                             <td
@@ -194,7 +221,7 @@ const BlogsPage = () => {
                             </td>
                           </tr>
                         )}
-                      {!isLoading &&
+                      {!blogsLoading &&
                         blogs &&
                         blogs?.result?.length > 0 &&
                         blogs?.result?.map((item: any, index: any) => (
@@ -222,14 +249,14 @@ const BlogsPage = () => {
                                   alt="product"
                                   width="100"
                                   height="50"
-                                  // crossOrigin="anonymous"
+                                // crossOrigin="anonymous"
                                 />
                               </div>
                             </td>
                             <td className="">{item?.title}</td>
                             <td>{item?.category}</td>
                             {/* tags are array of strings  */}
-                            <td>{item?.tags}</td>
+                            <td>{item?.tags[0]},...</td>
                             <td>
                               {item?.date
                                 ? dayjs(item.date).format("DD-MM-YYYY")
@@ -276,7 +303,7 @@ const BlogsPage = () => {
                     </tbody>
                   </Table>
                 </div>
-                {totalPages > 1 && !search && (
+              
                   <Pagination
                     currentPage={page}
                     setCurrentPage={setPage}
@@ -284,7 +311,7 @@ const BlogsPage = () => {
                     totalPages={totalPages}
                     style={{ marginTop: "20px" }}
                   />
-                )}
+                
               </Col>
             </Row>
             {/* {selectedBlog && (

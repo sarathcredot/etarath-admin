@@ -193,7 +193,7 @@ const SalesExecutivesList = ({
                         <Form.Control
                           type="text"
                           className="search-term"
-                          placeholder="Search "
+                          placeholder="Search Sales Executive"
                           style={{ width: "250px" }}
                           value={search}
                           onChange={(e) =>

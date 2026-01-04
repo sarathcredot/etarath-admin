@@ -177,7 +177,7 @@ const BrandsList = ({
                         <Form.Control
                           type="text"
                           className="search-term"
-                          placeholder="Search Retailer"
+                          placeholder="Search Brand"
                           style={{ width: "250px" }}
                           onChange={(e: any) =>
                             debouncedHandleSearch(e.target.value)

@@ -128,7 +128,7 @@ const OffersPage = () => {
                   <div className="datatable-header">
                     <Row className="align-items-lg-center justify-content-end mb-3">
                       <Col className="col-auto pl-lg-1">
-                        <div className="search search-style-1 mx-lg-auto w-auto">
+                        {/* <div className="search search-style-1 mx-lg-auto w-auto">
                           <InputGroup>
                             <Form.Control
                               type="text"
@@ -141,7 +141,7 @@ const OffersPage = () => {
                               // value={search}
                             />
                           </InputGroup>
-                        </div>
+                        </div> */}
                       </Col>
                       <Col xl="auto" className="">
                         <Button

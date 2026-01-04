@@ -460,9 +460,9 @@ export default function EditVendorPage() {
               <span>3</span> Preferences
             </WizardNavItem>
 
-            <WizardNavItem>
+            {/* <WizardNavItem>
               <span>4</span> Subscription
-            </WizardNavItem>
+            </WizardNavItem> */}
           </WizardNav>
 
           {/* ------------------------- */}

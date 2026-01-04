@@ -58,6 +58,10 @@ import BrandPage from "src/components/pages/brands/BrandsPage";
 import VendorPlans from "src/components/pages/subscriptions/vendor-plans/VendorPlans";
 import VendorPlanDetailPage from "src/components/pages/subscriptions/vendor-plans/VendorPlanDetailPage";
 import RetailerPlanDetailPage from "src/components/pages/subscriptions/retailer-plans/RetailerPlanDetailPage";
+import SubOrderDetailvPage from "src/components/pages/subscriptions/vendor-plans/OrderDetailPage";
+import SubOrderDetailrPage from "src/components/pages/subscriptions/retailer-plans/OrderDetailPage";
+
+
 import RetailerPlans from "src/components/pages/subscriptions/retailer-plans/RetailerPlans";
 import OffersPage from "src/components/pages/cms/offers/OffersPage";
 import AttributesPage from "src/components/pages/attributes/AttributesPage";
@@ -98,12 +102,12 @@ const adminRoutes: Array<RouteProps> = [
   { path: "/vendors/detail", component: <VendorsDetailPage /> },
   { path: "/vendors/add-vendor", component: <AddVendorPage /> },
   { path: "/vendors/edit-vendor", component: <EditVendorPage /> },
-  
+
   // Retailers
   { path: "/retailers", exact: true, component: <RetailersPage /> },
   { path: "/retailers/detail", component: <RetailersDetailPage /> },
   { path: "/retailers/add-retailer", component: <AddRetailerPage /> },
-    { path: "/retailers/edit-retailer", component: <EditRetailerPage /> },
+  { path: "/retailers/edit-retailer", component: <EditRetailerPage /> },
 
 
   // Sales Executives
@@ -125,8 +129,8 @@ const adminRoutes: Array<RouteProps> = [
   { path: "/products", exact: true, component: <ProductsPage /> },
   { path: "/products/detail", component: <ProductsDetailPage /> },
 
-   { path: "/requested-products", exact: true, component: <RequestedProductsPage /> },
-     { path: "/requested-products/details", exact: true, component: <RequestProductsDetailPage /> },
+  { path: "/requested-products", exact: true, component: <RequestedProductsPage /> },
+  { path: "/requested-products/details", exact: true, component: <RequestProductsDetailPage /> },
 
   // Stocks
   { path: "/stock/detail", component: <StockDetailPage /> },
@@ -150,7 +154,7 @@ const adminRoutes: Array<RouteProps> = [
 
   // claims
 
-   {
+  {
     path: "/claims/detail",
     component: <ClaimDetailPage />,
   },
@@ -176,6 +180,18 @@ const adminRoutes: Array<RouteProps> = [
     path: "/subscriptions/retailer-plans/detail",
     component: <RetailerPlanDetailPage />,
   },
+
+  {
+    path: "/subscriptions/vendor/order/detail",
+    component: <SubOrderDetailvPage />,
+  },
+
+   {
+    path: "/subscriptions/retailer/order/detail",
+    component: <SubOrderDetailrPage />,
+  },
+
+
   // { path: "/packages", exact:true, component: <PackagesList /> },
   // { path: "/packages/detail",  component: <PackagesDetailPage /> },
 

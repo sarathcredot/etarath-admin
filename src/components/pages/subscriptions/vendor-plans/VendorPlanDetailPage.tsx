@@ -24,7 +24,7 @@ const VendorPlanDetailPage = () => {
 
   //  QUERIES
   const { data: plan } = useGetPlanById(planId, !!planId) as {
-    data: SubscriptionPlan;
+    data: any;
   };
   const { data: planOrders } = useGetAllPlanOrdersById(planId, !!planId);
 
@@ -63,14 +63,13 @@ const VendorPlanDetailPage = () => {
             url: "/dashboard",
           },
           {
-            name: "retailer plans",
-            url: "/subscriptions/retailer-plans",
+            name: "vendor plans",
+            url: "/subscriptions/vendor-plans",
           },
           {
-            name: plan
-              ? `${_.capitalize(plan?.plan.toLowerCase())}  Plan`
-              : "Plan",
-            url: `/subscriptions/retailer-plans/detail?_id=${planId}`,
+            name: `${plan?.plan} Plan Details`,
+            url:`/subscriptions/vendor-plans/detail?_id=${planId}`
+           
           },
         ]}
       />
@@ -91,7 +90,7 @@ const VendorPlanDetailPage = () => {
                       Total Subscriptions
                     </h3>
                     <strong className="text-6 ">
-                      {/* {formatNumberShort(analytics?.totalOrders || 0)} */}0
+                      {plan?.totalSubscriptions || 0}
                     </strong>
                   </Col>
                   <Col
@@ -119,7 +118,7 @@ const VendorPlanDetailPage = () => {
                       Active Subscriptions
                     </h3>
                     <strong className="text-6 ">
-                      {/* {formatNumberShort(analytics?.activeOrders || 0)} */}0
+                      {plan?.totalActiveSubscriptions || 0}
                     </strong>
                   </Col>
 
@@ -148,8 +147,7 @@ const VendorPlanDetailPage = () => {
                       Expired Subscriptions
                     </h3>
                     <strong className="text-6 ">
-                      {/* {formatNumberShort(analytics?.expiredOrders || 0)} */}
-                      0
+                      {plan?.totalExpiredSubscriptions || 0}
                     </strong>
                   </Col>
 
@@ -178,8 +176,8 @@ const VendorPlanDetailPage = () => {
                       Total Revenue
                     </h3>
                     <strong className="text-6 ">
-                      {/* ${formatNumberShort(analytics?.totalRevenue || 0.0)} */}
-                      0
+                      {plan?.totalRevenue || 0}AED
+
                     </strong>
                   </Col>
                   <Col

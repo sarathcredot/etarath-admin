@@ -8,23 +8,29 @@ import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 
 import MediaThumb from "src/components/features/media-thumb";
 import ImgPreview from "src/components/features/elements/ImgPreview";
-import ProductsList, { Product } from "../ProductsList";
-import EditProduct from "./EditProduct";
+// import ProductsList, { Product } from "../ProductsList";
+import EditOrder from "./Popups/EditOrder";
 import {
   useGetOrdersByProductId,
   useGetProductById,
   useUpdateProductStatus,
   useVerifyProduct,
 } from "src/services/product.service";
+
+import { useGetSubscriptionOrderById } from "src/services/subscription-orders"
+
 import { generateFilePath } from "src/services/url.service";
 // import StocksList from "../";
 import { capitalCase } from "capital-case";
-import ProductOrdersList from "../ProductOrdersList";
+import { format } from "date-fns";
 
-const RequestProductsDetailPage = () => {
+// import ProductOrdersList from "../ProductOrdersList";
+
+const SubOrderDetailPage = () => {
   //IMPORTS
   const [searchParams] = useSearchParams();
-  const productId = searchParams.get("_id");
+  const orderId = searchParams.get("_id");
+  const planId = searchParams.get("planId");
 
   //STATE
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
@@ -53,8 +59,8 @@ const RequestProductsDetailPage = () => {
       obj.search = search;
     }
 
-    if (productId) {
-      obj.organiserId = productId;
+    if (orderId) {
+      obj.organiserId = orderId;
     }
 
     return obj;
@@ -64,19 +70,19 @@ const RequestProductsDetailPage = () => {
 
   const {
     data: product,
-    isLoading: productLoading,
+    isLoading: subOrderLoading,
     error: productError,
-  } = useGetProductById(productId ? productId : "", !!productId) as {
+  } = useGetSubscriptionOrderById(orderId ? orderId : "", !!orderId) as {
     data: any | undefined;
     isLoading: boolean;
     error: unknown;
   };
 
-  const {
-    data: orders,
-    isLoading: ordersLoading,
-    error: ordersError,
-  } = useGetOrdersByProductId(productId ? productId : "", !!productId);
+  // const {
+  //   data: orders,
+  //   isLoading: ordersLoading,
+  //   error: ordersError,
+  // } = useGetOrdersByProductId(productId ? productId : "", !!productId);
 
   // MUTATIONS
   const { mutateAsync: updateProductStatus } = useUpdateProductStatus();
@@ -138,40 +144,40 @@ const RequestProductsDetailPage = () => {
 
   };
 
-  useEffect(() => {
-    if (product && product?.isVerified === "pending") {
-      setVerifyKyc(true);
-    }
-  }, [product]);
+  // useEffect(() => {
+  //   if (product && product?.isVerified === "pending") {
+  //     setVerifyKyc(true);
+  //   }
+  // }, [product]);
 
 
   return (
     <>
       <Breadcrumb
-        current={
-          product?.productName
-            ? `${product?.productName} -
-                              ${product?.width}${product?.height ? `/${product?.height}` : ""
-            } R${product?.size}`
-            : "Product Details"
-        }
+        // current={
+        //   product?.productName
+        //     ? `${product?.productName} -
+        //                       ${product?.width}${product?.height ? `/${product?.height}` : ""
+        //     } R${product?.size}`
+        //     : "Product Details"
+        // }
         paths={[
           {
             name: "Dashboard",
             url: "/dashboard",
           },
           {
-            name: "products",
-            url: "/products",
+            name: "Plan Details",
+            url: `/subscriptions/vendor-plans/detail?_id=${planId}`,
           },
+
           {
-            name: product?.productName
-              ? `${product?.productName} -
-                              ${product?.width}${product?.height ? `/${product?.height}` : ""
-              } R${product?.size}`
-              : "Product Details",
-            url: `/products/detail?_id=${productId}`,
+            name: "Subscriptions Details",
+            url: `/subscriptions/vendor/order/detail?planId=${planId}&_id=${orderId}`,
           },
+
+
+
         ]}
       />
       <div>
@@ -182,28 +188,11 @@ const RequestProductsDetailPage = () => {
           >
             <Card className="card-modern">
               <Card.Header className="d-flex align-items-center justify-content-between">
-                <Card.Title>Product Details</Card.Title>
+                <Card.Title>Subscriptions Purchase Details</Card.Title>
                 <div
                   className="d-flex align-items-end justify-content-end h-100"
                   style={{ gap: 10 }}
                 >
-                  {product?.isVerified === "approved" && product?.addToList=== false && (
-                    <>
-                      <Button
-                        className="font-weight-semibold"
-                        style={{ height: "30px", width: "110px" }}
-                        variant="dark"
-                        // size="md"
-                        onClick={() => {
-                          setSelectedProductId(product?._id ? product?._id : "");
-                          setEditOpen(true);
-                        }}
-                      >
-                        + Add to List
-                      </Button>
-
-                    </>
-                  )}
 
                   {/* <div
                     className="action_btn bg-dark"
@@ -222,60 +211,62 @@ const RequestProductsDetailPage = () => {
                     <Row>
                       <Col lg={4}>
                         <div>
-                          <h6>Product Name</h6>
+                          <h6>Subscriptions Id  </h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {product?.productName}
+                            {product?.subId}
                           </h5>
                         </div>
                         <div>
-                          <h6>Brand</h6>
+                          <h6>Subscription Plan</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {product?.brand?.name}
+                            {product?.planDetails?.plan}
                           </h5>
                         </div>
                       </Col>
                       <Col lg={4}>
                         <div>
-                          <h6>Origin</h6>
+                          <h6>Purchased Date</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {product?.originDetails?.origin?.value}
-                          </h5>
-                        </div>
-                        <div>
-                          <h6>Year</h6>
-                          <h5 className=" text-dark font-weight-500 ">
-                            {
-                              product?.yearOfManufacturerDetails
-                                ?.yearOfManufacturer?.value
+                            {product?.purchased_Date
+                              ? format(new Date(product?.purchased_Date), "dd/MM/yyyy")
+                              : ""
                             }
                           </h5>
                         </div>
+                        <div>
+                          <h6>Purchased Total Ammount</h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {
+                              product?.total_amount
+                            } AED
+                          </h5>
+                        </div>
                       </Col>
                       <Col lg={4}>
                         <div>
-                          <h6>Category</h6>
+                          <h6>Duration Type</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {product?.category}
+                            {product?.durationType}
                           </h5>
                         </div>
                         <div>
-                          <h6>Width</h6>
+                          <h6>Payment Status</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {product?.width}
+                            {product?.paymentStatus}
                           </h5>
                         </div>
                       </Col>
                       <Col lg={12}>
                         <div>
-                          <h6>Description</h6>
+                          <h6>Plan Price</h6>
                           <h5
                             className=" text-dark font-weight-500 "
                             style={{ width: "90%" }}
                           >
-                            {product?.description}
+                            {product?.plan_price}AED /month
                           </h5>
                         </div>
-                        <div>
+                        {/* <div>
                           <h6>Features</h6>
                           <ul className="pl-3">
                             {product?.features?.map(
@@ -288,30 +279,51 @@ const RequestProductsDetailPage = () => {
                               )
                             )}
                           </ul>
-                        </div>
+                        </div> */}
                       </Col>
                     </Row>
                   </Col>
                   <Col xl={6} className="px-3 ">
                     <Row className="h-100">
                       <Col>
-                        {product?.height && (
+                        {/* {product?.height && (
                           <div>
                             <h6>Height</h6>
                             <h5 className=" text-dark font-weight-500 ">
                               {product?.height}
                             </h5>
                           </div>
-                        )}
+                        )} */}
                         <div>
-                          <h6>Rim Size</h6>
+                          <h6>Plan End Date</h6>
+                          <h5 style={{ display: "flex", gap: "5px" }} className=" text-dark font-weight-500 "  >
+                            {product?.plan_end_date
+                              ? format(new Date(product?.plan_end_date), "dd/MM/yyyy")
+                              : ""
+                            }
+
+                            <div
+                              className="action_btn "
+                              onClick={() => { setStatusOpen(true) }}
+                            >
+                              <i className="fas fa-pencil-alt"></i>
+                            </div>
+
+                          </h5>
+
+                        </div>
+                        <div>
+                          <h6>Next Billing Date</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {product?.size}
+                            {product?.next_billing_date
+                              ? format(new Date(product?.next_billing_date), "dd/MM/yyyy")
+                              : ""
+                            }
                           </h5>
                         </div>
                       </Col>
                       <Col>
-                        <div>
+                        {/* <div>
                           <h6 className="mb-0">Status</h6>
                           <div
                             className="d-flex align-items-center"
@@ -332,21 +344,22 @@ const RequestProductsDetailPage = () => {
                               {!product?.isSuspend ? "Active" : "Blocked"}
                             </h5>
                           </div>
+                        </div> */}
+                        <div>
+                          <h6>Trial Period </h6>
+                          <h5 className=" text-dark font-weight-500 ">
+                            {product?.trial_period} Days
+                          </h5>
                         </div>
 
                         <div>
-                          <h6>Verification Status</h6>
-                          {product?.isVerified ? (
+                          <h6>Status</h6>
+                          {product?.isActive ? (
                             <span
-                              className={`ecommerce-status ${product?.isVerified === "approved"
-                                ? "completed"
-                                : product?.isVerified === "rejected"
-                                  ? "failed"
-                                  : "on-hold"
-                                } text-dark font-weight-500`}
+                              className={`ecommerce-status completed`}
                               style={{ textTransform: "capitalize" }}
                             >
-                              {product?.isVerified}
+                              Active
                             </span>
                           ) : (
                             "-"
@@ -355,7 +368,7 @@ const RequestProductsDetailPage = () => {
 
 
                       </Col>
-                      <Col xl={12} className="px-3 mb-n3 mt-auto">
+                      {/* <Col xl={12} className="px-3 mb-n3 mt-auto">
                         <div>
                           <h6>Images</h6>
                           <Row>
@@ -379,7 +392,7 @@ const RequestProductsDetailPage = () => {
                             )}
                           </Row>
                         </div>
-                      </Col>
+                      </Col> */}
                     </Row>
                   </Col>
                 </Row>
@@ -387,7 +400,10 @@ const RequestProductsDetailPage = () => {
 
 
               <Card.Header className="d-flex align-items-center justify-content-between">
-                <Card.Title>Vendor Details</Card.Title>
+                <Card.Title>
+                  Vendor Details
+
+                </Card.Title>
                 <div
                   className="d-flex align-items-end justify-content-end h-100"
                   style={{ gap: 10 }}
@@ -431,15 +447,28 @@ const RequestProductsDetailPage = () => {
                     <Row>
                       <Col lg={4}>
                         <div>
-                          <h6>Business Name </h6>
+                          <h6>Name </h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {product?.createdKyc?.business_name}
+                            {
+
+
+                              product?.kycDetails?.business_name
+
+
+                            }
+
                           </h5>
                         </div>
                         <div>
                           <h6>Phone Number</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {product?.createdKyc?.phoneNumber}
+                            {
+
+
+                              product?.kycDetails?.phoneNumber
+
+
+                            }
                           </h5>
                         </div>
                       </Col>
@@ -447,13 +476,24 @@ const RequestProductsDetailPage = () => {
                         <div>
                           <h6>Email</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {product?.createdKyc?.email}
+                            {
+
+
+                              product?.kycDetails?.email
+
+
+                            }
                           </h5>
                         </div>
                         <div>
                           <h6>Address</h6>
                           <h5 className=" text-dark font-weight-500 ">
-                            {product?.createdKyc?.business_address}
+                            {
+
+                              product?.kycDetails?.business_address
+
+
+                            }
                           </h5>
                         </div>
                       </Col>
@@ -541,11 +581,10 @@ const RequestProductsDetailPage = () => {
                         </div> */}
                       </Col>
                       <Col xl={12} className="px-3 mb-n3 mt-auto">
-                        <div>
+                        {/* <div>
                           <h6>Images</h6>
                           <Row>
-                            {/* {product?.imageUrl?.map(
-                              (img: any, index: number) => ( */}
+                            
                             <Col className="p-1 p-xl-3">
                               <div
                                 className="product_image_div"
@@ -557,14 +596,13 @@ const RequestProductsDetailPage = () => {
                                   alt="product"
                                   width="110"
                                   height="110"
-                                // crossOrigin="anonymous"/
+                                
                                 />
                               </div>
                             </Col>
-                            {/* )
-                            )} */}
+                          
                           </Row>
-                        </div>
+                        </div> */}
                       </Col>
                     </Row>
                   </Col>
@@ -592,7 +630,7 @@ const RequestProductsDetailPage = () => {
         </Col> */}
       </div>
 
-      {verifyKyc && (
+      {/* {verifyKyc && (
         <div
           style={{
             position: "fixed",
@@ -634,7 +672,7 @@ const RequestProductsDetailPage = () => {
               }}
               onClick={() => setVerifyKyc(false)}
             >
-              <i style={{color: "#000"}} className="fas fa-xmark"></i>
+              <i className="fas fa-xmark"></i>
             </div>
 
             <div>
@@ -678,18 +716,27 @@ const RequestProductsDetailPage = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
 
+      <ConfirmationPopup
+        submit={() => { setStatusOpen(false), setEditOpen(true) }}
+        isOpen={isStatusOpen}
+        toggle={() => {
 
+          setStatusOpen(!isStatusOpen);
+        }}
+        text={"Are you sure that you want to update subscription expire data?"}
+      />
 
-      <EditProduct
-        productId={selectedProductId}
+      <EditOrder
+        orderId={product?._id}
         isOpen={isEditOpen}
         toggle={() => setEditOpen(!isEditOpen)}
+        data={product}
       />
     </>
   );
 };
 
-export default RequestProductsDetailPage;
+export default SubOrderDetailPage;

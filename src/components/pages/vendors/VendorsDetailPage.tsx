@@ -30,12 +30,13 @@ import {
 import SalesExecutivesList from "./SalesExecutivesList";
 import VendorOrdersList from "./VendorOrdersList";
 import VendorClaimsList from "./VendorClaimList";
+import CustomersList from "./CustomersList";
 
 
 import { useGetPreferenceByUserId } from "src/services/preference.service";
 import { useGetSubscriptionOrderById } from "src/services/subscription-orders";
 import VendorWarehousesList from "./VendorWarehousesList";
-import { useGetAllVendorWarehouses } from "src/services/warehouse.service";
+import { useGetAllVendorWarehouses, useGetAllVendorCustomers } from "src/services/warehouse.service";
 
 const VendorsDetailPage = () => {
   //IMPORTS
@@ -73,6 +74,10 @@ const VendorsDetailPage = () => {
   const [waerPage, setWaerPage] = useState<number>(1);
   const [waerLimit, setWaerLimit] = useState<number>(10);
   const [waerSearch, setWaerSearch] = useState<string>("");
+
+  const [cuPage, setCuPage] = useState<number>(1);
+  const [cuLimit, setCuLimit] = useState<number>(10);
+  const [cuSearch, setCuSearch] = useState<string>("");
 
 
 
@@ -198,6 +203,31 @@ const VendorsDetailPage = () => {
   }, [agentPage, agentLimit, agentSearch, vendorID]);
 
 
+  // agent use memo
+
+  const cuQueryObj = useMemo(() => {
+    const obj: any = {};
+
+    if (cuPage) {
+      obj.page = cuPage;
+    }
+
+    if (cuLimit) {
+      obj.limit = cuLimit;
+    }
+
+    if (cuSearch) {
+      obj.search = cuSearch;
+    }
+
+    if (vendorID) {
+      obj.vendorID = vendorID;
+    }
+
+    return obj;
+  }, [cuPage, cuLimit, cuSearch, vendorID]);
+
+
 
 
 
@@ -237,6 +267,13 @@ const VendorsDetailPage = () => {
     vendorID ? vendorID : "",
     !!vendorID,
     waerQueryObj
+  );
+
+
+  const { data: customers, isLoading: customerLoading } = useGetAllVendorCustomers(
+    vendorID ? vendorID : "",
+    !!vendorID,
+    cuQueryObj
   );
 
 
@@ -1085,7 +1122,7 @@ const VendorsDetailPage = () => {
                 vendorId={vendorID ? vendorID : ""}
                 warehouses={warehouses}
                 warehousesLoading={warehousesLoading}
-                setPage={setWaerLimit}
+                setPage={setWaerPage}
                 setLimit={setWaerLimit}
                 setSearch={setWaerSearch}
                 page={waerPage}
@@ -1107,6 +1144,23 @@ const VendorsDetailPage = () => {
                 search={agentSearch}
               />
             </Tab>
+
+            <Tab eventKey="customers" title="Customers">
+              <CustomersList
+                vendorId={vendorID ? vendorID : ""}
+                customers={customers}
+                cuLoading={customerLoading}
+                setPage={setCuPage}
+                setLimit={setCuLimit}
+                setSearch={setCuSearch}
+                page={cuPage}
+                limit={cuLimit}
+                search={cuSearch}
+              />
+            </Tab>
+
+
+
           </Tabs>
         </div>
       </div>
@@ -1130,8 +1184,8 @@ const VendorsDetailPage = () => {
               fontSize: 12,
               fontWeight: "bold",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-              background: "#FF600F",
-              color: "#fff",
+              background: "white",
+              color: "#000",
               flexDirection: "column",
               justifyContent: "center",
               padding: 20,
@@ -1152,16 +1206,16 @@ const VendorsDetailPage = () => {
               }}
               onClick={() => setVerifyKyc(false)}
             >
-              <i className="fas fa-xmark"></i>
+              <i style={{ color: "#000" }} className="fas fa-xmark"></i>
             </div>
 
             <div>
-              <h3 className="mt-0 p-0 " style={{ color: "#fff", fontSize: 17 }}>
+              <h3 className="mt-0 p-0 " style={{ fontSize: 17 }}>
                 Vendor Verification
               </h3>
               <p
                 className="m-0"
-                style={{ color: "#fff", fontWeight: "normal" }}
+                style={{ fontWeight: "normal" }}
               >
                 Please verify the profile details and documents before approving
                 or rejecting the vendor.

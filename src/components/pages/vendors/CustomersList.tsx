@@ -13,12 +13,13 @@ import { StockEditValidationSchema } from "src/validations/validationSchemas";
 import { useFormik } from "formik";
 import { useGetAllVendors } from "src/services/vendor.service";
 import { errorMsg } from "src/utils/toast";
+import AddStock from "./popups/AddStock";
 import dayjs from "dayjs";
 
-const RetailerOrdersList = ({
-  orders,
-  ordersLoading = false,
-  retailerId,
+const CustomersList = ({
+  customers,
+  cuLoading = false,
+  vendorId,
   setPage = () => { },
   setSearch = () => { }, // fallback so debounce doesn’t break
   setLimit,
@@ -26,16 +27,15 @@ const RetailerOrdersList = ({
   limit = 10,
   search = "",
 }: {
-  retailerId: string;
-  orders: any;
-  ordersLoading: boolean;
+  vendorId: any;
+  customers: any;
+  cuLoading: boolean;
   setPage?: Dispatch<React.SetStateAction<number>>;
   setLimit?: Dispatch<React.SetStateAction<number>>;
   setSearch?: Dispatch<React.SetStateAction<any>>;
   page?: number;
   limit?: number;
   search?: string;
-
 }) => {
   const navigate = useNavigate();
 
@@ -118,8 +118,8 @@ const RetailerOrdersList = ({
   //   }
   // };
 
-  const totalRecords = orders?.total || 0;
-  const totalPages = orders?.totalPages || 0;
+  const totalRecords = customers?.total || 0;
+  const totalPages = customers?.totalPages || 0;
 
   useEffect(() => {
     if (isEditOpen && selectedStock) {
@@ -146,7 +146,6 @@ const RetailerOrdersList = ({
     }, 1000),
     []
   );
-
   return (
     <>
       <div className="">
@@ -159,7 +158,7 @@ const RetailerOrdersList = ({
                 <Row className="align-items-lg-center justify-content-end mb-3">
                   <Col>
                     <h5 className="m-0 card-title h5 font-weight-bold">
-                      Orders
+                      Executives
                     </h5>
                   </Col>
 
@@ -194,7 +193,7 @@ const RetailerOrdersList = ({
                         <Form.Control
                           type="text"
                           className="search-term"
-                          placeholder="Search Order "
+                          placeholder="Search Customer"
                           style={{ width: "250px" }}
                           value={search}
                           onChange={(e) =>
@@ -216,64 +215,57 @@ const RetailerOrdersList = ({
                 >
                   <thead>
                     <tr>
-                      <th style={{ width: "30px" }}>Order ID</th>
-                      <th
-                        // className="text-center"
-                        style={{ width: "80px" }}
-                      >
-                        Product
-                      </th>
+                      <th style={{ width: "30px" }}>#</th>
+                      <th style={{ width: "80px" }}>Customer</th>
                       <th></th>
-                      <th>Vendor</th>
-                      {/* <th>Quantity</th> */}
-                      <th>Total Price</th>
-                      <th>Order Date</th>
-                      <th>Status</th>
+                      <th>Contact Number</th>
+                      <th>Email</th>
+                      <th>Customer Type</th>
+                      {/* <th>Status</th> */}
                       {/* <th className="text-center" style={{ width: "80px" }}>
                         Actions
                       </th> */}
                     </tr>
                   </thead>
                   <tbody>
-                    {ordersLoading ? (
+                    {cuLoading ? (
                       <tr>
                         <td colSpan={9}>
                           <Loader />
                         </td>
                       </tr>
-                    ) : !ordersLoading &&
-                      orders &&
-                      orders?.result?.length > 0 ? (
-                      orders?.result?.map((item: any, index: number) => (
+                    ) : !cuLoading &&
+                      customers &&
+                      customers?.result?.length > 0 ? (
+                      customers?.result?.map((item: any, index: number) => (
                         <tr
+
                           key={index}
-                          onClick={() =>
-                            navigate(`/orders/detail?_id=${item?._id}`)
+                          onClick={
+                            item?.userDetails?.role === "retailer"
+                              ? () => navigate(`/retailers/detail?_id=${item?.userDetails?._id}`)
+                              : undefined
                           }
                           style={{ cursor: "pointer" }}
                         >
                           <td>
                             {/* <Link
-                              to={`/orders/detail?_id=${index + 1}`}
+                              to={`/sales-executives/detail?_id=${index + 1}`}
                               style={{ whiteSpace: "nowrap" }}
                             > */}
-                            <strong style={{ whiteSpace: "nowrap" }}>
-                              {item?.orderId}
-                            </strong>
+
+                            {index + 1}
                             {/* </Link> */}
                           </td>
                           <td>
                             {/* <Link
                               style={{ width: "50px", height: "50px" }}
                               className="d-flex align-items-center justify-content-center"
-                              to={`/stock/detail?_id=${item?.stockIdByVendor}`}
-                              onClick={(e) => e.stopPropagation()}
+                              to={`/products/detail?_id=${item?.product?._id}`}
                             > */}
                             <img
                               className="mr-1"
-                              src={generateFilePath(
-                                item?.productDetails?.imageUrl[0]
-                              )}
+                              src={generateFilePath(item?.userDetails?.imgUrl)}
                               // src={item?.imageUrl[0]}
                               alt="product"
                               width="40"
@@ -285,40 +277,29 @@ const RetailerOrdersList = ({
                           <td>
                             {/* <Link
                               to={`/stock/detail?_id=${item?.stockIdByVendor}`}
-                              onClick={(e) => e.stopPropagation()}
                             > */}
-                            {`${item?.productDetails?.productName} - ${item?.productDetails?.width
-                              }${item?.productDetails?.height
-                                ? `/${item?.productDetails?.height}`
-                                : ""
-                              } R${item?.productDetails?.size}`}
+                            <strong> {item?.userDetails?.userName} </strong>
                             {/* </Link> */}
                           </td>
+                          <td>{item?.userDetails?.phoneNumber || "-"}</td>
+                          <td>{item?.userDetails?.email || "-"}</td>
                           <td>
-                            <Link
-                              to={`/vendors/detail?_id=${item?.vendorId}`}
-                              onClick={(e) => e.stopPropagation()}
+                            {item?.typweOfCustomer
+                            }
+                          </td>
+                          {/* <td>
+                            <div
+                              className={`ecommerce-status ${item?.issuspended ? "failed" : "completed"
+                                }`}
                             >
-                              {item?.kycDetails?.business_name || item?.vendorDetails?.userName}
-                            </Link>
-                          </td>
-                          {/* <td>{item?.quantity || 0} </td> */}
-                          <td>{item?.totalPrice || 0} AED</td>
-                          <td>
-                            {item?.orderDate
-                              ? dayjs(item?.orderDate).format("DD-MM-YYYY")
-                              : "-"}
-                          </td>
-                          <td>
-                            <div className={`ecommerce-status ${item?.status}`}>
-                              {capitalize(item?.status)}
+                              {item?.issuspended ? "Suspended" : "Active"}
                             </div>
-                          </td>
-                          {/* <td onClick={(e) => e.stopPropagation()}>
+                          </td> */}
+                          {/* <td>
                             <div className="d-flex align-items-center justify-content-around">
                               {isEditOpen &&
-                              selectedStock &&
-                              selectedStock?._id === item?._id ? (
+                                selectedStock &&
+                                selectedStock?._id === item?._id ? (
                                 <>
                                   <button className="action_btn" type="submit">
                                     <i className="fas fa-check"></i>
@@ -344,6 +325,15 @@ const RetailerOrdersList = ({
                                     }}
                                   >
                                     <i className="fas fa-pencil-alt"></i>
+                                  </div>
+                                  <div
+                                    className="action_btn"
+                                    onClick={() => {
+                                      setSelectedStock(item);
+                                      setDeleteOpen(true);
+                                    }}
+                                  >
+                                    <i className="far fa-trash-alt"></i>
                                   </div>
                                 </>
                               )}
@@ -376,7 +366,7 @@ const RetailerOrdersList = ({
             </Card> */}
           </Col>
         </Row>
-      </div>
+      </div >
       {/* <ConfirmationPopup
         submit={() => handleDeleteStock()}
         isOpen={isDeleteOpen}
@@ -387,4 +377,4 @@ const RetailerOrdersList = ({
   );
 };
 
-export default RetailerOrdersList;
+export default CustomersList;

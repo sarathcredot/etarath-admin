@@ -95,7 +95,7 @@ const VendorClaimList = ({
                         <Form.Control
                           type="text"
                           className="search-term"
-                          placeholder="Search"
+                          placeholder="Search Claim"
                           style={{ width: "250px" }}
                           value={search}
                           onChange={(e) =>

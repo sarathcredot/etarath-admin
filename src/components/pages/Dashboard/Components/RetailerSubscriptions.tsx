@@ -1,22 +1,26 @@
 import Chart from "react-apexcharts";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Card, Col, Form, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { ApexOptions } from "apexcharts";
+import { convertSubscriptionTimelineToApexSeries, usegetDataSubcriptionDataRole, usegetDataSubcriptionDataRoleChart } from "src/services/dashboard.service";
 
 const RetailerSubscriptions = () => {
-  const [filter, setFilter] = useState<string>("MONTH");
+
+  const [filter, setFilter] = useState<string>("month");
+  const [chartResult, setChartResult] = useState<any[]>([]);
+
   const getCategories = (filterType: string) => {
     const currentYear = new Date().getFullYear();
 
     switch (filterType) {
-      case "YEAR":
+      case "year":
         const startYear = 2018;
         return Array.from({ length: currentYear - startYear + 1 }, (_, i) =>
           (startYear + i).toString()
         );
 
-      case "MONTH":
+      case "month":
         return [
           "Jan",
           "Feb",
@@ -32,10 +36,10 @@ const RetailerSubscriptions = () => {
           "Dec",
         ];
 
-      case "WEEK":
+      case "week":
         return ["Week 1", "Week 2", "Week 3", "Week 4"];
 
-      case "DAY":
+      case "day":
         return Array.from({ length: 31 }, (_, i) => i + 1);
 
       default:
@@ -44,7 +48,7 @@ const RetailerSubscriptions = () => {
   };
   const getData = (filterType: string) => {
     switch (filterType) {
-      case "YEAR":
+      case "year":
         return [
           {
             name: "Standard Subscriptions",
@@ -59,7 +63,7 @@ const RetailerSubscriptions = () => {
             data: [0, 0, 0, 0, 0, 0, 30, 50],
           },
         ];
-      case "MONTH":
+      case "month":
         return [
           {
             name: "Standard Subscriptions",
@@ -74,7 +78,7 @@ const RetailerSubscriptions = () => {
             data: [26, 16, 5, 20, 15, 15, 19, 18, 15, 15, 12, 12],
           },
         ];
-      case "WEEK":
+      case "week":
         return [
           {
             name: "Standard Subscriptions",
@@ -89,7 +93,7 @@ const RetailerSubscriptions = () => {
             data: [0, 0, 0, 0, 0, 0, 30, 50],
           },
         ];
-      case "DAY":
+      case "day":
         return [
           {
             name: "Standard Subscriptions",
@@ -146,20 +150,40 @@ const RetailerSubscriptions = () => {
     }));
   };
 
-  // const data = [
-  //   convertToSeries(
-  //     "Basic",
-  //     Array.from({ length: 40 }, () => Math.floor(Math.random() * 100))
-  //   ),
-  //   convertToSeries(
-  //     "Standard",
-  //     Array.from({ length: 40 }, () => Math.floor(Math.random() * 80))
-  //   ),
-  //   convertToSeries(
-  //     "Premium",
-  //     Array.from({ length: 40 }, () => Math.floor(Math.random() * 60))
-  //   ),
-  // ];
+  const agentQueryObj = useMemo(() => {
+    const obj: any = {};
+
+    obj.role = "retailer"
+    // obj.year = "2026"
+    // obj.chartType="user"
+
+    if (filter) {
+      obj.filter = filter;
+    }
+
+    return obj;
+  }, [filter]);
+
+
+
+  const { data: result } = usegetDataSubcriptionDataRole(true, { role: "retailer" })
+
+  const { data: resultChart } = usegetDataSubcriptionDataRoleChart(true, agentQueryObj)
+
+  useEffect(() => {
+
+    if (!resultChart?.timeline || !filter) return;
+
+    const result = convertSubscriptionTimelineToApexSeries(
+      resultChart?.timeline,
+      filter
+
+    );
+
+    setChartResult(result);
+
+  }, [resultChart, filter]);
+
 
   return (
     <>
@@ -183,36 +207,29 @@ const RetailerSubscriptions = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>
-                      <Link to={`/subscriptions/auction/detail?id=1`}>
-                        <i className="bx bx-package mr-2"></i>
-                        Standard
-                      </Link>
-                    </td>
-                    <td>780</td>
-                    <td className="text-lg-right">70</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <Link to={`/subscriptions/auction/detail?id=1`}>
-                        <i className="bx bx-package mr-2"></i>
-                        Executive
-                      </Link>
-                    </td>
-                    <td>780</td>
-                    <td className="text-lg-right">70</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <Link to={`/subscriptions/auction/detail?id=1`}>
-                        <i className="bx bx-package mr-2"></i>
-                        Corporate
-                      </Link>
-                    </td>
-                    <td>780</td>
-                    <td className="text-lg-right">70</td>
-                  </tr>
+
+
+                  {
+                    result?.plans?.map((data: any, index: any) => (
+
+                      <tr key={index}>
+                        <td>
+                          <Link to={`/subscriptions/retailer-plans/detail?_id=${data?._id}`}
+                            style={{ textDecoration: "none", color: "inherit" }}
+                          >
+                            <i className="bx bx-package mr-2"></i>
+                            {data?.planName}
+                          </Link>
+                        </td>
+                        <td> {data?.totalSubscriptions} </td>
+                        <td className="text-lg-right">
+
+                          {data?.monthlyCount}
+
+                        </td>
+                      </tr>
+                    ))
+                  }
                 </tbody>
               </Table>
             </Card.Body>
@@ -269,10 +286,10 @@ const RetailerSubscriptions = () => {
                       value={filter}
                       onChange={(e) => handleFilterChange(e.target.value)}
                     >
-                      <option value="YEAR">Year</option>
-                      <option value="MONTH">Month</option>
-                      <option value="WEEK">Week</option>
-                      <option value="DAY">Day</option>
+                      <option value="year">Year</option>
+                      <option value="month">Month</option>
+                      <option value="week">Week</option>
+                      <option value="day">Day</option>
                     </Form.Control>
                   </div>
                 </Col>
@@ -281,27 +298,32 @@ const RetailerSubscriptions = () => {
             <Card.Body className="h-100 pt-2">
               <Row>
                 <Col className="col-auto">
-                  <strong className="text-color-dark text-6">20</strong>
-                  <h3 className="text-4 mt-0 mb-2">This Month</h3>
+                  <strong className="text-color-dark text-6">{resultChart?.summary?.thisPeriod}</strong>
+                  <h3 className="text-4 mt-0 mb-2">
+                    this {filter}
+
+                  </h3>
                 </Col>
                 <Col className="col-auto">
-                  <strong className="text-color-dark text-6">30</strong>
-                  <h3 className="text-4 mt-0 mb-2">Last Month</h3>
+                  <strong className="text-color-dark text-6">{resultChart?.summary?.thisPeriod}</strong>
+                  <h3 className="text-4 mt-0 mb-2">   this {filter} </h3>
                 </Col>
                 <Col className="col-auto">
-                  <strong className="text-color-dark text-6">225</strong>
+                  <strong className="text-color-dark text-6">{resultChart?.summary?.thisPeriod}</strong>
                   <h3 className="text-4 mt-0 mb-2">Total Subscriptions</h3>
                 </Col>
               </Row>
 
               <Row>
                 <Col className="px-0">
-                  <Chart
-                    options={options}
-                    series={getData(filter)}
-                    type="bar"
-                    height={273}
-                  />
+                  {chartResult.length > 0 && (
+                    <Chart
+                      options={options}
+                      series={chartResult}
+                      type="bar"
+                      height={273}
+                    />
+                  )}
                 </Col>
               </Row>
             </Card.Body>
