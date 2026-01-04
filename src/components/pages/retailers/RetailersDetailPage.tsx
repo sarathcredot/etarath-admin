@@ -10,6 +10,7 @@ import { User } from "src/types/types";
 import { generateFilePath } from "src/services/url.service";
 import { useKycVerification } from "src/services/kyc.service";
 import EditRetailer from "./popups/EditRetailer";
+import EditOrder from "./popups/EditOrder";
 // import EditDate from "./popups/EditDate"
 import {
   useGetOrdersByRetailerId,
@@ -732,7 +733,7 @@ const RetailersDetailPage = () => {
                           className=" text-dark font-weight-500 "
                           style={{ textTransform: "capitalize" }}
                         >
-                          {retailerActivePlan?.planId?.plan || "-"}
+                          {retailerActivePlan?.planDetails?.plan || "-"}
                         </h5>
                       </div>
                       <div>
@@ -750,9 +751,10 @@ const RetailersDetailPage = () => {
                           className=" text-dark font-weight-500 "
                           style={{ textTransform: "capitalize" }}
                         >
-                          {formatCurrency(
-                            retailerActivePlan?.planId?.price_monthly || 0
-                          )}{" "}
+                          {/* {formatCurrency( */}
+                          {retailerActivePlan?.planDetails?.price_monthly || 0}
+                          {/* )} */}
+                          {" "}
                           / Month
                         </h5>
                       </div>
@@ -1105,7 +1107,7 @@ const RetailersDetailPage = () => {
       />
 
       <ConfirmationPopup
-        submit={() => { setStatusOpen(false) }}
+        submit={() => { setStatusOpensub(false), setEditOpenSub(true) }}
         isOpen={isStatusOpensub}
         toggle={() => setStatusOpensub(!isStatusOpensub)}
         text={
@@ -1132,7 +1134,15 @@ const RetailersDetailPage = () => {
         toggle={() => setEditOpen(!isEditOpen)}
       />
 
-      
+      {/* edit sub end data  */}
+      <EditOrder
+        orderId={retailerActivePlan?._id}
+        isOpen={isEditOpenSub}
+        toggle={() => setEditOpenSub(!isEditOpenSub)}
+        data={retailerActivePlan}
+      />
+
+
     </>
   );
 };

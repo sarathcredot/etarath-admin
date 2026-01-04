@@ -464,9 +464,9 @@ export default function AddRetailerPage() {
                     {/* ------------------------- */}
                     {/* STEP 4: SUBSCRIPTION      */}
                     {/* ------------------------- */}
-                    <WizardTab>
+                    {/* <WizardTab>
                         <SubscriptionForm formik={subscriptionFormik} />
-                    </WizardTab>
+                    </WizardTab> */}
 
                     {/* ------------------------- */}
                     {/* BUILT-IN WIZARD BUTTONS   */}

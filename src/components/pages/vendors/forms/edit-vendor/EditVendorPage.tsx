@@ -489,9 +489,9 @@ export default function EditVendorPage() {
           {/* ------------------------- */}
           {/* STEP 4: SUBSCRIPTION      */}
           {/* ------------------------- */}
-          <WizardTab>
+          {/* <WizardTab>
             <SubscriptionForm formik={subscriptionFormik} />
-          </WizardTab>
+          </WizardTab> */}
 
           {/* ------------------------- */}
           {/* BUILT-IN WIZARD BUTTONS   */}

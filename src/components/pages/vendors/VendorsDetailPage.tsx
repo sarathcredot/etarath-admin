@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 
 import EditVendor from "./popups/EditVendor";
+import EditOrder from "./popups/EditOrder";
 import {
   useGetAgentsByVendorId,
   useGetOrdersByVendorId,
@@ -48,6 +49,10 @@ const VendorsDetailPage = () => {
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [isKycEditOpen, setKycEditOpen] = useState<boolean>(false);
   const [isStatusOpen, setStatusOpen] = useState<boolean>(false);
+  const [isStatusOpenSub, setStatusOpenSub] = useState<boolean>(false);
+  const [isEditOpenSub, setEditOpenSub] = useState<boolean>(false);
+
+
   const [verifyKyc, setVerifyKyc] = useState<boolean>(false);
   const [is_kyc_approve_open, set_is_kyc_approve_open] =
     useState<boolean>(false);
@@ -807,7 +812,7 @@ const VendorsDetailPage = () => {
                         className="d-flex align-items-center"
                         style={{ gap: 10 }}
                       >
-                        <div
+                        {/* <div
                           title="Edit Vendor"
                           className="action_btn bg-dark"
                           onClick={() => {
@@ -815,7 +820,7 @@ const VendorsDetailPage = () => {
                           }}
                         >
                           <i className="fas fa-pencil-alt text-light"></i>
-                        </div>
+                        </div> */}
                       </div>
                     ) : (
                       <Button
@@ -900,9 +905,16 @@ const VendorsDetailPage = () => {
                         <h6>End Date</h6>
                         <h5
                           className=" text-dark font-weight-500 "
-                          style={{ textTransform: "capitalize" }}
+                          style={{ textTransform: "capitalize", display: "flex", gap: "5px" }}
                         >
                           {formatDate(vendorActivePlan?.plan_end_date)}
+
+                          <div
+                            className="action_btn "
+                            onClick={() => { setStatusOpenSub(true) }}
+                          >
+                            <i className="fas fa-pencil-alt"></i>
+                          </div>
                         </h5>
                       </div>
                       <div>
@@ -922,7 +934,7 @@ const VendorsDetailPage = () => {
                           className=" text-dark font-weight-500 "
                           style={{ textTransform: "capitalize" }}
                         >
-                          {vendorActivePlan?.trial_period || "-"}
+                          {vendorActivePlan?.trial_period || "-"} Days
                         </h5>
                       </div>
                       <div>
@@ -1258,6 +1270,15 @@ const VendorsDetailPage = () => {
         toggle={() => setStatusOpen(!isStatusOpen)}
         text={"Are you sure that you want to change the status of this vendor?"}
       />
+
+      <ConfirmationPopup
+        submit={() => { setStatusOpenSub(false), setEditOpenSub(true) }}
+        isOpen={isStatusOpenSub}
+        toggle={() => setStatusOpenSub(!isStatusOpenSub)}
+        text={"Are you sure that you want to update subscription expire data?"}
+      />
+
+
       <ConfirmationPopup
         submit={() => handleKycVerification(vendor?._id, "approved")}
         isOpen={is_kyc_approve_open}
@@ -1285,6 +1306,14 @@ const VendorsDetailPage = () => {
         isOpen={isKycEditOpen}
         toggle={() => setKycEditOpen(!isKycEditOpen)}
         userId={vendor ? vendor?._id : vendorID ? vendorID : ""}
+      />
+
+      {/* edit sub end data  */}
+      <EditOrder
+        orderId={vendorActivePlan?._id}
+        isOpen={isEditOpenSub}
+        toggle={() => setEditOpenSub(!isEditOpenSub)}
+        data={vendorActivePlan}
       />
     </>
   );
