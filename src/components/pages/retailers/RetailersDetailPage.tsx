@@ -690,7 +690,7 @@ const RetailersDetailPage = () => {
                         className="d-flex align-items-center"
                         style={{ gap: 10 }}
                       >
-                        <div
+                        {/* <div
                           title="Edit Retailer"
                           className="action_btn bg-dark"
                           onClick={() => {
@@ -700,7 +700,7 @@ const RetailersDetailPage = () => {
                           }}
                         >
                           <i className="fas fa-pencil-alt text-light"></i>
-                        </div>
+                        </div> */}
                       </div>
                     ) : (
                       <Button

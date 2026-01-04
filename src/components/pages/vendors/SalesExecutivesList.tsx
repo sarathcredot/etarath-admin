@@ -240,7 +240,7 @@ const SalesExecutivesList = ({
                       agents?.result?.map((item: any, index: number) => (
                         <tr
                         onClick={() =>
-                          navigate(`/sales-executives/detail?_id=${item?._id}`)
+                          navigate(`/sales-executives/detail?vendor=${vendorId}&_id=${item?._id}`)
                         } 
                         style={{ cursor: "pointer" }} key={index}
                         >

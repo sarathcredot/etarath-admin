@@ -62,6 +62,30 @@ export const useGetSalesAgentallClaimsById = (id: any | undefined, enabled: bool
 
 
 
+
+export const getSalesAgentAllTargetById = async (id: any | undefined, queryParams?: any) => {
+    if (!id) throw new Error("No id provided");
+    return await axiosAuth.get(`${baseUrl}/sales-agent/${id}/all-targets`, {
+        params: {
+            ...queryParams
+        }
+    });
+};
+
+export const useGetSalesAgentallTargetById = (id: any | undefined, enabled: boolean, queryParams?: any) => {
+    return useQuery({
+        queryKey: ["agent-target", id, queryParams],
+        queryFn: () => getSalesAgentAllTargetById(id, queryParams).then((res) => res?.data?.data),
+        enabled: enabled,
+    });
+};
+
+
+
+
+
+
+
 // SUSPEND/UNSUSPEND A AGENT
 
 export const updateaAgentStatus = async ({
@@ -91,24 +115,24 @@ export const useUpdateagentStatus = () => {
 
 
 export const updateAgent = async ({
-  id,
-  data,
+    id,
+    data,
 }: {
-  id: number;
-  data: any;
+    id: number;
+    data: any;
 }) => {
-  if (!id) throw new Error("No id provided");
-  return await axiosAuth.put(`${baseUrl}/${id}`, data);
+    if (!id) throw new Error("No id provided");
+    return await axiosAuth.put(`${baseUrl}/${id}`, data);
 };
 
 export const useUpdateAgent = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: updateAgent,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["agent"] });
-      queryClient.invalidateQueries({ queryKey: ["agent"] });
-    },
-  });
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: updateAgent,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["agent"] });
+            queryClient.invalidateQueries({ queryKey: ["agent"] });
+        },
+    });
 };
 

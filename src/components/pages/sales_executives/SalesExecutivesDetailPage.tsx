@@ -5,17 +5,19 @@ import Breadcrumb from "src/components/common/breadcrumb";
 import PtSwitch from "src/components/features/elements/switch";
 import { toast } from "react-toastify";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
-import { useGetSalesAgentById, useGetSalesAgentallOrdersById, useGetSalesAgentallClaimsById, useUpdateagentStatus } from "src/services/salesAgent.service";
+import { useGetSalesAgentById, useGetSalesAgentallOrdersById, useGetSalesAgentallClaimsById, useUpdateagentStatus, useGetSalesAgentallTargetById } from "src/services/salesAgent.service";
 import EditVendor from "./Popups/EditSalesExecutive";
 import { generateFilePath } from "src/services/url.service";
 import VendorOrdersList from "../vendors/VendorOrdersList";
 import VendorClaimsList from "../vendors/VendorClaimList";
+import TargetList from "./TargetList";
 
 
 const SalesExecutivesDetailPage = () => {
   //IMPORTS
   const [searchParams] = useSearchParams();
   const agentId = searchParams.get("_id");
+  const vendorId = searchParams.get("vendor");
 
   //STATE
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
@@ -33,6 +35,11 @@ const SalesExecutivesDetailPage = () => {
   const [claimPage, setClaimPage] = useState<number>(1);
   const [claimLimit, setClaimLimit] = useState<number>(10);
   const [claimSearch, setClaimSearch] = useState<string>("");
+
+  const [targetPage, settargetPage] = useState<number>(1);
+  const [targetLimit, settargetLimit] = useState<number>(10);
+  const [targetSearch, settargetSearch] = useState<string>("");
+
 
   //USE MEMO
   const queryObj = useMemo(() => {
@@ -106,6 +113,30 @@ const SalesExecutivesDetailPage = () => {
     return obj;
   }, [claimPage, claimLimit, claimSearch, agentId]);
 
+
+  const targetQueryObj = useMemo(() => {
+    const obj: any = {};
+
+    if (targetPage) {
+      obj.page = targetPage;
+    }
+
+    if (targetLimit) {
+      obj.limit = targetLimit;
+    }
+
+    if (targetSearch) {
+      obj.search = targetSearch;
+    }
+
+    if (agentId) {
+      obj.agentId = agentId;
+    }
+
+    return obj;
+  }, [claimPage, claimLimit, claimSearch, agentId]);
+
+
   //HANDLERS
   const handleChangeStatus = async (isActive: boolean) => {
     try {
@@ -138,6 +169,8 @@ const SalesExecutivesDetailPage = () => {
   const { data: agent, isLoading: agentsLoading } = useGetSalesAgentById(agentId, !!agentId)
   const { data: orders, isLoading: ordersLoading } = useGetSalesAgentallOrdersById(agentId, !!agentId, orderQueryObj)
   const { data: claims, isLoading: claimsLoading } = useGetSalesAgentallClaimsById(agentId, !!agentId, claimQueryObj)
+  const { data: target, isLoading: targetLoading } = useGetSalesAgentallTargetById(agentId, !!agentId, targetQueryObj)
+
 
   const { mutateAsync: updateAgentStatus } = useUpdateagentStatus();
 
@@ -154,8 +187,8 @@ const SalesExecutivesDetailPage = () => {
             url: "/dashboard",
           },
           {
-            name: "sales-executives",
-            url: "/sales-executives",
+            name: "Vendor",
+            url: `/vendors/detail?_id=${vendorId}`,
           },
           {
             name: "sales-executive",
@@ -269,16 +302,13 @@ const SalesExecutivesDetailPage = () => {
 
 
                   <Col>
-                    {/* <div>
-                      <h6>Verification Status</h6>
-                      <span
-                        className={`ecommerce-status ${true ? "completed" : "pending"
-                          } text-dark font-weight-500`}
-                      >
-                        {true ? "Completed" : "Pending"}
-                      </span>
-                    
-                    </div> */}
+                    <div>
+                      <h6>Current Month Target</h6>
+                      <h5 className=" text-dark font-weight-500 ">
+                        {agent?.salesAgentTarget}
+                      </h5>
+
+                    </div>
                     <div>
                       <h6 className="mb-0">Status</h6>
                       <div
@@ -350,6 +380,20 @@ const SalesExecutivesDetailPage = () => {
                 page={claimPage}
                 limit={claimLimit}
                 search={claimSearch}
+              />
+            </Tab>
+
+            <Tab eventKey="target" title="Targets">
+              <TargetList
+                vendorId={agentId ? agentId : ""}
+                target={target}
+                targetLoading={targetLoading}
+                setPage={settargetPage}
+                setLimit={settargetLimit}
+                setSearch={settargetSearch}
+                page={targetPage}
+                limit={targetLimit}
+                search={targetSearch}
               />
             </Tab>
 
