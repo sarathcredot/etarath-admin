@@ -24,6 +24,11 @@ export const useGetSalesAgentById = (id: any | undefined, enabled: boolean) => {
 };
 
 
+// create agent 
+
+
+
+
 
 export const getSalesAgentAllOrdersById = async (id: string | undefined, queryParams?: any) => {
     if (!id) throw new Error("No id provided");
@@ -132,6 +137,56 @@ export const useUpdateAgent = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["agent"] });
             queryClient.invalidateQueries({ queryKey: ["agent"] });
+        },
+    });
+};
+
+
+
+
+
+export const createAgent = async ({
+
+    data,
+}: {
+
+    data: any;
+}) => {
+
+    return await axiosAuth.post(`${baseUrl}`, data);
+};
+
+export const useCreateAgent = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: createAgent,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["sales-agents"] });
+            queryClient.invalidateQueries({ queryKey: ["sales-agents"] });
+        },
+    });
+};
+
+
+
+export const deleteeAgent = async ({
+    id,
+   
+}: {
+    id:any;
+   
+}) => {
+
+    return await axiosAuth.delete(`${baseUrl}/${id}/delete-agent`);
+};
+
+export const useDeleteAgent = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: deleteeAgent,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["sales-agents"] });
+            queryClient.invalidateQueries({ queryKey: ["sales-agents"] });
         },
     });
 };

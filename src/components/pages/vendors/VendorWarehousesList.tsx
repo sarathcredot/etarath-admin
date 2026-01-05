@@ -5,8 +5,11 @@ import { Link, useNavigate } from "react-router-dom";
 import Loader from "src/components/features/loader";
 import { generateFilePath } from "src/services/url.service";
 import dayjs from "dayjs";
-import { useGetAllVendorWarehouses } from "src/services/warehouse.service";
+import { useGetAllVendorWarehouses, useDeleteWarehouse } from "src/services/warehouse.service";
 import AddWarehouse from "./popups/AddWarehouse";
+import { toast } from "react-toastify";
+import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
+import { errorMsg } from "src/utils/toast";
 
 const VendorWarehousesList = ({
 
@@ -38,7 +41,9 @@ const VendorWarehousesList = ({
   const [isAddOpen, setAddOpen] = useState<boolean>(false);
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
+  const [selectedStock, setSelectedStock] = useState<any>(null);
 
+  const { mutateAsync: deleteWarehouse } = useDeleteWarehouse()
 
   // QUERIES
 
@@ -56,6 +61,34 @@ const VendorWarehousesList = ({
     }, 1000),
     []
   );
+
+
+  const handleDeleteStock = async () => {
+
+    try {
+
+      console.log("de", selectedStock)
+
+      const res = await deleteWarehouse({ vendorId: vendorId, warehouseId: selectedStock?._id })
+      toast(res?.data?.message, {
+        containerId: "default",
+        className: "no-icon notification-success",
+      });
+
+      setDeleteOpen(false)
+
+    } catch (error) {
+
+      toast(_.capitalize(errorMsg(error).toLowerCase()), {
+        containerId: "default",
+        className: "no-icon notification-danger",
+      });
+
+      setDeleteOpen(false)
+    }
+
+  }
+
 
 
   return (
@@ -140,9 +173,9 @@ const VendorWarehousesList = ({
                     <th>Location</th>
                     <th>Created Date</th>
                     <th>Status</th>
-                    {/* <th className="text-center" style={{ width: "80px" }}>
+                    <th className="text-center" style={{ width: "80px" }}>
                       Actions
-                    </th> */}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -157,16 +190,16 @@ const VendorWarehousesList = ({
                     warehouses?.result?.length > 0 ? (
                     warehouses?.result?.map((item: any, index: number) => (
                       <tr
-                        onClick={() =>
-                          navigate(`/warehouses/detail?_id=${item?._id}&vendorId=${item?.vendorId}`)
-                        }
+                        // onClick={() =>
+                        //   navigate(`/warehouses/detail?_id=${item?._id}&vendorId=${item?.vendorId}`)
+                        // }
                         key={index}
                       >
                         <td>{index + 1}</td>
                         <td>
 
                           <img
-                            className="mr-1"
+                            className=""
                             src={generateFilePath(item?.shop_photo_logo)}
                             // src={item?.imageUrl[0]}
                             alt="warehouses"
@@ -176,7 +209,17 @@ const VendorWarehousesList = ({
                           />
                           {/* </Link> */}
                         </td>
-                        <td>{item?.shop_name}</td>
+                        <td>
+                          <Link
+                            to={`/warehouses/detail?_id=${item?._id}&vendorId=${item?.vendorId}`}
+                            style={{ textDecoration: "none", color: "inherit" }}
+                          >
+                            <strong>
+                              {item?.shop_name}
+                            </strong>
+                          </Link>
+
+                        </td>
                         <td>{item?.location || "-"}</td>
                         <td>
                           {item?.createdAt
@@ -191,17 +234,20 @@ const VendorWarehousesList = ({
                             {item?.issuspended ? "Suspended" : "Active"}
                           </div>
                         </td>
-                        {/* <td>
+                        <td>
                           <div className="d-flex align-items-center justify-content-around">
                             <div
                               className="action_btn"
-                              
+                              onClick={() => {
+                                setSelectedStock(item);
+                                setDeleteOpen(true);
+                              }}
                             >
-                              <i className="fas fa-pencil-alt"></i>
+                              <i className="far fa-trash-alt"></i>
                             </div>
-                            
+
                           </div>
-                        </td> */}
+                        </td>
                       </tr>
                     ))
                   ) : (
@@ -229,12 +275,12 @@ const VendorWarehousesList = ({
           </Col>
         </Row>
       </div>
-      {/* <ConfirmationPopup
+      <ConfirmationPopup
         submit={() => handleDeleteStock()}
         isOpen={isDeleteOpen}
         toggle={() => setDeleteOpen(!isDeleteOpen)}
-        text={"Are you sure that you want to delete this stock?"}
-      /> */}
+        text={"Are you sure that you want to delete this warehouse?"}
+      />
 
       <AddWarehouse
         isOpen={isAddOpen}

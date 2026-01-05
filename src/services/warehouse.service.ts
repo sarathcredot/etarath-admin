@@ -211,7 +211,7 @@ export const useGetAllVendorCustomers = (
 
 
 
-// CREATE NEW PRODUCT
+// CREATE NEW waerhouse
 export const createWarehouse = async ({
   vendorId,
   data,
@@ -226,6 +226,29 @@ export const useCreateWarehouse = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createWarehouse,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["warehouses"] });
+    },
+  });
+};
+
+
+
+// CREATE NEW PRODUCT
+export const deletWarehouse = async ({
+  vendorId,
+  warehouseId,
+}: {
+  vendorId: string;
+  warehouseId: any;
+}) => {
+  return await axiosAuth.delete(`${baseUrl}/${vendorId}/warehouse/${warehouseId}`,);
+};
+
+export const useDeleteWarehouse = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deletWarehouse,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["warehouses"] });
     },

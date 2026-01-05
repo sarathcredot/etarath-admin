@@ -13,8 +13,9 @@ import { StockEditValidationSchema } from "src/validations/validationSchemas";
 import { useFormik } from "formik";
 import { useGetAllVendors } from "src/services/vendor.service";
 import { errorMsg } from "src/utils/toast";
-import AddStock from "./popups/AddStock";
+import AddAgent from "./popups/AddAgent";
 import dayjs from "dayjs";
+import { useDeleteAgent } from "src/services/salesAgent.service"
 
 const SalesExecutivesList = ({
   agents,
@@ -49,7 +50,7 @@ const SalesExecutivesList = ({
   // MUTATION
   // const { mutateAsync: deleteStock } = useDeleteStock();
   // const { mutateAsync: updateStock } = useUpdateStock();
-
+  const { mutateAsync: deletAgent } = useDeleteAgent()
   //FORMINK
   const formik = useFormik({
     initialValues: {
@@ -121,20 +122,6 @@ const SalesExecutivesList = ({
   const totalRecords = agents?.total || 0;
   const totalPages = agents?.totalPages || 0;
 
-  useEffect(() => {
-    if (isEditOpen && selectedStock) {
-      formik.setValues({
-        stock: selectedStock?.stock ? selectedStock?.stock.toString() : "",
-        price: selectedStock?.price ? selectedStock?.price.toString() : "",
-        warrantyPeriod: selectedStock?.warrantyPeriod
-          ? selectedStock?.warrantyPeriod.toString()
-          : "",
-        warranty_type: selectedStock?.warranty_type
-          ? selectedStock?.warranty_type
-          : "",
-      });
-    }
-  }, [isEditOpen, selectedStock]);
 
   const debouncedHandleSearch = useCallback(
     debounce((text) => {
@@ -146,6 +133,35 @@ const SalesExecutivesList = ({
     }, 1000),
     []
   );
+
+
+  const handleDeleteStock = async () => {
+
+    try {
+
+      console.log("de", selectedStock)
+
+      const res = await deletAgent({id:selectedStock?._id})
+      toast(res?.data?.message, {
+        containerId: "default",
+        className: "no-icon notification-success",
+      });
+
+      setDeleteOpen(false)
+
+    } catch (error) {
+
+      toast(_.capitalize(errorMsg(error).toLowerCase()), {
+        containerId: "default",
+        className: "no-icon notification-danger",
+      });
+
+      setDeleteOpen(false)
+    }
+
+  }
+
+
   return (
     <>
       <div className="">
@@ -203,6 +219,17 @@ const SalesExecutivesList = ({
                       </InputGroup>
                     </div>
                   </Col>
+
+                  <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
+                    <Button
+                      className="font-weight-semibold"
+                      variant="dark"
+                      onClick={() => setAddOpen(true)}
+                    >
+                      + Add
+                    </Button>
+                  </Col>
+
                 </Row>
               </div>
               <Form onSubmit={formik.handleSubmit}>
@@ -222,9 +249,9 @@ const SalesExecutivesList = ({
                       <th>Email</th>
                       <th>Created Date</th>
                       <th>Status</th>
-                      {/* <th className="text-center" style={{ width: "80px" }}>
+                      <th className="text-center" style={{ width: "80px" }}>
                         Actions
-                      </th> */}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -239,10 +266,10 @@ const SalesExecutivesList = ({
                       agents?.result?.length > 0 ? (
                       agents?.result?.map((item: any, index: number) => (
                         <tr
-                        onClick={() =>
-                          navigate(`/sales-executives/detail?vendor=${vendorId}&_id=${item?._id}`)
-                        } 
-                        style={{ cursor: "pointer" }} key={index}
+                          // onClick={() =>
+                          //   navigate(`/sales-executives/detail?vendor=${vendorId}&_id=${item?._id}`)
+                          // }
+                          style={{ cursor: "pointer" }} key={index}
                         >
                           <td>
                             {/* <Link
@@ -271,11 +298,12 @@ const SalesExecutivesList = ({
                             {/* </Link> */}
                           </td>
                           <td>
-                            {/* <Link
-                              to={`/stock/detail?_id=${item?.stockIdByVendor}`}
-                            > */}
-                            <strong> {item?.userName} </strong>
-                            {/* </Link> */}
+                            <Link
+                              to={`/sales-executives/detail?vendor=${vendorId}&_id=${item?._id}`}
+                              style={{ textDecoration: "none", color: "inherit" }}
+                            >
+                              <strong> {item?.userName} </strong>
+                            </Link>
                           </td>
                           <td>{item?.phoneNumber || "-"}</td>
                           <td>{item?.email || "-"}</td>
@@ -292,6 +320,20 @@ const SalesExecutivesList = ({
                               {item?.issuspended ? "Suspended" : "Active"}
                             </div>
                           </td>
+
+                          <td>
+                            <div
+                              className="action_btn"
+                              onClick={() => {
+                                setSelectedStock(item);
+                                setDeleteOpen(true);
+                              }}
+                            >
+                              <i className="far fa-trash-alt"></i>
+                            </div>
+                          </td>
+
+
                           {/* <td>
                             <div className="d-flex align-items-center justify-content-around">
                               {isEditOpen &&
@@ -364,12 +406,18 @@ const SalesExecutivesList = ({
           </Col>
         </Row>
       </div>
-      {/* <ConfirmationPopup
+      <ConfirmationPopup
         submit={() => handleDeleteStock()}
         isOpen={isDeleteOpen}
         toggle={() => setDeleteOpen(!isDeleteOpen)}
-        text={"Are you sure that you want to delete this stock?"}
-      /> */}
+        text={"Are you sure that you want to delete agent ?"}
+      />
+
+      <AddAgent
+        isOpen={isAddOpen}
+        toggle={() => setAddOpen(!isAddOpen)}
+        vendorId={vendorId}
+      />
     </>
   );
 };

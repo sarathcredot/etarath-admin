@@ -14,6 +14,8 @@ import {
   useDeleteStock,
   useGetStocksByProductId,
   useUpdateStock,
+  useUpdateWaerehouseStockQt,
+  useUpdateWaerehouseStockStatus,
 } from "src/services/stock.service";
 import {
   StockEditValidationSchema,
@@ -31,6 +33,7 @@ import { errorMsg } from "src/utils/toast";
 const StocksList = ({
   stocks,
   stocksLoading = false,
+  waerhouseId,
   vendorId,
   setPage = () => { },
   setSearch = () => { }, // fallback so debounce doesn’t break
@@ -41,6 +44,7 @@ const StocksList = ({
 
 }: {
   vendorId?: any;
+  waerhouseId?: any
   stocks: any;
   stocksLoading: boolean;
   setPage?: Dispatch<React.SetStateAction<number>>;
@@ -63,6 +67,10 @@ const StocksList = ({
   // MUTATION
   const { mutateAsync: deleteStock } = useDeleteStock();
   const { mutateAsync: updateStock } = useUpdateStock();
+
+  const { mutateAsync: updateStatus } = useUpdateWaerehouseStockStatus();
+  const { mutateAsync: updateQt } = useUpdateWaerehouseStockQt();
+
 
   //FORMINK
   const formik = useFormik({
@@ -170,6 +178,66 @@ const StocksList = ({
 
 
 
+  const handleChangeStatus = async (proid: any, status: any) => {
+    try {
+
+      // console.log("update status", warehouse)
+
+
+      const resp = await updateStatus({
+        productId: proid,
+        waerehousesId: waerhouseId,
+        status: !status,
+      });
+
+      // setSelectedWaer(null);
+      // setStatusOpen(false);
+      toast(resp?.data?.message, {
+        containerId: "default",
+        className: "no-icon notification-success",
+      });
+    } catch (error) {
+      toast("Can't update Retailer right now, please try later!", {
+        containerId: "default",
+        className: "no-icon notification-danger",
+      });
+      // setStatusOpen(false);
+    }
+  };
+
+
+  const handleChangeQt = async (warehouse: any) => {
+    try {
+
+      console.log("update qt", selectedStock)
+
+
+      // const resp = await updateQt({
+      //   productId: selectedStock?._id,
+      //   waerehousesId: selectedStock?.availableWarehouses?.warehouseId,
+      //   stock: formik.values.stock
+      // });
+
+      // formik.resetForm();
+      // setSelectedStock(null);
+      // setEditOpen(false);
+      // toast(resp?.data?.message, {
+      //   containerId: "default",
+      //   className: "no-icon notification-success",
+      // });
+    } catch (error) {
+      toast("Can't update stock right now, please try later!", {
+        containerId: "default",
+        className: "no-icon notification-danger",
+      });
+      // formik.resetForm();
+      setSelectedStock(null);
+      setEditOpen(false);
+    }
+  };
+
+
+
   return (
     <>
       <div className="">
@@ -271,12 +339,11 @@ const StocksList = ({
                       <th>General Sale Price</th>
                       <th>Loyal Customer Price</th>
                       <th>Warranty Period</th>
-                      {/* <th>Verification </th> */}
-
-                      {/* <th>Status</th> */}
-                      {/* <th className="text-center" style={{ width: "80px" }}>
+                      <th>Quanty </th>
+                      <th>Status</th>
+                      <th className="text-center" style={{ width: "80px" }}>
                         Actions
-                      </th> */}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -292,10 +359,10 @@ const StocksList = ({
                       stocks?.result?.map((item: any, index: number) => (
                         <tr
                           key={index}
-                          onClick={() =>
-                            !isEditOpen &&
-                            navigate(`/stock/detail?_id=${item?._id}`)
-                          }
+                          // onClick={() =>
+                          //   !isEditOpen &&
+                          //   navigate(`/stock/detail?_id=${item?._id}`)
+                          // }
                           style={{ cursor: "pointer" }}
                         >
                           <td>
@@ -309,41 +376,42 @@ const StocksList = ({
                             </Link> */}
                           </td>
                           <td>
-                            <Link
+                            {/* <Link
                               style={{ width: "50px", height: "50px" }}
                               className="d-flex align-items-center justify-content-center"
                               onClick={(e) => e.stopPropagation()}
                               to={`/products/detail?_id=${item?.productDetails?._id}`}
-                            >
-                              <img
-                                className="mr-1"
-                                src={generateFilePath(
-                                  item?.productDetails?.imageUrl[0]
-                                )}
-                                // src={item?.imageUrl[0]}
-                                alt="product"
-                                width="40"
-                                height="40"
-                              // crossOrigin="anonymous"
-                              />
-                            </Link>
+                            > */}
+                            <img
+                              className="mr-1"
+                              src={generateFilePath(
+                                item?.productDetails?.imageUrl[0]
+                              )}
+                              // src={item?.imageUrl[0]}
+                              alt="product"
+                              width="40"
+                              height="40"
+                            // crossOrigin="anonymous"
+                            />
+                            {/* </Link> */}
                           </td>
                           <td>
-                            {/* <Link
-                              onClick={(e) => e.stopPropagation()}
-                              to={`/products/detail?_id=${item?.product?._id}`}
-                            > */}
+                            <Link
 
-                            <strong>
-                              {item?.productDetails?.productName}-{" "}
-                              {`${item?.productDetails?.width}${item?.productDetails?.height
+                              to={`/stock/detail?_id=${item?._id}`}
+                              style={{ textDecoration: "none", color: "inherit" }}
+                            >
+
+                              <strong>
+                                {item?.productDetails?.productName}-{" "}
+                                {`${item?.productDetails?.width}${item?.productDetails?.height
                                   ? `/${item?.productDetails?.height}`
                                   : ""
-                                } R${item?.productDetails?.size}`}
-                            </strong>
+                                  } R${item?.productDetails?.size}`}
+                              </strong>
 
 
-                            {/* </Link> */}
+                            </Link>
                           </td>
                           {/* {isEditOpen &&
                           selectedStock &&
@@ -530,7 +598,52 @@ const StocksList = ({
                               {item?.warrantyPeriod}{" "}
                               {capitalize(item?.warranty_type)}
                             </td>
+
                           )}
+                          <td>
+                            {
+                              item?.availableWarehouses
+                                ?.find(
+                                  (data: any) =>
+                                    data?.warehouseId?.toString() === waerhouseId?.toString()
+                                )
+                                ?.stock ?? "-"
+                            }
+                          </td>
+
+                          <td>
+                            {(() => {
+                              const warehouse = item?.availableWarehouses?.find(
+                                (data: any) =>
+                                  data?.warehouseId?.toString() === waerhouseId?.toString()
+                              );
+
+                              return warehouse ? (
+                                <div
+                                  onClick={() => { handleChangeStatus(item?._id, warehouse?.status) }}
+                                  className="d-flex align-items-center">
+                                  <PtSwitch
+                                    className="mr-2"
+                                    on={warehouse?.status}
+                                    size="sm"
+                                    variant="success"
+                                  />
+                                </div>
+                              ) : null;
+                            })()}
+                          </td>
+
+                          <td>
+                            <div
+                              className="action_btn"
+                              onClick={() => {
+                                setSelectedStock(item);
+                                setEditOpen(true);
+                              }}
+                            >
+                              <i className="fas fa-pencil-alt"></i>
+                            </div>
+                          </td>
                           {/* <td>
                             <div
                               className={`ecommerce-status ${item?.isVerified}`}

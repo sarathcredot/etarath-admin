@@ -313,3 +313,8 @@ export const WarehouseValidationSchema = Yup.object().shape({
   address: Yup.string().required("Warehouse Address is required"),
   shop_photo_logo: Yup.mixed().required("Upload Warehouse Image"),
 });
+
+
+
+
+

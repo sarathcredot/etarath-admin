@@ -364,7 +364,7 @@ const WarehouseDetailPage = () => {
                     <Tabs className="nav-justified">
                         <Tab eventKey="products" title="Products">
                             <StocksList
-                                
+                                waerhouseId={warehouseId}
                                 stocks={stocks}
                                 stocksLoading={stocksLoading}
                                 setPage={setStockPage}

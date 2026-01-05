@@ -106,7 +106,7 @@ const EditWarehouse = ({ isOpen, toggle, vendorId, warehouseId, data }: Props) =
       // size="lg"
       >
         <Modal.Header>
-          <h3 className="my-2">Edit Sales Executive</h3>
+          <h3 className="my-2">Edit warehouse Executive</h3>
         </Modal.Header>
         <Form onSubmit={formik.handleSubmit}>
           <Modal.Body className="pb-4">
