@@ -62,6 +62,8 @@ const StocksList = ({
   const [isAddOpen, setAddOpen] = useState<boolean>(false);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [selectedStock, setSelectedStock] = useState<any>(null);
+  const [isEditOpenQt, setEditOpenQt] = useState<boolean>(false);
+
 
 
   // MUTATION
@@ -79,7 +81,7 @@ const StocksList = ({
       price_normal_customer: "",
       price_loyal_customer: "",
       warrantyPeriod: "",
-      warranty_type: "",
+      stock: "",
     },
     validationSchema: StockEditValidationSchema,
 
@@ -144,25 +146,6 @@ const StocksList = ({
   const totalRecords = stocks?.total || 0;
   const totalPages = stocks?.totalPages || 0;
 
-  useEffect(() => {
-    if (isEditOpen && selectedStock) {
-      formik.setValues({
-        // stock: selectedStock?.stock ? selectedStock?.stock.toString() : "",
-        price_normal_customer: selectedStock?.price_normal_customer
-          ? selectedStock?.price_normal_customer.toString()
-          : "",
-        price_loyal_customer: selectedStock?.price_loyal_customer
-          ? selectedStock?.price_loyal_customer.toString()
-          : "",
-        warrantyPeriod: selectedStock?.warrantyPeriod
-          ? selectedStock?.warrantyPeriod.toString()
-          : "",
-        warranty_type: selectedStock?.warranty_type
-          ? selectedStock?.warranty_type
-          : "",
-      });
-    }
-  }, [isEditOpen, selectedStock]);
 
 
   const debouncedHandleSearch = useCallback(
@@ -175,6 +158,35 @@ const StocksList = ({
     }, 1000),
     []
   );
+
+
+  const stockFormik = useFormik({
+    initialValues: {
+      stock: "",
+
+    },
+
+
+    onSubmit: (values) => {
+      console.log(values, "VALUES");
+      handleChangeQt(values);
+    },
+  });
+
+
+  useEffect(() => {
+    if (isEditOpenQt && selectedStock) {
+
+      const waerhouse = selectedStock?.availableWarehouses.find((item: any) => item?.warehouseId.toString() === waerhouseId?.toString())
+
+      console.log("stock", waerhouse)
+
+      stockFormik.setValues({
+        stock: waerhouse?.stock ? waerhouse?.stock : "",
+
+      });
+    }
+  }, [isEditOpenQt, selectedStock]);
 
 
 
@@ -212,25 +224,25 @@ const StocksList = ({
       console.log("update qt", selectedStock)
 
 
-      // const resp = await updateQt({
-      //   productId: selectedStock?._id,
-      //   waerehousesId: selectedStock?.availableWarehouses?.warehouseId,
-      //   stock: formik.values.stock
-      // });
+      const resp = await updateQt({
+        productId: selectedStock?._id,
+        waerehousesId: waerhouseId,
+        stock: stockFormik.values.stock
+      });
 
-      // formik.resetForm();
-      // setSelectedStock(null);
-      // setEditOpen(false);
-      // toast(resp?.data?.message, {
-      //   containerId: "default",
-      //   className: "no-icon notification-success",
-      // });
+      stockFormik.resetForm();
+      setSelectedStock(null);
+      setEditOpenQt(false);
+      toast(resp?.data?.message, {
+        containerId: "default",
+        className: "no-icon notification-success",
+      });
     } catch (error) {
       toast("Can't update stock right now, please try later!", {
         containerId: "default",
         className: "no-icon notification-danger",
       });
-      // formik.resetForm();
+      stockFormik.resetForm();
       setSelectedStock(null);
       setEditOpen(false);
     }
@@ -557,7 +569,7 @@ const StocksList = ({
                                   </Form.Group>
                                 </div>
                                 <div className="d-flex">
-                                  <Form.Group className="align-items-center">
+                                  {/* <Form.Group className="align-items-center">
                                     <Form.Control
                                       style={{ color: "#000" }}
                                       //   size="md"
@@ -589,7 +601,7 @@ const StocksList = ({
                                     <Form.Control.Feedback type="invalid">
                                       {formik.errors.warranty_type}
                                     </Form.Control.Feedback>
-                                  </Form.Group>
+                                  </Form.Group> */}
                                 </div>
                               </div>
                             </td>
@@ -601,14 +613,29 @@ const StocksList = ({
 
                           )}
                           <td>
-                            {
-                              item?.availableWarehouses
-                                ?.find(
+                            {isEditOpenQt &&
+                              selectedStock?._id === item?._id ?
+                              (
+                                <Form.Group as={Row} className="align-items-center">
+                                  <Form.Control
+                                    type="number"
+                                    placeholder="Enter stock"
+                                    name="stock"
+                                    value={stockFormik.values.stock}
+                                    onChange={stockFormik.handleChange}
+                                    isInvalid={!!stockFormik.errors.stock && stockFormik.touched.stock}
+                                    step="any"
+                                  />
+                                  <Form.Control.Feedback type="invalid">
+                                    {stockFormik.errors.stock}
+                                  </Form.Control.Feedback>
+                                </Form.Group>
+                              ) : (
+                                item?.availableWarehouses?.find(
                                   (data: any) =>
                                     data?.warehouseId?.toString() === waerhouseId?.toString()
-                                )
-                                ?.stock ?? "-"
-                            }
+                                )?.stock ?? "-"
+                              )}
                           </td>
 
                           <td>
@@ -633,7 +660,7 @@ const StocksList = ({
                             })()}
                           </td>
 
-                          <td>
+                          {/* <td>
                             <div
                               className="action_btn"
                               onClick={() => {
@@ -643,7 +670,59 @@ const StocksList = ({
                             >
                               <i className="fas fa-pencil-alt"></i>
                             </div>
+                          </td> */}
+
+                          <td onClick={(e) => e.stopPropagation()}>
+                            <div className="d-flex align-items-center justify-content-around">
+                              {isEditOpenQt &&
+                                selectedStock?._id === item?._id ?
+
+                                (
+                                  <>
+                                    <button onClick={() => { stockFormik.submitForm() }} className="action_btn" type="submit">
+                                      <i className="fas fa-check"></i>
+                                    </button>
+                                    <div
+                                      className="action_btn"
+                                      onClick={() => {
+                                        stockFormik.resetForm();
+                                        setSelectedStock(null);
+                                        setEditOpenQt(false);
+                                      }}
+                                    >
+                                      <i className="fas fa-x-mark"></i>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    <div
+                                      className="action_btn"
+                                      onClick={() => {
+                                        setSelectedStock(item);
+                                        setEditOpenQt(true);
+                                      }}
+                                    >
+                                      <i className="fas fa-pencil-alt"></i>
+                                    </div>
+                                    {/* <div
+                                  className="action_btn"
+                                  onClick={() => {
+                                    setSelectedStock(item);
+                                    setDeleteOpen(true);
+                                  }}
+                                >
+                                  <i className="far fa-trash-alt"></i>
+                                </div> */}
+                                  </>
+                                )}
+                            </div>
                           </td>
+
+
+
+
+
+
                           {/* <td>
                             <div
                               className={`ecommerce-status ${item?.isVerified}`}
