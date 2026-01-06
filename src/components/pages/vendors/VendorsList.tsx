@@ -14,17 +14,17 @@ import PtSwitch from "src/components/features/elements/switch";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 import { toast } from "react-toastify";
 import Loader from "src/components/features/loader";
-import { debounce } from "lodash";
+import { debounce, result } from "lodash";
 import AddVendor from "./popups/AddVendor";
 import AddBussinessDetails from "./popups/AddBussinessDetails";
 import { generateFilePath } from "src/services/url.service";
 import EditVendor from "./popups/EditVendor";
-import { useUpdateVendorStatus } from "src/services/vendor.service";
+import { useUpdateVendorStatus, useDeleteVendor } from "src/services/vendor.service";
 
 type Props = {
   header?: boolean;
   vendors: any;
-  data:any
+  data: any
   isLoading: boolean;
   setPage: Dispatch<React.SetStateAction<number>>;
   setLimit: Dispatch<React.SetStateAction<number>>;
@@ -57,6 +57,8 @@ const VendorsList = ({
   console.log(selectedVendor, "selectedVendor");
   //MUTATIONS
   const { mutateAsync: updateVendorStatus } = useUpdateVendorStatus();
+  const { mutateAsync: deleteVendor } = useDeleteVendor();
+
 
   //HANDLERS
   const handleChangeStatus = async (vendorId: string, isActive: boolean) => {
@@ -85,6 +87,30 @@ const VendorsList = ({
     }
   };
 
+  const handleChangeDelete = async (vendorId: string) => {
+    try {
+      if (!vendorId) throw new Error("Vendor ID is required!");
+
+      const resp = await deleteVendor({
+        id: vendorId,
+
+      });
+
+      setSelectedVendor(null);
+      setDeleteOpen(false);
+      toast("Vendor deleted successfully", {
+        containerId: "default",
+        className: "no-icon notification-success",
+      });
+    } catch (error) {
+      toast("Can't delete Vendor right now, please try later!", {
+        containerId: "default",
+        className: "no-icon notification-danger",
+      });
+      setDeleteOpen(false);
+    }
+  };
+
   const debouncedHandleSearch = useCallback(
     debounce((text) => {
       try {
@@ -101,6 +127,7 @@ const VendorsList = ({
 
   const totalRecords = data?.total || 0;
   const totalPages = data?.totalPages || 0;
+
 
 
   return (
@@ -172,7 +199,7 @@ const VendorsList = ({
                     </th>
                   </tr>
                 </thead>
-                <tbody  style={{ borderBottom: "1px solid #dee2e6",cursor:"pointer" }}>
+                <tbody style={{ borderBottom: "1px solid #dee2e6", cursor: "pointer" }}>
                   {isLoading && (
                     <tr>
                       <td colSpan={9}>
@@ -212,9 +239,16 @@ const VendorsList = ({
                             
                             </strong>
                           </Link> */}
-                         <td>
-                          {index+1}
-                        </td>
+                          <td>
+                            {/* {index + 1} */}
+                            {/* {(vendors?.currentPage - 1) * itemsPerPage + index + 1} */}
+
+
+                            {(data?.currentPage - 1) * limit + index + 1}
+
+                         
+
+                          </td>
 
                         </td>
                         <td>
@@ -238,9 +272,9 @@ const VendorsList = ({
                         </td>
                         <td>
                           <strong>
- {item?.kycDetails?.business_name || item?.userName}
+                            {item?.kycDetails?.business_name || item?.userName}
                           </strong>
-                         
+
                         </td>
                         <td>
                           {item?.kycDetails?.phoneNumber || item?.phoneNumber}
@@ -295,7 +329,7 @@ const VendorsList = ({
                             >
                               <i className="far fa-eye"></i>
                             </div>
-                            {/* <div
+                            <div
                               className="action_btn"
                               onClick={() => {
                                 setDeleteOpen(true);
@@ -303,7 +337,7 @@ const VendorsList = ({
                               }}
                             >
                               <i className="far fa-trash-alt"></i>
-                            </div> */}
+                            </div>
                           </div>
                         </td>
                       </tr>
@@ -331,6 +365,18 @@ const VendorsList = ({
         toggle={() => setStatusOpen(!isStatusOpen)}
         text={"Are you sure that you want to change the status of this vendor?"}
       />
+
+      <ConfirmationPopup
+        submit={() =>
+          handleChangeDelete(selectedVendor?._id)
+        }
+        isOpen={isDeleteOpen}
+        toggle={() => setDeleteOpen(!isDeleteOpen)}
+        text={"Are you sure that you want to delete of this vendor?"}
+      />
+
+
+
       <AddVendor isOpen={isAddOpen} toggle={() => setAddOpen(!isAddOpen)} />
       <EditVendor
         vendorId={selectedVendor?._id}

@@ -267,7 +267,9 @@ const RequestedProductsPage = () => {
                                   (productsData?.pagination?.page - 1) *
                                     productsData?.pagination?.limit +
                                   1} */}
-                                {index + 1}
+                                {/* {index + 1} */}
+                                {(products?.currentPage - 1) * limit + index + 1}
+
                                 {/* </strong> */}
                                 {/* </Link> */}
                               </td>

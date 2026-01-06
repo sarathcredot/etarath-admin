@@ -201,7 +201,7 @@ const AttributesList = ({
                           </Button>
                         </div>
                       </Col> */}
-                 
+
                 </Row>
               </div>
               <Table
@@ -215,6 +215,8 @@ const AttributesList = ({
                   <tr>
                     <th style={{ width: "30px" }}>#</th>
                     <th>Attribute</th>
+                    <th>Priority</th>
+
                     <th style={{ width: "120px" }}>Status</th>
                     <th className="text-center" style={{ width: "80px" }}>
                       Actions
@@ -232,16 +234,20 @@ const AttributesList = ({
                     attributesData?.map((item: any, index: number) => (
                       <tr key={index}>
                         <td>
-                          <strong>
-                            {/* {index +
-                                  (attributesData?.pagination?.page - 1) *
-                                    attributesData?.pagination?.limit +
-                                  1} */}
-                            {index + 1}
-                          </strong>
+                          {/* <strong> */}
+
+                          {/* {index + 1} */}
+                           {(data?.currentPage - 1) * limit + index + 1}
+                          {/* </strong> */}
                         </td>
 
-                        <td>{item?.value}</td>
+                        <td>
+                          <strong>
+                            {item?.value}
+                          </strong>
+
+                        </td>
+                        <td>{item?.priority}</td>
                         <td>
                           <div
                             onClick={() => {

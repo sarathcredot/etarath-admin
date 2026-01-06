@@ -265,7 +265,8 @@ const BrandsList = ({
                           style={{ textDecoration: "none", color: "inherit" }}
                           >
                             {/* <strong> */}
-                              {index + 1}
+                              {/* {index + 1} */}
+                               {(brandsData?.currentPage - 1) * limit + index + 1}
                               {/* </strong> */}
                           </Link>
                         </td>

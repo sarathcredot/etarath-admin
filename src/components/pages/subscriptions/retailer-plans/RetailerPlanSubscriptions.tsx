@@ -184,7 +184,8 @@ const RetailerPlanSubscriptions = ({ header = false, planId }: any) => {
                         <td>
                           <Link to={`/organizers/detail?_id=${item?.user?._id}`}>
                             {/* <strong> */}
-                            {index + 1}
+                            {/* {index + 1} */}
+                                {(subscriptions?.currentPage - 1) * limit + index + 1}
                             {/* </strong> */}
                           </Link>
                         </td>

@@ -87,13 +87,13 @@ export const VendorValidationSchema = Yup.object().shape({
   phoneNumber: Yup.string().required("Phone Number is required"),
   // .min(8, "Only 10 digits required")
   // .max(10, "Only 10 digits allowed"),
-  eidNo: Yup.string()
-    .required("EID Number is required")
-    .matches(
-      /^784-(19|20)\d{2}-\d{7}-\d{1}$/,
-      "Enter a valid Emirates ID number (e.g. 784-1995-1234567-1)"
-    ),
-  eidFile: Yup.mixed().required("EID Document is required"),
+  // eidNo: Yup.string()
+  //   .required("EID Number is required")
+  //   .matches(
+  //     /^784-(19|20)\d{2}-\d{7}-\d{1}$/,
+  //     "Enter a valid Emirates ID number (e.g. 784-1995-1234567-1)"
+  //   ),
+  // eidFile: Yup.mixed().required("EID Document is required"),
   imgUrl: Yup.mixed().required("Profile is required"),
 });
 

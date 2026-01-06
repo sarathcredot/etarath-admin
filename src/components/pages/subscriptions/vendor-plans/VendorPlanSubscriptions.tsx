@@ -170,7 +170,8 @@ const VendorPlanSubscriptions = ({ header = false, planId }: any) => {
                           style={{ textDecoration: "none", color: "inherit" }}
                           > */}
                           {/* <strong> */}
-                          {index + 1}
+                          {/* {index + 1} */}
+                           {(subscriptions?.currentPage - 1) * limit + index + 1}
                           {/* </strong> */}
                           {/* </Link> */}
                         </td>

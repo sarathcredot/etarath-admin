@@ -164,3 +164,26 @@ export const useGetRetailerPriorityByIdById = (
     enabled: enabled,
   });
 };
+
+
+
+export const deleteRetailer = async ({
+  id
+}: {
+  id: string;
+
+}) => {
+  if (!id) throw new Error("Retailer id required");
+  return await axiosAuth.delete(`${baseUrl}/${id}`);
+};
+
+export const useDeleteRetailer = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteRetailer,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["retailers"] });
+      queryClient.invalidateQueries({ queryKey: ["retailers"] });
+    },
+  });
+};

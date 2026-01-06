@@ -6,7 +6,7 @@ const baseUrl = `${url}/admin/users`;
 
 // GET ALL VENDORS
 export const getAllVendors = async (queryParams?: any) => {
-  return await axiosAuth.get(`${baseUrl}`,{
+  return await axiosAuth.get(`${baseUrl}`, {
     params: {
       role: 'vendor',
       ...queryParams
@@ -52,7 +52,7 @@ export const useAddVendor = () => {
 };
 
 // UPDATE A VENDOR
-export const updateVendor = async ({ id, data }: { id: number|string; data: any }) => {
+export const updateVendor = async ({ id, data }: { id: number | string; data: any }) => {
   if (!id) throw new Error("No id provided");
   return await axiosAuth.put(`${baseUrl}/${id}`, data);
 };
@@ -96,57 +96,57 @@ export const useUpdateVendorStatus = () => {
 
 // GET ALL VENDOR STOCKS
 
-export const getStocksByVendorId = async (vendorId: any, queryParams?:any) => {
+export const getStocksByVendorId = async (vendorId: any, queryParams?: any) => {
   if (!vendorId) throw new Error("No vendor id provided");
-  return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/all-stocks`,{
-    params:{
+  return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/all-stocks`, {
+    params: {
       ...queryParams
     }
   });
 };
 
-export const useGetStocksByVendorId = (vendorId: any, enabled: boolean, queryParams?:any) => {
+export const useGetStocksByVendorId = (vendorId: any, enabled: boolean, queryParams?: any) => {
   return useQuery({
-    queryKey: ["stocks", vendorId,queryParams],
-    queryFn: () => getStocksByVendorId(vendorId,queryParams).then((res) => res?.data?.data),
+    queryKey: ["stocks", vendorId, queryParams],
+    queryFn: () => getStocksByVendorId(vendorId, queryParams).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };
 
 // GET ALL VENDOR ORDERS
 
-export const getOrdersByVendorId = async (vendorId: any,queryParams?:any) => {
+export const getOrdersByVendorId = async (vendorId: any, queryParams?: any) => {
   if (!vendorId) throw new Error("No vendor id provided");
-  return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/all-orders`,{
-    params:{
+  return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/all-orders`, {
+    params: {
       ...queryParams
     }
   });
 };
 
-export const useGetOrdersByVendorId = (vendorId: any, enabled: boolean,queryParams?:any) => {
+export const useGetOrdersByVendorId = (vendorId: any, enabled: boolean, queryParams?: any) => {
   return useQuery({
-    queryKey: ["vendor-orders", vendorId,queryParams],
-    queryFn: () => getOrdersByVendorId(vendorId,queryParams).then((res) => res?.data?.data),
+    queryKey: ["vendor-orders", vendorId, queryParams],
+    queryFn: () => getOrdersByVendorId(vendorId, queryParams).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };
 
 // GET ALL VENDOR Claims
 
-export const getClaimByVendorId = async (vendorId: any,queryParams?:any) => {
+export const getClaimByVendorId = async (vendorId: any, queryParams?: any) => {
   if (!vendorId) throw new Error("No vendor id provided");
-  return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/all-claims`,{
-    params:{
+  return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/all-claims`, {
+    params: {
       ...queryParams
     }
   });
 };
 
-export const useGetClaimByVendorId = (vendorId: any, enabled: boolean,queryParams?:any) => {
+export const useGetClaimByVendorId = (vendorId: any, enabled: boolean, queryParams?: any) => {
   return useQuery({
-    queryKey: ["vendor-claims", vendorId,queryParams],
-    queryFn: () => getClaimByVendorId(vendorId,queryParams).then((res) => res?.data?.data),
+    queryKey: ["vendor-claims", vendorId, queryParams],
+    queryFn: () => getClaimByVendorId(vendorId, queryParams).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };
@@ -155,19 +155,45 @@ export const useGetClaimByVendorId = (vendorId: any, enabled: boolean,queryParam
 
 // GET ALL VENDOR SALES AGENTS
 
-export const getAgentsByVendorId = async (vendorId: any,queryParams?:any) => {
+export const getAgentsByVendorId = async (vendorId: any, queryParams?: any) => {
   if (!vendorId) throw new Error("No vendor id provided");
-  return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/sales-agents`,{
-   params:{
-    ...queryParams
-   }
+  return await axiosAuth.get(`${baseUrl}/vendor/${vendorId}/sales-agents`, {
+    params: {
+      ...queryParams
+    }
   });
 };
 
-export const useGetAgentsByVendorId = (vendorId: any, enabled: boolean,queryParams?:any) => {
+export const useGetAgentsByVendorId = (vendorId: any, enabled: boolean, queryParams?: any) => {
   return useQuery({
-    queryKey: ["sales-agents", vendorId,queryParams],
-    queryFn: () => getAgentsByVendorId(vendorId,queryParams).then((res) => res?.data?.data),
+    queryKey: ["sales-agents", vendorId, queryParams],
+    queryFn: () => getAgentsByVendorId(vendorId, queryParams).then((res) => res?.data?.data),
     enabled: enabled,
+  });
+};
+
+
+
+// delete vendor
+
+
+export const deleteVendor = async ({
+  id
+}: {
+  id: string;
+
+}) => {
+  if (!id) throw new Error("Vendor id required");
+  return await axiosAuth.delete(`${baseUrl}/${id}`);
+};
+
+export const useDeleteVendor = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteVendor,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["vendors"] });
+      queryClient.invalidateQueries({ queryKey: ["vendor"] });
+    },
   });
 };

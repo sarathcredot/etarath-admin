@@ -18,7 +18,7 @@ import { debounce } from "lodash";
 import AddRetailer from "./popups/AddRetailer";
 import { generateFilePath } from "src/services/url.service";
 import EditRetailer from "./popups/EditRetailer";
-import { useUpdateRetailerStatus } from "src/services/retailer.service";
+import { useUpdateRetailerStatus , useDeleteRetailer } from "src/services/retailer.service";
 
 type Props = {
   header?: boolean;
@@ -53,9 +53,12 @@ const RetailersList = ({
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [isStatusOpen, setStatusOpen] = useState<boolean>(false);
   const [selectedRetailer, setSelectedRetailer] = useState<any>(null);
+  const [selectedVendor, setSelectedVendor] = useState<any>(null);
+
   console.log(selectedRetailer, "selectedRetailer");
   //MUTATIONS
   const { mutateAsync: updateRetailerStatus } = useUpdateRetailerStatus();
+  const {mutateAsync: deleteRetailer}=useDeleteRetailer()
 
   //HANDLERS
   const handleChangeStatus = async (retailerId: string, isActive: boolean) => {
@@ -94,6 +97,30 @@ const RetailersList = ({
     }, 1000),
     []
   );
+
+  const handleChangeDelete = async (vendorId: string) => {
+    try {
+      if (!vendorId) throw new Error("Vendor ID is required!");
+
+      const resp = await deleteRetailer({
+        id: vendorId,
+
+      });
+
+      setSelectedRetailer(null);
+      setDeleteOpen(false);
+      toast("Retailer deleted successfully", {
+        containerId: "default",
+        className: "no-icon notification-success",
+      });
+    } catch (error) {
+      toast("Can't delete Vendor right now, please try later!", {
+        containerId: "default",
+        className: "no-icon notification-danger",
+      });
+      setDeleteOpen(false);
+    }
+  };
 
   const totalRecords = data?.total || 0;
   const totalPages = data?.totalPages || 0;
@@ -195,8 +222,8 @@ const RetailersList = ({
                         <td>
                           {/* <Link to={`/retailers/detail?_id=${item?._id}`}> */}
                           {/* <strong> */}
-
-                          {index + 1}
+                          {(data?.currentPage - 1) * limit + index + 1}
+                          {/* {index + 1} */}
                           {/* </strong> */}
                           {/* </Link> */}
                         </td>
@@ -278,7 +305,7 @@ const RetailersList = ({
                             >
                               <i className="far fa-eye"></i>
                             </div>
-                            {/* <div
+                            <div
                               className="action_btn"
                               onClick={() => {
                                 setDeleteOpen(true);
@@ -286,7 +313,7 @@ const RetailersList = ({
                               }}
                             >
                               <i className="far fa-trash-alt"></i>
-                            </div> */}
+                            </div>
                           </div>
                         </td>
                       </tr>
@@ -316,6 +343,16 @@ const RetailersList = ({
           "Are you sure that you want to change the status of this retailer?"
         }
       />
+
+      <ConfirmationPopup
+        submit={() =>
+          handleChangeDelete(selectedRetailer?._id)
+        }
+        isOpen={isDeleteOpen}
+        toggle={() => setDeleteOpen(!isDeleteOpen)}
+        text={"Are you sure that you want to delete of this retailer?"}
+      />
+
       <AddRetailer isOpen={isAddOpen} toggle={() => setAddOpen(!isAddOpen)} />
       <EditRetailer
         retailerId={selectedRetailer?._id}
