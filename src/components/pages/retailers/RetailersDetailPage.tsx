@@ -434,7 +434,7 @@ const RetailersDetailPage = () => {
                             className="action_btn bg-dark"
                             onClick={() => {
                               navigate(
-                                `/retailers/edit-retailer?_id=${retailer?._id}`
+                                `/retailers/edit-retailer?_id=${retailer?._id}&section=${1}`
                               );
                             }}
                           >
@@ -633,7 +633,7 @@ const RetailersDetailPage = () => {
                           className="action_btn bg-dark"
                           onClick={() => {
                             navigate(
-                              `/retailers/edit-retailer?_id=${retailer?._id}`
+                              `/retailers/edit-retailer?_id=${retailer?._id}&section=${2}`
                             );
                           }}
                         >

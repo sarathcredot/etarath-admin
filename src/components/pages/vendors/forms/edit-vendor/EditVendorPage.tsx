@@ -47,21 +47,21 @@ import { User } from "src/types/types";
 export default function EditVendorPage() {
   const [searchParams] = useSearchParams();
   const vendorID = searchParams.get("_id");
-  const section:any = searchParams.get("section")
+  const section: any = searchParams.get("section")
   const navigate = useNavigate();
 
   // const [vendorId, setVendorId] = useState<string>("");
-  const [stepIndex, setStepIndex] = useState<number>(2);
+  const [stepIndex, setStepIndex] = useState<number>(0);
   // console.log({ vendorId });
 
 
 
-  // useEffect(()=>{
+  useEffect(()=>{
 
 
-  //   setStepIndex(section)
+    setStepIndex(section)
 
-  // },[section])
+  },[section])
 
 
 
@@ -453,14 +453,15 @@ export default function EditVendorPage() {
 
         <Wizard
           className="form-horizontal"
-          showProgress={true}
+          showProgress
           progressSize="lg"
           validators={[
             profileFormik,
             contactFormik,
             preferenceFormik,
-            subscriptionFormik,
           ]}
+          stepIndex={stepIndex}
+          onStepChange={setStepIndex}
           onFinish={handleWizardFinish}
         >
           {/* ------------------------- */}

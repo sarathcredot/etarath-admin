@@ -489,7 +489,7 @@ const VendorsDetailPage = () => {
                             className="action_btn bg-dark"
                             onClick={() => {
                               navigate(
-                                `/vendors/edit-vendor?_id=${vendor?._id}`
+                                `/vendors/edit-vendor?_id=${vendor?._id}&section=${0}`
                               );
                             }}
                           >
@@ -697,7 +697,7 @@ const VendorsDetailPage = () => {
                           title="Edit Vendor"
                           className="action_btn bg-dark"
                           onClick={() => {
-                            navigate(`/vendors/edit-vendor?_id=${vendor?._id}&section=${0}`);
+                            navigate(`/vendors/edit-vendor?_id=${vendor?._id}&section=${1}`);
                           }}
                         >
                           <i className="fas fa-pencil-alt text-light"></i>
@@ -783,7 +783,7 @@ const VendorsDetailPage = () => {
                           title="Edit Vendor"
                           className="action_btn bg-dark"
                           onClick={() => {
-                            navigate(`/vendors/edit-vendor?_id=${vendor?._id}`);
+                            navigate(`/vendors/edit-vendor?_id=${vendor?._id}&section=${2}`);
                           }}
                         >
                           <i className="fas fa-pencil-alt text-light"></i>
