@@ -54,10 +54,12 @@ export default function AddVendorPage() {
       email: "",
       location: "",
       tradeLicenseNumber: "",
+      vatNumber:"",
       tradeLicenseRegistrationDate: "",
       tradeLicenseExpiryDate: "",
       documents: {
         tradeLicense: "" as any,
+        vatDoc:"" as any
       },
       business_address: "",
       post: "",
@@ -89,6 +91,16 @@ export default function AddVendorPage() {
             let response = await uploadFile(formData);
             values.documents.tradeLicense = response.data.data;
           }
+
+          if (typeof values?.documents?.vatDoc !== "string") {
+            let formData = new FormData();
+            formData.append("file", values?.documents?.vatDoc);
+            let response = await uploadFile(formData);
+            values.documents.vatDoc = response.data.data;
+          }
+
+
+
           if (typeof values?.vendor_logo !== "string") {
             let formData = new FormData();
             formData.append("file", values?.vendor_logo?.file);
@@ -138,6 +150,7 @@ export default function AddVendorPage() {
       email: "",
       language: [] as string[],
       role: "vendor",
+      priority:0
     },
 
     validationSchema: VendorContactValidationSchema,

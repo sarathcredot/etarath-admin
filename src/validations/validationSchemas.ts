@@ -173,12 +173,25 @@ export const EditRetailerValidationSchema = Yup.object().shape({
 export const AttributeValidationSchema = Yup.object().shape({
   attribute: Yup.string().required("Attribute is required"),
 });
+
 export const OfferValidationSchema = Yup.object().shape({
   imageUrl: Yup.mixed().required("Image is required"),
   priority: Yup.number()
     .integer("must be intiger")
     .required("Priority is required"),
 });
+
+
+
+export const AddsValidationSchema = Yup.object().shape({
+  imgUrl: Yup.mixed().required("Image is required"),
+  priority: Yup.number()
+    .integer("must be intiger")
+    .required("Priority is required"),
+});
+
+
+
 const getEditorText = (editorState: EditorState) => {
   const contentState = editorState.getCurrentContent();
   return contentState.getPlainText().trim();

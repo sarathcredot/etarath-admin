@@ -19,6 +19,8 @@ export type User = {
   vendorTag: string;
   createdAt: string;
   updatedAt: string;
+  priority:number;
+
   kyc?: {
     _id: string;
     createdBy: string;
@@ -28,11 +30,13 @@ export type User = {
     business_type: string;
     shop_location: string;
     location: string;
+    vatNumber: string;
     tradeLicenseNumber: string;
     tradeLicenseRegistrationDate: string;
     tradeLicenseExpiryDate: string;
     documents: {
       tradeLicense: string;
+      vatDoc: string;
     };
     shop_address: string;
     business_address: string;

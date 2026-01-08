@@ -5,12 +5,13 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import Select from "react-select";
 import MediaGalleryModal from "src/components/features/modals/media-gallery-modal";
 import { generateFilePath } from "src/services/url.service";
-import {Country, State, City} from 'country-state-city';
+import { Country, State, City } from 'country-state-city';
 
 
 export const timeFormat = "hh:mm A";
 export default function ProfileForm({ formik, isEdit = false }: any) {
   const tradeLicenseInputRef = useRef<HTMLInputElement | null>(null);
+   const vatDocInputRef = useRef<HTMLInputElement | null>(null);
   const shopPhotoInputRef = useRef<HTMLInputElement | null>(null);
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
 
@@ -53,14 +54,14 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
                       typeof formik.values.vendor_logo === "string"
                         ? generateFilePath(formik.values.vendor_logo)
                         : formik.values.vendor_logo.copy_link
-                        ? formik.values.vendor_logo.copy_link
-                        : URL.createObjectURL(formik.values.vendor_logo?.file)
+                          ? formik.values.vendor_logo.copy_link
+                          : URL.createObjectURL(formik.values.vendor_logo?.file)
                     }
                     alt="profile"
                     width={"100%"}
                     height={"100%"}
                     style={{ objectFit: "cover" }}
-                    // crossOrigin="anonymous"
+                  // crossOrigin="anonymous"
                   />
                   <div
                     onClick={() => setIsUploadOpen(true)}
@@ -176,12 +177,12 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
           </div>
         )}
       </Col>
-   
-   
-   
-   
-   
-   
+
+
+
+
+
+
       <Col lg={6} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">
@@ -252,6 +253,78 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
+
+      <Col lg={6} className="px-4 py-1  ">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">Upload VAT Document</Form.Label>
+          <div className="d-flex align-items-center  w-100" style={{ gap: 10 }}>
+            <Form.Control
+              ref={vatDocInputRef}
+              type="file"
+              placeholder="Upload VAT document"
+              name="documents.vatDoc"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                if (e.currentTarget?.files && e.currentTarget?.files[0]) {
+                  formik.setFieldValue(
+                    "documents.vatDoc",
+                    e.currentTarget.files[0]
+                  );
+                }
+              }}
+              // isInvalid={
+              //   !!(
+              //     formik.errors.shop_photo_logo &&
+              //     formik.touched.shop_photo_logo
+              //   )
+              // }
+            />
+
+            {formik.values.documents.vatDoc && (
+              <Button
+                variant="danger"
+                size="sm"
+                className="h-100 "
+                style={{ minHeight: "42px" }}
+                onClick={() => {
+                  formik.setFieldValue("documents.vatDoc", null);
+                  if (vatDocInputRef.current) {
+                    vatDocInputRef.current.value = "";
+                  }
+                }}
+              >
+                Remove
+              </Button>
+            )}
+          </div>
+          {/* <Form.Control.Feedback type="invalid">
+            {formik.errors.shop_photo_logo}
+          </Form.Control.Feedback> */}
+        </Form.Group>
+      </Col>
+      <Col lg={6} className="px-4 py-1  ">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">
+           VAT Number
+          </Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter VAT Number"
+            name="vatNumber"
+            value={formik.values.vatNumber}
+            onChange={formik.handleChange}
+            // isInvalid={
+            //   !!formik.errors.vatNumber &&
+            //   formik.touched.vatNumber
+            // }
+          />
+          {/* <Form.Control.Feedback type="invalid">
+            {formik.errors.vatNumber}
+          </Form.Control.Feedback> */}
+        </Form.Group>
+      </Col>
+
+
+
       <Col lg={6} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">
@@ -339,15 +412,15 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
             value={
               formik.values.business_hours
                 ? [
-                    dayjs(
-                      formik.values.business_hours.split(" - ")[0],
-                      timeFormat
-                    ),
-                    dayjs(
-                      formik.values.business_hours.split(" - ")[1],
-                      timeFormat
-                    ),
-                  ]
+                  dayjs(
+                    formik.values.business_hours.split(" - ")[0],
+                    timeFormat
+                  ),
+                  dayjs(
+                    formik.values.business_hours.split(" - ")[1],
+                    timeFormat
+                  ),
+                ]
                 : null
             }
             onChange={(times) => {
@@ -424,6 +497,10 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
+
+
+
+
       <MediaGalleryModal
         isOpen={isUploadOpen}
         onClose={(files: any) => {

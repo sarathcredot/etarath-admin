@@ -1,10 +1,13 @@
 @charset "UTF-8";
+
 html.modern.sidebar-left-sm .header.header-nav-menu .logo:after {
   width: 250px;
 }
+
 .header .userbox .profile-info {
   min-width: 4rem;
 }
+
 .porto-help-tip {
   color: #666;
   cursor: help;
@@ -17,6 +20,7 @@ html.modern.sidebar-left-sm .header.header-nav-menu .logo:after {
   width: 16px;
   margin-left: 5px;
 }
+
 .porto-help-tip:after {
   font-family: "Font Awesome 5 Free";
   font-weight: 400;
@@ -35,31 +39,32 @@ html.modern.sidebar-left-sm .header.header-nav-menu .logo:after {
   content: "";
   cursor: help;
 }
+
 .tooltip {
   z-index: 9997;
 }
+
 .form-control[type="number"] {
   min-width: 4rem;
 }
+
 .form-group .select2-container {
   width: 100% !important;
 }
-.form-group
-  .select2-container
-  .select2-selection--single
-  .select2-selection__rendered {
+
+.form-group .select2-container .select2-selection--single .select2-selection__rendered {
   padding-left: 0;
 }
-.select2-container--bootstrap
-  .select2-selection--multiple
-  .select2-search--inline
-  .select2-search__field {
+
+.select2-container--bootstrap .select2-selection--multiple .select2-search--inline .select2-search__field {
   height: 35px;
   padding-left: 0;
 }
+
 .select2-container .select2-selection--multiple ul.select2-selection__rendered {
   padding-left: 0;
 }
+
 span.select2-container .select2-selection--multiple,
 span.select2-container .select2-selection--single {
   min-height: 38px;
@@ -68,16 +73,18 @@ span.select2-container .select2-selection--single {
   padding-left: 10px;
   padding-right: 10px;
 }
-.select2-container--default.select2-container--focus
-  .select2-selection--multiple {
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
   border: 1px solid #aaa;
 }
+
 .truncate {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
 .vendor-banner {
   background: transparent;
   border: 2px dashed #e7e7e7;
@@ -87,34 +94,41 @@ span.select2-container .select2-selection--single {
   background-position: center;
   background-size: cover;
 }
-.vendor-banner > span {
+
+.vendor-banner>span {
   position: absolute;
   top: 50%;
   left: 50%;
   pointer-events: none;
   transform: translate(-50%, -50%);
 }
+
 .vendor-banner i {
   display: block;
   text-align: center;
   font-size: 3rem;
   color: #e7e7e7;
 }
+
 .withdraw-notice {
   background-color: #e0ffff;
   padding: 1rem;
   font-weight: 600;
 }
+
 @keyframes bouncedelay {
+
   0%,
   80%,
   to {
     transform: scale(0);
   }
+
   40% {
     transform: scale(1);
   }
 }
+
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -127,13 +141,16 @@ span.select2-container .select2-selection--single {
   visibility: visible;
   z-index: 999999;
 }
-.loaded > .loading-overlay {
+
+.loaded>.loading-overlay {
   opacity: 0;
   visibility: hidden;
 }
-body:not(.loaded) > .loading-overlay {
+
+body:not(.loaded)>.loading-overlay {
   transition: none;
 }
+
 .bounce-loader {
   position: absolute;
   top: 50%;
@@ -144,6 +161,7 @@ body:not(.loaded) > .loading-overlay {
   text-align: center;
   z-index: 10000;
 }
+
 .bounce-loader .bounce1,
 .bounce-loader .bounce2,
 .bounce-loader .bounce3 {
@@ -155,55 +173,71 @@ body:not(.loaded) > .loading-overlay {
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.15);
   animation: 1.4s ease-in-out 0s normal both infinite bouncedelay;
 }
+
 .bounce-loader .bounce1 {
   animation-delay: -0.32s;
 }
+
 .bounce-loader .bounce2 {
   animation-delay: -0.16s;
 }
-body:not(.loaded) > .bounce-loader {
+
+body:not(.loaded)>.bounce-loader {
   transition: none;
 }
-body:not(.loaded) > :not(.loading-overlay) {
+
+body:not(.loaded)> :not(.loading-overlay) {
   visibility: hidden;
 }
+
 .content-body {
   position: relative;
 }
+
 .content-body .loading-overlay {
   position: absolute;
   inset: 40px;
 }
+
 .btn[disabled] {
   pointer-events: none;
   opacity: 0.8;
 }
+
 .react-datepicker-wrapper {
   flex: 1;
 }
+
 .react-datepicker-wrapper .react-datepicker__input-container {
   display: block;
 }
+
 .tabs-modern .react-tabs__tab.active {
   background: #fff;
   border-radius: 0 4px 4px 0;
 }
+
 .tabs-modern .react-tabs__tab:not(:last-child) {
   border-bottom: 1px solid #efefef;
 }
+
 .card-title.h5 {
   margin: 0;
 }
+
 .card-subtitle.h6 {
   margin: 7px 0 0;
   font-weight: normal;
 }
+
 .ui-pnotify .Toastify__toast {
   font-family: inherit;
 }
+
 .toggle-preview .collapse:not(.show) {
   display: block;
 }
+
 .category-image {
   width: 60px;
 }
@@ -232,11 +266,13 @@ body:not(.loaded) > :not(.loading-overlay) {
 
     color: #fff;
   }
+
   &:hover .edit_div {
     opacity: 1;
     transition: all 0.3s ease-in-out;
   }
 }
+
 .warehouse_image_div {
   position: relative;
   display: flex;
@@ -248,9 +284,11 @@ body:not(.loaded) > :not(.loading-overlay) {
   cursor: pointer;
   overflow: hidden;
   transition: all 0.3s ease-in-out;
-  img{
+
+  img {
     width: 100%;
   }
+
   .edit_div {
     opacity: 0;
     position: absolute;
@@ -263,6 +301,7 @@ body:not(.loaded) > :not(.loading-overlay) {
 
     color: #fff;
   }
+
   &:hover .edit_div {
     opacity: 1;
     transition: all 0.3s ease-in-out;
@@ -282,10 +321,12 @@ body:not(.loaded) > :not(.loading-overlay) {
   cursor: pointer;
   overflow: hidden;
   transition: all 0.3s ease-in-out;
+
   img {
     width: 100%;
     border-radius: 3px;
   }
+
   .edit_div {
     opacity: 0;
     position: absolute;
@@ -298,6 +339,7 @@ body:not(.loaded) > :not(.loading-overlay) {
 
     color: #fff;
   }
+
   &:hover .edit_div {
     opacity: 1;
     transition: all 0.3s ease-in-out;
@@ -305,8 +347,10 @@ body:not(.loaded) > :not(.loading-overlay) {
 }
 
 .react-datepicker-popper {
-  z-index: 9999 !important; /* higher than Bootstrap modal (1050) */
+  z-index: 9999 !important;
+  /* higher than Bootstrap modal (1050) */
 }
+
 /*# sourceMappingURL=custom.min.css.map */
 
 .stock_edit {
@@ -316,11 +360,13 @@ body:not(.loaded) > :not(.loading-overlay) {
     border: 1px solid #dddddd73;
     outline: none;
     padding: 0 10px;
+
     &&:hover {
       background: #000;
       color: #fff;
     }
   }
+
   input {
     width: 50%;
     border-radius: 0px;
@@ -333,3 +379,7 @@ input [type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none !important;
   margin: 0;
 }
+
+
+
+

@@ -62,6 +62,7 @@ const VendorsDetailPage = () => {
   const [orderPage, setOrderPage] = useState<number>(1);
   const [orderLimit, setOrderLimit] = useState<number>(10);
   const [orderSearch, setOrderSearch] = useState<string>("");
+  const [orderStatus, setOrderStatus] = useState("all")
 
   const [stockPage, setStockPage] = useState<number>(1);
   const [stockLimit, setStockLimit] = useState<number>(10);
@@ -71,18 +72,22 @@ const VendorsDetailPage = () => {
   const [claimPage, setClaimPage] = useState<number>(1);
   const [claimLimit, setClaimLimit] = useState<number>(10);
   const [claimSearch, setClaimSearch] = useState<string>("");
+  const [claimStatus, setClaimStatus] = useState("all")
 
   const [agentPage, setAgentPage] = useState<number>(1);
   const [agentLimit, setAgentLimit] = useState<number>(10);
   const [agentSearch, setAgentSearch] = useState<string>("");
+  const [agentStatus, setAgentStatus] = useState<string>("all");
 
   const [waerPage, setWaerPage] = useState<number>(1);
   const [waerLimit, setWaerLimit] = useState<number>(10);
   const [waerSearch, setWaerSearch] = useState<string>("");
+  const [waerStatus, setWaerStatus] = useState<string>("all");
 
   const [cuPage, setCuPage] = useState<number>(1);
   const [cuLimit, setCuLimit] = useState<number>(10);
   const [cuSearch, setCuSearch] = useState<string>("");
+  const [cuStatus, setCuStatus] = useState<string>("all");
 
 
 
@@ -106,8 +111,12 @@ const VendorsDetailPage = () => {
       obj.vendorID = vendorID;
     }
 
+    if (orderStatus) {
+      obj.status = orderStatus
+    }
+
     return obj;
-  }, [orderPage, orderLimit, orderSearch, vendorID]);
+  }, [orderPage, orderLimit, orderSearch, vendorID, orderStatus]);
 
 
   // stock use memo
@@ -156,8 +165,12 @@ const VendorsDetailPage = () => {
       obj.vendorID = vendorID;
     }
 
+    if (claimStatus) {
+      obj.status = claimStatus
+    }
+
     return obj;
-  }, [claimPage, claimLimit, claimSearch, vendorID]);
+  }, [claimPage, claimLimit, claimSearch, vendorID, claimStatus]);
 
   const waerQueryObj = useMemo(() => {
     const obj: any = {};
@@ -178,8 +191,12 @@ const VendorsDetailPage = () => {
       obj.vendorID = vendorID;
     }
 
+    if (waerStatus) {
+      obj.status = waerStatus
+    }
+
     return obj;
-  }, [waerPage, waerLimit, waerSearch, vendorID]);
+  }, [waerPage, waerLimit, waerSearch, vendorID, waerStatus]);
 
 
 
@@ -204,8 +221,13 @@ const VendorsDetailPage = () => {
       obj.vendorID = vendorID;
     }
 
+    if (agentStatus) {
+
+      obj.status = agentStatus
+    }
+
     return obj;
-  }, [agentPage, agentLimit, agentSearch, vendorID]);
+  }, [agentPage, agentLimit, agentSearch, vendorID, agentStatus]);
 
 
   // agent use memo
@@ -228,9 +250,13 @@ const VendorsDetailPage = () => {
     if (vendorID) {
       obj.vendorID = vendorID;
     }
+    if (cuStatus) {
+
+      obj.status = cuStatus
+    }
 
     return obj;
-  }, [cuPage, cuLimit, cuSearch, vendorID]);
+  }, [cuPage, cuLimit, cuSearch, vendorID, cuStatus]);
 
 
 
@@ -573,6 +599,37 @@ const VendorsDetailPage = () => {
                           </div>
                         </Col>
                         <Col>
+
+
+                          {
+                            vendor?.kyc?.vatNumber && (
+                              <>
+                                <h6>VAT Number</h6>
+                                <h6 className=" text-dark font-weight-500 " >{vendor?.kyc.vatNumber}</h6>
+                              </>
+
+                            )
+                          }
+
+                          {
+                            vendor?.kyc?.documents.vatDoc && (
+                              <div className="">
+                                <h6>VAT Document</h6>
+                                <Button
+                                  variant="default"
+                                  onClick={() =>
+                                    showFile(vendor?.kyc?.documents.vatDoc)
+                                  }
+                                >
+                                  <i className="far fa-eye mr-2"></i>
+                                  View
+                                </Button>
+                              </div>
+
+                            )
+                          }
+
+
                           {vendor?.kyc && (
                             <div className="">
                               <h6>Shop Photo</h6>
@@ -640,7 +697,7 @@ const VendorsDetailPage = () => {
                           title="Edit Vendor"
                           className="action_btn bg-dark"
                           onClick={() => {
-                            navigate(`/vendors/edit-vendor?_id=${vendor?._id}`);
+                            navigate(`/vendors/edit-vendor?_id=${vendor?._id}&section=${0}`);
                           }}
                         >
                           <i className="fas fa-pencil-alt text-light"></i>
@@ -1111,6 +1168,7 @@ const VendorsDetailPage = () => {
                 setPage={setOrderPage}
                 setLimit={setOrderLimit}
                 setSearch={setOrderSearch}
+                setStatus={setOrderStatus}
                 page={orderPage}
                 limit={orderLimit}
                 search={orderSearch}
@@ -1124,6 +1182,7 @@ const VendorsDetailPage = () => {
                 setPage={setClaimPage}
                 setLimit={setClaimLimit}
                 setSearch={setClaimSearch}
+                setStatus={setClaimStatus}
                 page={claimPage}
                 limit={claimLimit}
                 search={claimSearch}
@@ -1137,6 +1196,7 @@ const VendorsDetailPage = () => {
                 setPage={setWaerPage}
                 setLimit={setWaerLimit}
                 setSearch={setWaerSearch}
+                setStatus={setWaerStatus}
                 page={waerPage}
                 limit={waerLimit}
                 search={waerSearch}
@@ -1151,6 +1211,7 @@ const VendorsDetailPage = () => {
                 setPage={setAgentPage}
                 setLimit={setAgentLimit}
                 setSearch={setAgentSearch}
+                setStatus={setAgentStatus}
                 page={agentPage}
                 limit={agentLimit}
                 search={agentSearch}
@@ -1165,6 +1226,7 @@ const VendorsDetailPage = () => {
                 setPage={setCuPage}
                 setLimit={setCuLimit}
                 setSearch={setCuSearch}
+                setStatus={setCuStatus}
                 page={cuPage}
                 limit={cuLimit}
                 search={cuSearch}

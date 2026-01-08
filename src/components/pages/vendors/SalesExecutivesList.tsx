@@ -23,6 +23,7 @@ const SalesExecutivesList = ({
   vendorId,
   setPage = () => { },
   setSearch = () => { }, // fallback so debounce doesn’t break
+  setStatus = () => { }, // fallback so debounce doesn’t break
   setLimit,
   page = 1,
   limit = 10,
@@ -34,6 +35,7 @@ const SalesExecutivesList = ({
   setPage?: Dispatch<React.SetStateAction<number>>;
   setLimit?: Dispatch<React.SetStateAction<number>>;
   setSearch?: Dispatch<React.SetStateAction<any>>;
+  setStatus?: Dispatch<React.SetStateAction<any>>;
   page?: number;
   limit?: number;
   search?: string;
@@ -134,6 +136,17 @@ const SalesExecutivesList = ({
     []
   );
 
+  const debouncedHandleStatus = useCallback(
+    debounce((text) => {
+      try {
+        setStatus(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
+
 
   const handleDeleteStock = async () => {
 
@@ -141,7 +154,7 @@ const SalesExecutivesList = ({
 
       console.log("de", selectedStock)
 
-      const res = await deletAgent({id:selectedStock?._id})
+      const res = await deletAgent({ id: selectedStock?._id })
       toast(res?.data?.message, {
         containerId: "default",
         className: "no-icon notification-success",
@@ -248,7 +261,35 @@ const SalesExecutivesList = ({
                       <th>Contact Number</th>
                       <th>Email</th>
                       <th>Created Date</th>
-                      <th>Status</th>
+                      <th>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          <span>Status</span>
+
+                          <Form.Control
+                            as="select"
+                            size="sm"
+                            style={{
+                              width: "110px",
+                              color: "#000",
+                            }}
+                            name="issuspend"
+                            onChange={(e: any) =>
+                              debouncedHandleStatus(e.target.value)
+                            }
+                          >
+                            <option value="all">All</option>
+                            <option value="active">Active</option>
+                            <option value="blocked">Blocked</option>
+                          </Form.Control>
+                        </div>
+                      </th>
                       <th className="text-center" style={{ width: "80px" }}>
                         Actions
                       </th>

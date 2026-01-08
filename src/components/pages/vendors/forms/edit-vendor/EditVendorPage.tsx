@@ -47,11 +47,24 @@ import { User } from "src/types/types";
 export default function EditVendorPage() {
   const [searchParams] = useSearchParams();
   const vendorID = searchParams.get("_id");
+  const section:any = searchParams.get("section")
   const navigate = useNavigate();
 
   // const [vendorId, setVendorId] = useState<string>("");
-  const [stepIndex, setStepIndex] = useState<number>(0);
+  const [stepIndex, setStepIndex] = useState<number>(2);
   // console.log({ vendorId });
+
+
+
+  // useEffect(()=>{
+
+
+  //   setStepIndex(section)
+
+  // },[section])
+
+
+
 
   // QUERIES
   const { data: vendor, isLoading: isVendorLoading } = useGetVendorById(
@@ -89,10 +102,12 @@ export default function EditVendorPage() {
       email: "",
       location: "",
       tradeLicenseNumber: "",
+      vatNumber: "",
       tradeLicenseRegistrationDate: "",
       tradeLicenseExpiryDate: "",
       documents: {
         tradeLicense: "" as any,
+        vatDoc: "" as any
       },
       business_address: "",
       post: "",
@@ -173,6 +188,7 @@ export default function EditVendorPage() {
       email: "",
       language: [] as string[],
       role: "vendor",
+      priority: 0
     },
 
     validationSchema: VendorContactValidationSchema,
@@ -348,6 +364,7 @@ export default function EditVendorPage() {
         email: vendor?.email || "",
         language: vendor?.language || [],
         role: "vendor",
+        priority: vendor?.priority || 0
       });
 
       if (vendor?.kyc) {
@@ -356,20 +373,22 @@ export default function EditVendorPage() {
           phoneNumber: vendor?.kyc?.phoneNumber || "",
           email: vendor?.kyc?.email || "",
           location: vendor?.kyc?.location || "",
+          vatNumber: vendor?.kyc?.vatNumber || "",
           tradeLicenseNumber: vendor?.kyc?.tradeLicenseNumber || "",
           tradeLicenseRegistrationDate: vendor?.kyc
             ?.tradeLicenseRegistrationDate
             ? new Date(vendor?.kyc?.tradeLicenseRegistrationDate)
-                .toISOString()
-                .split("T")[0]
+              .toISOString()
+              .split("T")[0]
             : "",
           tradeLicenseExpiryDate: vendor?.kyc?.tradeLicenseExpiryDate
             ? new Date(vendor?.kyc?.tradeLicenseExpiryDate)
-                .toISOString()
-                .split("T")[0]
+              .toISOString()
+              .split("T")[0]
             : "",
           documents: {
             tradeLicense: vendor?.kyc?.documents?.tradeLicense || "",
+            vatDoc: vendor?.kyc?.documents?.vatDoc || "",
           },
           business_address: vendor?.kyc?.business_address || "",
           post: vendor?.kyc?.post || "",
@@ -386,13 +405,13 @@ export default function EditVendorPage() {
       preferenceFormik.setValues({
         brands: vendorPreference?.brands
           ? vendorPreference?.brands?.map((brand: any) => ({
-              brandId: brand?.brandId?._id,
-            }))
+            brandId: brand?.brandId?._id,
+          }))
           : [],
         authorised_brands: vendorPreference?.authorised_brands
           ? vendorPreference?.authorised_brands?.map((brand: any) => ({
-              brandId: brand?.brandId?._id,
-            }))
+            brandId: brand?.brandId?._id,
+          }))
           : [],
         paymentMethod: vendorPreference?.paymentMethod || "",
         creditDays: vendorPreference?.creditDays || "",

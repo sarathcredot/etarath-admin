@@ -74,6 +74,10 @@
         "name": "Offers",
         "url": "/cms/offers"
       },
+       {
+        "name": "Advertisement",
+        "url": "/cms/advertisement"
+      },
       {
         "name": "Blogs",
         "url": "#",

@@ -9,6 +9,8 @@ const VendorsPage = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState<number>(10);
   const [search, setSearch] = useState<string>("");
+  const [status, setStatus] = useState<string>("all");
+  const [isSuspend, setisSuspend] = useState<string>("all");
 
 
 
@@ -28,11 +30,19 @@ const VendorsPage = () => {
       obj.search = search;
     }
 
+    if (status) {
+      obj.status = status
+    }
+    if (isSuspend) {
+      obj.isSuspend = isSuspend
+    }
+
     return obj;
-  }, [page, limit, search]);
+  }, [page, limit, search , status, isSuspend]);
 
   // QUERY
-  const { data, isLoading, error } = useGetAllRetailers(undefined, queryObj);
+  const { data, isLoading, error, } = useGetAllRetailers(undefined, queryObj);
+
 
 
   return (
@@ -59,6 +69,8 @@ const VendorsPage = () => {
             setPage={setPage}
             setLimit={setLimit}
             setSearch={setSearch}
+            setStatusU={setStatus}
+            setIsSupend={setisSuspend}
             page={page}
             limit={limit}
             search={search}

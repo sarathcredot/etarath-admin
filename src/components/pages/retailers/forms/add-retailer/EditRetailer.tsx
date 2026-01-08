@@ -68,6 +68,7 @@ export default function AddRetailerPage() {
             eidFile: "" as any,
             imgUrl: "" as any,
             role: "",
+            priority: 0
         },
 
         validationSchema: VendorValidationSchema,
@@ -128,6 +129,7 @@ export default function AddRetailerPage() {
             tradeLicenseNumber: "",
             documents: {
                 tradeLicense: "" as any,
+                vatDoc: "" as any
             },
             tradeLicenseRegistrationDate: "",
             tradeLicenseExpiryDate: "",
@@ -310,6 +312,7 @@ export default function AddRetailerPage() {
                 eidFile: retailer?.eidExpiryDate || "" as any,
                 imgUrl: retailer?.imgUrl || "" as any,
                 role: "retailer",
+                priority: retailer?.priority || 0
 
             })
 
@@ -321,6 +324,7 @@ export default function AddRetailerPage() {
 
                 documents: {
                     tradeLicense: retailer?.kyc?.documents?.tradeLicense, // ❗ file input must be null
+                    vatDoc: retailer?.kyc?.documents?.vatDoc || "",
                 },
 
                 tradeLicenseRegistrationDate: retailer?.kyc

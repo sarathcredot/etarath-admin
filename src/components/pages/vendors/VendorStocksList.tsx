@@ -217,7 +217,7 @@ const VendorStocksList = ({
                         <Form.Control
                           type="text"
                           className="search-term"
-                          placeholder="Search Vendor "
+                          placeholder="Search Product "
                           style={{ width: "250px" }}
                           value={search}
                           onChange={(e) =>

@@ -57,6 +57,7 @@ export default function EditRetailerPage() {
       eidFile: "" as any,
       imgUrl: "" as any,
       role: "retailer",
+      priority: 0
     },
 
     validationSchema: VendorValidationSchema,
@@ -114,8 +115,10 @@ export default function EditRetailerPage() {
       business_type: "",
       shop_location: "",
       tradeLicenseNumber: "",
+      vatNumber: "",
       documents: {
         tradeLicense: "" as any,
+        vatDoc: "" as ""
       },
       tradeLicenseRegistrationDate: "",
       tradeLicenseExpiryDate: "",
@@ -144,6 +147,13 @@ export default function EditRetailerPage() {
             let response = await uploadFile(formData);
             values.documents.tradeLicense = response.data.data;
           }
+          if (typeof values?.documents?.vatDoc !== "string") {
+            let formData = new FormData();
+            formData.append("file", values?.documents?.vatDoc);
+            let response = await uploadFile(formData);
+            values.documents.vatDoc = response.data.data;
+          }
+          
           if (typeof values?.shop_photo_logo !== "string") {
             let formData = new FormData();
             formData.append("file", values?.shop_photo_logo);
@@ -213,7 +223,7 @@ export default function EditRetailerPage() {
           // });
 
           setStepIndex(3);
-           subscriptionFormik.submitForm();
+          subscriptionFormik.submitForm();
         }
       } catch (error: any) {
         toast.dismiss();
@@ -309,7 +319,7 @@ export default function EditRetailerPage() {
           className="form-horizontal"
           showProgress={true}
           progressSize="lg"
-          validators={[profileFormik, kycFormik, preferenceFormik,subscriptionFormik]}
+          validators={[profileFormik, kycFormik, preferenceFormik, subscriptionFormik]}
           onFinish={handleWizardFinish}
         >
           {/* ------------------------- */}

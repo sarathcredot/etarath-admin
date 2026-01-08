@@ -64,6 +64,8 @@ import SubOrderDetailrPage from "src/components/pages/subscriptions/retailer-pla
 
 import RetailerPlans from "src/components/pages/subscriptions/retailer-plans/RetailerPlans";
 import OffersPage from "src/components/pages/cms/offers/OffersPage";
+import AddsPage from "src/components/pages/cms/adds/OffersPage";
+
 import AttributesPage from "src/components/pages/attributes/AttributesPage";
 import RetailersList from "src/components/pages/retailers/RetailersList";
 import RetailersDetailPage from "src/components/pages/retailers/RetailersDetailPage";
@@ -186,7 +188,7 @@ const adminRoutes: Array<RouteProps> = [
     component: <SubOrderDetailvPage />,
   },
 
-   {
+  {
     path: "/subscriptions/retailer/order/detail",
     component: <SubOrderDetailrPage />,
   },
@@ -200,6 +202,8 @@ const adminRoutes: Array<RouteProps> = [
 
   // CMS
   { path: "/cms/offers", component: <OffersPage /> },
+  { path: "/cms/advertisement", component: <AddsPage /> },
+
   { path: "/cms/blogs", component: <BlogsPage /> },
   { path: "/cms/blogs/categories", component: <BlogCategories /> },
   { path: "/cms/blogs/tags", component: <BlogTags /> },

@@ -10,9 +10,10 @@ import Pagination from "src/components/common/Pagination";
 const VendorOrdersList = ({
   orders,
   ordersLoading = false,
- setPage = () => { },
+  setPage = () => { },
   setSearch = () => { }, // fallback so debounce doesn’t break
   setLimit,
+  setStatus = () => { }, // fallback so debounce doesn’t break
   page = 1,
   limit = 10,
   search = "",
@@ -20,33 +21,46 @@ const VendorOrdersList = ({
   vendorId: any;
   orders: any;
   ordersLoading: boolean;
-   setPage?: Dispatch<React.SetStateAction<number>>;
+  setPage?: Dispatch<React.SetStateAction<number>>;
   setLimit?: Dispatch<React.SetStateAction<number>>;
   setSearch?: Dispatch<React.SetStateAction<any>>;
+  setStatus?: Dispatch<React.SetStateAction<any>>;
   page?: number;
   limit?: number;
   search?: string;
-  
+
 }) => {
   const navigate = useNavigate();
 
   //STATES
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
- 
+
   const totalRecords = orders?.total || 0;
   const totalPages = orders?.totalPages || 0;
 
-   const debouncedHandleSearch = useCallback(
-        debounce((text) => {
-          try {
-            setSearch(text);
-          } catch (error) {
-            console.log(error, "error in the debounce function");
-          }
-        }, 1000),
-        []
-      );
+  const debouncedHandleSearch = useCallback(
+    debounce((text) => {
+      try {
+        setSearch(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
+
+  const debouncedHandleStatus = useCallback(
+    debounce((text) => {
+      try {
+        setStatus(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
+
 
   return (
     <>
@@ -99,7 +113,7 @@ const VendorOrdersList = ({
                           style={{ width: "250px" }}
                           value={search}
                           onChange={(e) =>
-                                debouncedHandleSearch(e.target.value)
+                            debouncedHandleSearch(e.target.value)
                           }
                         />
                       </InputGroup>
@@ -128,7 +142,41 @@ const VendorOrdersList = ({
                     {/* <th>Quantity</th> */}
                     <th>Total Price</th>
                     <th>Order Date</th>
-                    <th>Status</th>
+                    <th>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        <span>Status</span>
+
+                        <Form.Control
+                          as="select"
+                          size="sm"
+                         
+                          style={{
+                            width: "110px",
+                            color: "#000",
+                          }}
+                          name="verification"
+                          onChange={(e: any) =>
+                            debouncedHandleStatus(e.target.value)
+                          }
+                        >
+                          <option value="all">All</option>
+                          <option value="delivered">Delivered</option>
+                          <option value="pending">Pending</option>
+                          <option value="in-Progress">In-Progress</option>
+                          <option value="cancelled">Cancelled</option>
+                          <option value="rejected">Rejected</option>
+
+
+                        </Form.Control>
+                      </div>
+                    </th>
                     {/* <th className="text-center" style={{ width: "80px" }}>
                         Actions
                       </th> */}
@@ -148,7 +196,7 @@ const VendorOrdersList = ({
                           navigate(`/orders/detail?_id=${item?._id}`)
                         }
                         key={index}
-                        style={{cursor:"pointer"}}
+                        style={{ cursor: "pointer" }}
                       >
                         <td>
                           {/* <Link
@@ -160,7 +208,7 @@ const VendorOrdersList = ({
                             {item?.orderId}
                           </Link> */}
 
-                          <strong  style={{ whiteSpace: "nowrap" }}>
+                          <strong style={{ whiteSpace: "nowrap" }}>
                             {item?.orderId}
                           </strong>
                         </td>
@@ -180,22 +228,21 @@ const VendorOrdersList = ({
                               alt="product"
                               width="40"
                               height="40"
-                              // crossOrigin="anonymous"
+                            // crossOrigin="anonymous"
                             />
                           </Link>
                         </td>
                         <td>
                           {item?.productDetails?.productName}-{" "}
-                            {`${item?.productDetails?.width}${
-                              item?.productDetails?.height
-                                ? `/${item.productDetails?.height}`
-                                : ""
+                          {`${item?.productDetails?.width}${item?.productDetails?.height
+                            ? `/${item.productDetails?.height}`
+                            : ""
                             } R${item?.productDetails?.size}`}
                         </td>
                         <td>
-                          
-                            {item?.userDetails?.userName || "-"}
-                        
+
+                          {item?.userDetails?.userName || "-"}
+
                         </td>
                         {/* <td>{item?.quantity || 0} </td> */}
                         <td>{item?.totalPrice.toFixed(2) || 0} AED</td>

@@ -539,6 +539,37 @@ const RetailersDetailPage = () => {
                           </div>
                         </Col>
                         <Col>
+
+
+                          {
+                            retailer?.kyc?.vatNumber && (
+                              <>
+                                <h6>VAT Number</h6>
+                                <h6 className=" text-dark font-weight-500 " >{retailer?.kyc.vatNumber}</h6>
+                              </>
+
+                            )
+                          }
+
+                          {
+                            retailer?.kyc?.documents.vatDoc && (
+                              <div className="">
+                                <h6>VAT Document</h6>
+                                <Button
+                                  variant="default"
+                                  onClick={() =>
+                                    showFile(retailer?.kyc?.documents.vatDoc)
+                                  }
+                                >
+                                  <i className="far fa-eye mr-2"></i>
+                                  View
+                                </Button>
+                              </div>
+
+                            )
+                          }
+
+
                           {retailer?.kyc && (
                             <div className="">
                               <h6>Shop Photo</h6>

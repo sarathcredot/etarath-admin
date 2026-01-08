@@ -29,6 +29,8 @@ type Props = {
   setPage: Dispatch<React.SetStateAction<number>>;
   setLimit: Dispatch<React.SetStateAction<number>>;
   setSearch: Dispatch<React.SetStateAction<string>>;
+  setStatusU: Dispatch<React.SetStateAction<string>>;
+  setIsSupend: Dispatch<React.SetStateAction<string>>;
   page: number;
   limit: number;
   search: string;
@@ -42,6 +44,8 @@ const VendorsList = ({
   setPage = () => { },
   setLimit,
   setSearch = () => { }, // fallback so debounce doesn’t break
+  setStatusU = () => { }, // fallback so debounce doesn’t break
+  setIsSupend = () => { }, // fallback so debounce doesn’t break
   page = 1,
   limit = 10,
   search = "",
@@ -122,6 +126,32 @@ const VendorsList = ({
     []
   );
 
+  const debouncedHandleFillterStatus = useCallback(
+    debounce((text) => {
+      try {
+        console.log("text",text)
+        setStatusU(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
+
+  const debouncedHandleSearchFillterisSupaend = useCallback(
+    debounce((text) => {
+      try {
+        setIsSupend(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
+
+
+
+
   // const totalRecords = vendors?.length || 0;
   // const totalPages = Math.ceil(totalRecords / limit);
 
@@ -192,8 +222,67 @@ const VendorsList = ({
                     <th></th>
                     <th>Phone Number</th>
                     <th>Email</th>
-                    <th>Verifaction</th>
-                    <th>Status</th>
+                    <th>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        <span>Verification</span>
+
+                        <Form.Control
+                          as="select"
+                          size="sm"
+                          style={{
+                            width: "110px",
+                            color: "#000",
+                          }}
+                          name="verification"
+                           onChange={(e: any) =>
+                            debouncedHandleFillterStatus(e.target.value)
+                          }
+                        >
+                          <option value="all">All</option>
+                          <option value="approved">Approved</option>
+                          <option value="pending">Pending</option>
+                          <option value="rejected">Rejected</option>
+                        </Form.Control>
+                      </div>
+                    </th>
+
+                    <th>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        <span>Status</span>
+
+                        <Form.Control
+                          as="select"
+                          size="sm"
+                          style={{
+                            width: "110px",
+                            color: "#000",
+                          }}
+                          name="issuspend"
+                          onChange={(e: any) =>
+                            debouncedHandleSearchFillterisSupaend(e.target.value)
+                          }
+                        >
+                          <option value="all">All</option>
+                          <option value="active">Active</option>
+                          <option value="blocked">Blocked</option>
+                        </Form.Control>
+                      </div>
+                    </th>
+
                     <th className="text-center" style={{ width: "80px" }}>
                       Actions
                     </th>
@@ -246,7 +335,7 @@ const VendorsList = ({
 
                             {(data?.currentPage - 1) * limit + index + 1}
 
-                         
+
 
                           </td>
 

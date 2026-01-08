@@ -30,14 +30,14 @@ export default function ProfileForm({ formik }: any) {
                       typeof formik.values.imgUrl === "string"
                         ? generateFilePath(formik.values.imgUrl)
                         : formik.values.imgUrl.copy_link
-                        ? formik.values.imgUrl.copy_link
-                        : URL.createObjectURL(formik.values.imgUrl?.file)
+                          ? formik.values.imgUrl.copy_link
+                          : URL.createObjectURL(formik.values.imgUrl?.file)
                     }
                     alt="profile"
                     width={"100%"}
                     height={"100%"}
                     style={{ objectFit: "cover" }}
-                    // crossOrigin="anonymous"
+                  // crossOrigin="anonymous"
                   />
                   <div
                     onClick={() => setIsUploadOpen(true)}
@@ -178,6 +178,37 @@ export default function ProfileForm({ formik }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
+      <Col lg={12} className=" px-2 py-1 ">
+        <Form.Group className="align-items-center">
+          <Form.Label className="col-form-label">Priority</Form.Label>
+          <Form.Control
+            style={{ color: "#000" }}
+            //   size="md"
+            as="select"
+            name="priority"
+            value={formik.values.priority}
+            onChange={(e) =>
+              formik.setFieldValue("priority", Number(e.target.value))
+            }
+          // isInvalid={
+          //   !!formik.errors.priority && formik.touched.priority
+          // }
+          >
+            <option disabled selected hidden value="">
+              Select Priority
+            </option>
+            {[0, 1, 2, 3, 4, 5].map((item: number, index: number) => (
+              <option key={index} value={item}>
+                {item}
+              </option>
+            ))}
+          </Form.Control>
+          {/* <Form.Control.Feedback type="invalid">
+                  {formik.errors.priority}
+                </Form.Control.Feedback> */}
+        </Form.Group>
+      </Col>
+
       <MediaGalleryModal
         isOpen={isUploadOpen}
         onClose={(files: any) => {

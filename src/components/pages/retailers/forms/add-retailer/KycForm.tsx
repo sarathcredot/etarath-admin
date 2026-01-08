@@ -1,31 +1,33 @@
 import { TimePicker } from "antd";
 import dayjs from "dayjs";
-import { Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import Select from "react-select";
 import { timeFormat } from "src/components/pages/vendors/forms/add-vendor/ProfileForm";
 import { BUSSINESS_TYPES } from "src/components/pages/vendors/popups/AddBussinessDetails";
-import {Country, State, City} from 'country-state-city';
-import { useEffect, useState } from "react";
+import { Country, State, City } from 'country-state-city';
+import { useEffect, useRef, useState } from "react";
 
 export default function KycForm({ formik }: any) {
 
   const [locations, setLocations] = useState<{ label: string; value: string }[]>([]);
-    const uaeCountry: any = Country.getAllCountries().find(c => c.isoCode === "AE"); // UAE country code
-    const allCities: { label: string; value: string }[] = [];
-    const res = State.getStatesOfCountry(uaeCountry.isoCode)
-    useEffect(() => {
-      res?.map((state) => {
-        City.getCitiesOfState(uaeCountry.isoCode, state.isoCode).forEach((city) => {
-          // allCities.push({
-          //   label: `${city.name}, ${state.name}`, // optional: add state
-          //   value: city.name,
-          // });
-          allCities.push({ label: city.name, value: city.name })
-        });
-      })
-      console.log("loc", allCities)
-      setLocations(allCities)
-    }, [])
+  const uaeCountry: any = Country.getAllCountries().find(c => c.isoCode === "AE"); // UAE country code
+  const allCities: { label: string; value: string }[] = [];
+  const res = State.getStatesOfCountry(uaeCountry.isoCode)
+  const vatDocInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    res?.map((state) => {
+      City.getCitiesOfState(uaeCountry.isoCode, state.isoCode).forEach((city) => {
+        // allCities.push({
+        //   label: `${city.name}, ${state.name}`, // optional: add state
+        //   value: city.name,
+        // });
+        allCities.push({ label: city.name, value: city.name })
+      });
+    })
+    console.log("loc", allCities)
+    setLocations(allCities)
+  }, [])
   return (
     <Row className="px-1 px-md-3">
       <Col lg={6} className="px-4 py-1">
@@ -202,6 +204,83 @@ export default function KycForm({ formik }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
+
+
+
+      <Col lg={6} className="px-4 py-1  ">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">Upload VAT Document</Form.Label>
+          <div className="d-flex align-items-center  w-100" style={{ gap: 10 }}>
+            <Form.Control
+              ref={vatDocInputRef}
+              type="file"
+              placeholder="Upload VAT document"
+              name="documents.vatDoc"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                if (e.currentTarget?.files && e.currentTarget?.files[0]) {
+                  formik.setFieldValue(
+                    "documents.vatDoc",
+                    e.currentTarget.files[0]
+                  );
+                }
+              }}
+            // isInvalid={
+            //   !!(
+            //     formik.errors.shop_photo_logo &&
+            //     formik.touched.shop_photo_logo
+            //   )
+            // }
+            />
+
+            {formik.values.documents.vatDoc && (
+              <Button
+                variant="danger"
+                size="sm"
+                className="h-100 "
+                style={{ minHeight: "42px" }}
+                onClick={() => {
+                  formik.setFieldValue("documents.vatDoc", null);
+                  if (vatDocInputRef.current) {
+                    vatDocInputRef.current.value = "";
+                  }
+                }}
+              >
+                Remove
+              </Button>
+            )}
+          </div>
+          {/* <Form.Control.Feedback type="invalid">
+            {formik.errors.shop_photo_logo}
+          </Form.Control.Feedback> */}
+        </Form.Group>
+      </Col>
+      <Col lg={6} className="px-4 py-1  ">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">
+            VAT Number
+          </Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter VAT Number"
+            name="vatNumber"
+            value={formik.values.vatNumber}
+            onChange={formik.handleChange}
+          // isInvalid={
+          //   !!formik.errors.vatNumber &&
+          //   formik.touched.vatNumber
+          // }
+          />
+          {/* <Form.Control.Feedback type="invalid">
+            {formik.errors.vatNumber}
+          </Form.Control.Feedback> */}
+        </Form.Group>
+      </Col>
+
+
+
+
+
+
       <Col lg={12} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">
@@ -276,15 +355,15 @@ export default function KycForm({ formik }: any) {
             value={
               formik.values.business_hours
                 ? [
-                    dayjs(
-                      formik.values.business_hours.split(" - ")[0],
-                      timeFormat
-                    ),
-                    dayjs(
-                      formik.values.business_hours.split(" - ")[1],
-                      timeFormat
-                    ),
-                  ]
+                  dayjs(
+                    formik.values.business_hours.split(" - ")[0],
+                    timeFormat
+                  ),
+                  dayjs(
+                    formik.values.business_hours.split(" - ")[1],
+                    timeFormat
+                  ),
+                ]
                 : null
             }
             onChange={(times) => {
