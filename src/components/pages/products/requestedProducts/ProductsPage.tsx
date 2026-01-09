@@ -206,14 +206,14 @@ const RequestedProductsPage = () => {
                         </div>
                       </Col>
                       <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
-                        <Button
+                        {/* <Button
                           className="font-weight-semibold"
                           variant="dark"
                           //   size="md"
                           onClick={() => setAddProductOpen(true)}
                         >
                           + Add Product
-                        </Button>
+                        </Button> */}
                       </Col>
                     </Row>
                   </div>

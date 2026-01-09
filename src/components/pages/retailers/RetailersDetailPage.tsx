@@ -26,7 +26,9 @@ import {
   formatNumberShort,
 } from "src/utils/formats";
 import { useGetPreferenceByUserId } from "src/services/preference.service";
-import { useGetSubscriptionOrderById } from "src/services/subscription-orders";
+import { useGetAllPaymentHistoryByUserid, useGetSubscriptionOrderById } from "src/services/subscription-orders";
+import PaymentHistoryList from "./PaymentHistory";
+import SubRenew from "./popups/SubRenew";
 
 const RetailersDetailPage = () => {
   //IMPORTS
@@ -37,6 +39,9 @@ const RetailersDetailPage = () => {
   //STATE
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [isEditOpenSub, setEditOpenSub] = useState<boolean>(false);
+  // const [isEditOpenSub, setEditOpenSub] = useState<boolean>(false);
+  const [isEditOpenSubRenew, setEditOpenSubRenew] = useState<boolean>(false);
+  const [subRenew, setSubRenew] = useState<boolean>(false);
 
   const [isStatusOpensub, setStatusOpensub] = useState<boolean>(false);
 
@@ -51,12 +56,19 @@ const RetailersDetailPage = () => {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [search, setSearch] = useState<string>("");
+  const [odStatus, setOdStatus] = useState<string>("all");
 
   // Claim
 
   const [claimPage, setClaimPage] = useState<number>(1);
   const [claimLimit, setClaimLimit] = useState<number>(10);
   const [claimSearch, setClaimSearch] = useState<string>("");
+  const [clStatus, setClaStatus] = useState<string>("");
+
+  const [payPage, setPayPage] = useState<number>(1);
+  const [payLimit, setPayLimit] = useState<number>(10);
+  const [paySearch, setPaySearch] = useState<string>("");
+  const [payStatus, setPayStatus] = useState<string>("all");
 
 
   //USE MEMO
@@ -78,9 +90,12 @@ const RetailersDetailPage = () => {
     if (retailerID) {
       obj.retailerID = retailerID;
     }
+    if (odStatus) {
+      obj.status = odStatus
+    }
 
     return obj;
-  }, [page, limit, search]);
+  }, [page, limit, search, odStatus]);
 
   // claims
 
@@ -103,8 +118,47 @@ const RetailersDetailPage = () => {
       obj.retailerID = retailerID;
     }
 
+    if (clStatus) {
+      obj.status = clStatus
+    }
+
     return obj;
-  }, [claimPage, claimLimit, claimSearch]);
+  }, [claimPage, claimLimit, claimSearch, clStatus]);
+
+
+  const payQueryObj = useMemo(() => {
+    const obj: any = {};
+
+    if (payPage) {
+      obj.page = payPage;
+    }
+
+    if (payLimit) {
+      obj.limit = payLimit;
+    }
+
+    if (paySearch) {
+      obj.search = paySearch;
+    }
+
+    if (retailerID) {
+      obj.retailerID = retailerID;
+    }
+    if (payStatus) {
+
+      obj.status = payStatus
+    }
+
+    return obj;
+  }, [payPage, payLimit, paySearch, retailerID, payStatus]);
+
+
+  const { data: paymentHistory, isLoading: paymentHistoryLoading } = useGetAllPaymentHistoryByUserid(
+    retailerID ? retailerID : "",
+    !!retailerID,
+    payQueryObj
+  );
+
 
 
   // QUERIES
@@ -721,17 +775,15 @@ const RetailersDetailPage = () => {
                         className="d-flex align-items-center"
                         style={{ gap: 10 }}
                       >
-                        {/* <div
-                          title="Edit Retailer"
-                          className="action_btn bg-dark"
+                        <Button
+                          className="font-weight-semibold"
+                          variant="dark"
                           onClick={() => {
-                            navigate(
-                              `/retailers/edit-retailer?_id=${retailer?._id}`
-                            );
+                            setSubRenew(true)
                           }}
                         >
-                          <i className="fas fa-pencil-alt text-light"></i>
-                        </div> */}
+                          Renew Subscription
+                        </Button>
                       </div>
                     ) : (
                       <Button
@@ -749,7 +801,7 @@ const RetailersDetailPage = () => {
                   </div>
                   <Row>
                     <Col>
-                      <div>
+                      {/* <div>
                         <h6>Subscription Order ID</h6>
                         <h5
                           className=" text-dark font-weight-500 "
@@ -757,7 +809,7 @@ const RetailersDetailPage = () => {
                         >
                           {retailerActivePlan?.subId || "-"}
                         </h5>
-                      </div>
+                      </div> */}
                       <div>
                         <h6>Subscription Plan</h6>
                         <h5
@@ -783,7 +835,7 @@ const RetailersDetailPage = () => {
                           style={{ textTransform: "capitalize" }}
                         >
                           {/* {formatCurrency( */}
-                          {retailerActivePlan?.planDetails?.price_monthly || 0}
+                          {retailerActivePlan?.planDetails?.price_monthly || 0} AED
                           {/* )} */}
                           {" "}
                           / Month
@@ -812,12 +864,20 @@ const RetailersDetailPage = () => {
                         </h5>
                       </div>
                       <div>
-                        <h6>Start Date</h6>
+                        <h6>Trial End Date</h6>
                         <h5
                           className=" text-dark font-weight-500 "
                           style={{ textTransform: "capitalize" }}
                         >
-                          {formatDate(retailerActivePlan?.plan_start_date)}
+                          {
+                            retailerActivePlan?.trial_end_date ?
+
+                              (formatDate(retailerActivePlan?.trial_end_date))
+
+                              : "N/A"
+
+                          }
+                          {/* {formatDate(vendorActivePlan?.plan_start_date)} */}
                         </h5>
                       </div>
                       <div>
@@ -836,7 +896,7 @@ const RetailersDetailPage = () => {
 
                         </h5>
                       </div>
-                      <div>
+                      {/* <div>
                         <h6>Next Billing Date</h6>
                         <h5
                           className=" text-dark font-weight-500 "
@@ -844,19 +904,40 @@ const RetailersDetailPage = () => {
                         >
                           {formatDate(retailerActivePlan?.next_billing_date)}
                         </h5>
-                      </div>
+                      </div> */}
                     </Col>
                     <Col>
                       <div>
                         <h6>Trial Period</h6>
+                        {/* <h5>
+                          {
+                          vendorActivePlan?.trial_period ?
+
+                            className = " text-dark font-weight-500 "
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {vendorActivePlan?.trial_period} Days
+
+                          : "NA"
+                        }
+                        </h5> */}
+
                         <h5
                           className=" text-dark font-weight-500 "
                           style={{ textTransform: "capitalize" }}
                         >
-                          {retailerActivePlan?.trial_period || "-"}
+                          {
+                            retailerActivePlan?.trial_period ?
+
+                              (retailerActivePlan?.trial_period)
+
+                              : "N/A"
+
+                          }
+                          {/* {formatDate(vendorActivePlan?.plan_start_date)} */}
                         </h5>
                       </div>
-                      <div>
+                      {/* <div>
                         <h6>Payment Status</h6>
                         {retailerActivePlan?.paymentStatus ? (
                           <span
@@ -873,7 +954,7 @@ const RetailersDetailPage = () => {
                         ) : (
                           "-"
                         )}
-                      </div>
+                      </div> */}
                     </Col>
                   </Row>
                 </Col>
@@ -1021,6 +1102,7 @@ const RetailersDetailPage = () => {
                 page={page}
                 limit={limit}
                 search={search}
+                setStatus={setOdStatus}
               />
             </Tab>
             <Tab eventKey="claims" title="Claims">
@@ -1034,8 +1116,29 @@ const RetailersDetailPage = () => {
                 page={claimPage}
                 limit={claimLimit}
                 search={claimSearch}
+                setStatus={setClaStatus}
               />
             </Tab>
+
+            <Tab eventKey="payment history" title="Payment History">
+              <PaymentHistoryList
+                vendorId={retailerID ? retailerID : ""}
+                paymentHistory={paymentHistory}
+                payLoading={paymentHistoryLoading}
+                setPage={setPayPage}
+                setLimit={setPayLimit}
+                setSearch={setPaySearch}
+                setStatus={setPayStatus}
+                page={payPage}
+                limit={payLimit}
+                search={paySearch}
+              />
+            </Tab>
+
+
+
+
+
           </Tabs>
         </div>
       </div>
@@ -1142,7 +1245,7 @@ const RetailersDetailPage = () => {
         isOpen={isStatusOpensub}
         toggle={() => setStatusOpensub(!isStatusOpensub)}
         text={
-          "Are you sure that you want to update subscription expire data?"
+          "Are you sure that you want to update subscription expiry date?"
         }
       />
 
@@ -1159,6 +1262,12 @@ const RetailersDetailPage = () => {
         toggle={() => set_is_kyc_reject_open(!is_kyc_reject_open)}
         text={"Are you sure that you want to reject this kyc?"}
       />
+      <ConfirmationPopup
+        submit={() => { setSubRenew(false), setEditOpenSubRenew(true) }}
+        isOpen={subRenew}
+        toggle={() => setSubRenew(!subRenew)}
+        text={"Are you sure you want to renew this subscription?"}
+      />
       <EditRetailer
         retailerId={retailerID ? retailerID : ""}
         isOpen={isEditOpen}
@@ -1170,6 +1279,13 @@ const RetailersDetailPage = () => {
         orderId={retailerActivePlan?._id}
         isOpen={isEditOpenSub}
         toggle={() => setEditOpenSub(!isEditOpenSub)}
+        data={retailerActivePlan}
+      />
+
+      <SubRenew
+        orderId={retailerActivePlan?._id}
+        isOpen={isEditOpenSubRenew}
+        toggle={() => setEditOpenSubRenew(!isEditOpenSubRenew)}
         data={retailerActivePlan}
       />
 

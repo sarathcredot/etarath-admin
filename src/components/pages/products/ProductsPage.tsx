@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Breadcrumb from "src/components/common/breadcrumb";
 import {
-  Button,
+  // Button,
   Card,
   Col,
   Form,
@@ -36,6 +36,7 @@ const ProductsPage = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState<number>(10);
   const [search, setSearch] = useState<string>("");
+  const [status, setStatus] = useState("all")
   const [addProductOpen, setAddProductOpen] = useState<boolean>(false);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -59,8 +60,12 @@ const ProductsPage = () => {
       obj.search = search;
     }
 
+    if (status) {
+      obj.status = status
+    }
+
     return obj;
-  }, [page, limit, search]);
+  }, [page, limit, search, status]);
 
   // QUERIES
   const {
@@ -128,6 +133,10 @@ const ProductsPage = () => {
       );
     }
   };
+
+  const handilStatusChange = (value: any) => {
+    setStatus(value)
+  }
 
   return (
     <>
@@ -209,14 +218,15 @@ const ProductsPage = () => {
                         </div>
                       </Col>
                       <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
-                        <Button
-                          className="font-weight-semibold"
-                          variant="dark"
+                        <button
+                          // className="font-weight-semibold"
+                          className="btn-black"
+                          // variant="dark"
                           //   size="md"
                           onClick={() => setAddProductOpen(true)}
                         >
                           + Add Product
-                        </Button>
+                        </button>
                       </Col>
                     </Row>
                   </div>
@@ -242,7 +252,35 @@ const ProductsPage = () => {
                         <th>Year</th>
 
                         {/* <th>Verification</th> */}
-                        <th>Status</th>
+                        <th>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            <span>Status</span>
+
+                            <Form.Control
+                              as="select"
+                              size="sm"
+                              style={{
+                                width: "110px",
+                                color: "#000",
+                              }}
+                              name="issuspend"
+                              onChange={(e: any) =>
+                                handilStatusChange(e.target.value)
+                              }
+                            >
+                              <option value="all">All</option>
+                              <option value="active">Active</option>
+                              <option value="blocked">Blocked</option>
+                            </Form.Control>
+                          </div>
+                        </th>
                         <th className="text-center" style={{ width: "80px" }}>
                           Actions
                         </th>
@@ -259,8 +297,8 @@ const ProductsPage = () => {
                         products?.result?.map(
                           (item: Product, index: number) => (
                             <tr key={index}
-                            
-                              
+
+
                             >
                               <td>
                                 {/* <Link to={`/products/detail?_id=${item?._id}`}> */}

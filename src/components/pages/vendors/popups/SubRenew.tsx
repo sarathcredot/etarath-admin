@@ -1,15 +1,18 @@
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
+import Select from "react-select";
+
 import { toast } from "react-toastify";
 import MediaGalleryModal from "src/components/features/modals/media-gallery-modal";
-import { subValidationSchema } from "src/validations/validationSchemas";
+import { subValidationSchema, VendorSubscriptionValidationSchema } from "src/validations/validationSchemas";
 // import { Brand } from "../BrandsList";
 import { useGetBrandById, useUpdateBrand } from "src/services/brand.service";
-import { useUpdateExpireData } from "src/services/subscription-orders";
+import { useGetSubscriptionOrderById, usePurchasePlan, useUpdateExpireData } from "src/services/subscription-orders";
 import { errorMsg } from "src/utils/toast";
 import _ from "lodash";
 import { useUploadFile } from "src/services/fileUpload.service";
+import { useGetAllPlansByRole } from "src/services/subscription.service";
 
 type Props = {
   isOpen: boolean;
@@ -18,10 +21,29 @@ type Props = {
   data: any
 };
 
-const EditOrder = ({ isOpen, toggle, orderId, data }: Props) => {
+export const durationTypes = [
+  {
+    value: "monthly",
+    label: "Monthly",
+  },
+  {
+    value: "yearly",
+    label: "Yearly",
+  },
+];
+
+const SubRenew = ({ isOpen, toggle, orderId, data }: Props) => {
   // STATES
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
   const [isUploadOpen2, setIsUploadOpen2] = useState<boolean>(false);
+
+
+  const { data: plans, isLoading } = useGetAllPlansByRole("vendor") as {
+    data: any;
+    isLoading: boolean;
+  };
+
+
 
   // QUERIES
   // const {
@@ -33,6 +55,7 @@ const EditOrder = ({ isOpen, toggle, orderId, data }: Props) => {
   // MUTATIONS
   const { mutateAsync: uploadFile } = useUploadFile();
   const { mutateAsync: updateOrder } = useUpdateExpireData();
+  const { mutateAsync: purchasePlan } = usePurchasePlan();
 
   //FORMINK
   const formik = useFormik({
@@ -48,6 +71,60 @@ const EditOrder = ({ isOpen, toggle, orderId, data }: Props) => {
       handleEditBrand(values);
     },
   });
+
+
+  const subscriptionFormik = useFormik({
+    initialValues: {
+      planId: "",
+      durationType: "",
+    },
+
+    validationSchema: VendorSubscriptionValidationSchema,
+
+    onSubmit: async (values) => {
+      console.log("SUBSCRIPTION SUBMIT:", values);
+      toast.loading("Renewing subscription plan", {
+        containerId: "default",
+        className: "no-icon notification-warning",
+      });
+      try {
+        const res = await purchasePlan({
+          userId: data?.userId,
+          planId: values.planId,
+          durationType: values.durationType,
+        });
+        if (res.status === 200) {
+          toast.dismiss();
+          toast("Subscription Plan Renewed successfully!", {
+            containerId: "default",
+            className: "no-icon notification-success",
+          });
+
+          toggle()
+
+        }
+      } catch (error: any) {
+        toast.dismiss();
+        toast(_.capitalize(errorMsg(error).toLowerCase()), {
+          containerId: "default",
+          className: "no-icon notification-danger",
+        });
+
+        toggle()
+      }
+    },
+  });
+
+
+  useEffect(() => {
+    if (data) {
+      subscriptionFormik.setValues({
+        planId: data?.planId || "",
+        durationType: data?.durationType || "",
+      });
+    }
+  }, [orderId, data]);
+
 
   //HANDLERS
   const handleEditBrand = async (values: any) => {
@@ -88,9 +165,9 @@ const EditOrder = ({ isOpen, toggle, orderId, data }: Props) => {
       <Modal show={isOpen} onHide={toggle} centered={true} size="lg">
         <Modal.Header>
           {/* <Modal.Title>Are you sure?</Modal.Title> */}
-          <h3 className="my-2">Edit subscription expiry date</h3>
+          <h3 className="my-2">Renew subscription</h3>
         </Modal.Header>
-        <Form onSubmit={formik.handleSubmit}>
+        <Form onSubmit={subscriptionFormik.handleSubmit}>
           <Modal.Body>
             <Row className=" px-md-3 ">
 
@@ -152,7 +229,9 @@ const EditOrder = ({ isOpen, toggle, orderId, data }: Props) => {
               </Col> */}
             </Row>
             <Row className="px-1 px-md-3 pt-md-3 ">
-              <Col lg={12} className="px-4 py-1  ">
+
+
+              {/* <Col lg={12} className="px-4 py-1  ">
                 <Form.Group as={Row} className="align-items-center">
                   <Form.Label className="col-form-label">subscription Id</Form.Label>
                   <Form.Control
@@ -186,7 +265,75 @@ const EditOrder = ({ isOpen, toggle, orderId, data }: Props) => {
                     {formik.errors.endDate}
                   </Form.Control.Feedback>
                 </Form.Group>
+              </Col> */}
+
+
+              <Col lg={12} className="px-2 py-1  ">
+                <Form.Label className="col-form-label">Subscription Plan</Form.Label>
+                <Select
+                  name="planId"
+                  options={plans?.map((item: any) => ({
+                    value: item?._id,
+                    label: item?.plan?.toUpperCase(),
+                  }))}
+                  value={plans
+                    ?.map((item: any) => ({
+                      value: item?._id,
+                      label: item?.plan?.toUpperCase(),
+                    }))
+                    .find((opt: any) => opt.value === subscriptionFormik.values.planId)}
+                  // isMulti={false}
+                  placeholder="Select Subscription Plan"
+                  onChange={(selected: any) => {
+                    console.log({ selected });
+                    subscriptionFormik.setFieldValue("planId", selected?.value);
+                  }}
+                  onBlur={() => subscriptionFormik.setFieldTouched("planId", true)}
+                  classNamePrefix={
+                    subscriptionFormik.touched.planId && subscriptionFormik.errors.planId ? "is-invalid" : ""
+                  }
+                />
+                {subscriptionFormik.touched.planId && subscriptionFormik.errors.planId && (
+                  <div className="text-danger mt-1" style={{ fontSize: "11px" }}>
+                    {subscriptionFormik.errors.planId}
+                  </div>
+                )}
               </Col>
+              <Col lg={12} className="px-2 py-1  ">
+                <Form.Label className="col-form-label">
+                  Select subscription duration
+                </Form.Label>
+                <Select
+                  name="durationType"
+                  options={durationTypes}
+                  value={durationTypes.find(
+                    (opt) => opt.value === subscriptionFormik.values.durationType
+                  )}
+                  isMulti={false}
+                  placeholder="Select subscriptionFormikription duration"
+                  // value={["english", "arabic", "german", "spanish", "french"]
+                  //   .map((loc) => ({ value: loc, label: loc?.toUpperCase() }))
+                  //   .filter((opt) => subscriptionFormik.values.brands.includes(opt.value))}
+                  onChange={(selected) => {
+                    console.log({ selected });
+                    subscriptionFormik.setFieldValue("durationType", selected?.value);
+                  }}
+                  onBlur={() => subscriptionFormik.setFieldTouched("durationType", true)}
+                  classNamePrefix={
+                    subscriptionFormik.touched.durationType && subscriptionFormik.errors.durationType
+                      ? "is-invalid"
+                      : ""
+                  }
+                />
+                {subscriptionFormik.touched.durationType && subscriptionFormik.errors.durationType && (
+                  <div className="text-danger mt-1" style={{ fontSize: "11px" }}>
+                    {subscriptionFormik.errors.durationType}
+                  </div>
+                )}
+              </Col>
+
+
+
             </Row>
           </Modal.Body>
           <Modal.Footer>
@@ -251,4 +398,4 @@ const EditOrder = ({ isOpen, toggle, orderId, data }: Props) => {
   );
 };
 
-export default EditOrder;
+export default SubRenew;

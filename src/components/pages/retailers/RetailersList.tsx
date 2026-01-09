@@ -187,15 +187,16 @@ const RetailersList = ({
                     </div>
                   </Col>
                   <Col xl="auto" className="">
-                    <Button
-                      className="font-weight-semibold px-3"
-                      variant="dark"
+                    <button
+                      // className="font-weight-semibold px-3"
+                      // variant="dark"
+                       className="btn-black"
                       // style={{ background: "#000" }}
                       onClick={() => navigate("/retailers/add-retailer")}
                     // onClick={() => setAddOpen(true)}
                     >
                       + Add Retailer
-                    </Button>
+                    </button>
                   </Col>
                 </Row>
               </div>

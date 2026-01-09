@@ -188,14 +188,15 @@ const BrandsList = ({
                     </div>
                   </Col>
                   <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
-                    <Button
-                      className="font-weight-semibold"
-                      variant="dark"
+                    <button
+                      className="btn-black"
+                      // className="font-weight-semibold"
+                      // variant="dark"
                       //   size="md"
                       onClick={() => setAddBrandOpen(true)}
                     >
                       + Add Brand
-                    </Button>
+                    </button>
                   </Col>
                   {/* <Col
                         lg="auto"
@@ -222,7 +223,7 @@ const BrandsList = ({
                           </Button>
                         </div>
                       </Col> */}
-                
+
                 </Row>
               </div>
               <Table
@@ -262,12 +263,12 @@ const BrandsList = ({
                       <tr key={index}>
                         <td>
                           <Link to={`/brands/detail?_id=${item?._id}`}
-                          style={{ textDecoration: "none", color: "inherit" }}
+                            style={{ textDecoration: "none", color: "inherit" }}
                           >
                             {/* <strong> */}
-                              {/* {index + 1} */}
-                               {(brandsData?.currentPage - 1) * limit + index + 1}
-                              {/* </strong> */}
+                            {/* {index + 1} */}
+                            {(brandsData?.currentPage - 1) * limit + index + 1}
+                            {/* </strong> */}
                           </Link>
                         </td>
                         <td>
@@ -288,9 +289,9 @@ const BrandsList = ({
                           <Link to={`/brands/detail?_id=${item?._id}`}
                             style={{ textDecoration: "none", color: "inherit" }}
                           >
-                          <strong>
+                            <strong>
                               {item?.name || "-"}
-                          </strong>
+                            </strong>
                           </Link>
                         </td>
                         <td>{item?.priority || "-"}</td>

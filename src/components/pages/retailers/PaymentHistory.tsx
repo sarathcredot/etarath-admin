@@ -13,24 +13,25 @@ import { StockEditValidationSchema } from "src/validations/validationSchemas";
 import { useFormik } from "formik";
 import { useGetAllVendors } from "src/services/vendor.service";
 import { errorMsg } from "src/utils/toast";
+// import AddStock from "./popups/AddStock";
 import dayjs from "dayjs";
+import { formatDate } from "src/utils/formats"
 
-const RetailerOrdersList = ({
-  orders,
-  ordersLoading = false,
-  retailerId,
+const PaymentHistoryList = ({
+  paymentHistory,
+  payLoading = false,
+  vendorId,
   setPage = () => { },
   setSearch = () => { }, // fallback so debounce doesn’t break
+  setStatus = () => { }, // fallback so debounce doesn’t break
   setLimit,
   page = 1,
   limit = 10,
   search = "",
-  setStatus = () => { },
-
 }: {
-  retailerId: string;
-  orders: any;
-  ordersLoading: boolean;
+  vendorId: any;
+  paymentHistory: any;
+  payLoading: boolean;
   setPage?: Dispatch<React.SetStateAction<number>>;
   setLimit?: Dispatch<React.SetStateAction<number>>;
   setSearch?: Dispatch<React.SetStateAction<any>>;
@@ -38,7 +39,6 @@ const RetailerOrdersList = ({
   page?: number;
   limit?: number;
   search?: string;
-
 }) => {
   const navigate = useNavigate();
 
@@ -121,8 +121,8 @@ const RetailerOrdersList = ({
   //   }
   // };
 
-  const totalRecords = orders?.total || 0;
-  const totalPages = orders?.totalPages || 0;
+  const totalRecords = paymentHistory?.total || 0;
+  const totalPages = paymentHistory?.totalPages || 0;
 
   useEffect(() => {
     if (isEditOpen && selectedStock) {
@@ -150,6 +150,7 @@ const RetailerOrdersList = ({
     []
   );
 
+
   const debouncedHandleStatus = useCallback(
     debounce((text) => {
       try {
@@ -160,6 +161,7 @@ const RetailerOrdersList = ({
     }, 1000),
     []
   );
+
 
   return (
     <>
@@ -173,7 +175,7 @@ const RetailerOrdersList = ({
                 <Row className="align-items-lg-center justify-content-end mb-3">
                   <Col>
                     <h5 className="m-0 card-title h5 font-weight-bold">
-                      Orders
+                      Executives
                     </h5>
                   </Col>
 
@@ -208,7 +210,7 @@ const RetailerOrdersList = ({
                         <Form.Control
                           type="text"
                           className="search-term"
-                          placeholder="Search Order "
+                          placeholder="Search subscription Id"
                           style={{ width: "250px" }}
                           value={search}
                           onChange={(e) =>
@@ -230,169 +232,79 @@ const RetailerOrdersList = ({
                 >
                   <thead>
                     <tr>
-                      <th style={{ width: "30px" }}>Order ID</th>
-                      <th
-                        // className="text-center"
-                        style={{ width: "80px" }}
-                      >
-                        Product
-                      </th>
-                      <th></th>
-                      <th>Vendor</th>
-                      {/* <th>Quantity</th> */}
-                      <th>Total Price</th>
-                      <th>Order Date</th>
-                      <th>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          <span>Status</span>
+                      <th style={{ width: "30px" }}>#</th>
+                      <th style={{ width: "80px" }}>Subscription Id</th>
+                      <th>User Name</th>
+                      <th>Contact Number</th>
+                      <th>Email</th>
+                      <th>Subscription Plan  </th>
+                      <th> Purchase Date  </th>
+                      <th> Plan Expiry Data  </th>
+                      <th> Total Amount </th>
+                      <th> Payment Status </th>
 
-                          <Form.Control
-                            as="select"
-                            size="sm"
-                            style={{
-                              width: "110px",
-                              color: "#000",
-                            }}
-                            name="verification"
-                            onChange={(e: any) =>
-                              debouncedHandleStatus(e.target.value)
-                            }
-                          >
-                            <option value="all">All</option>
-                            <option value="approved">Approved</option>
-                            <option value="pending">Pending</option>
-                            <option value="rejected">Rejected</option>
-                          </Form.Control>
-                        </div>
-                      </th>
 
-                      {/* <th className="text-center" style={{ width: "80px" }}>
-                        Actions
-                      </th> */}
                     </tr>
                   </thead>
                   <tbody>
-                    {ordersLoading ? (
+                    {payLoading ? (
                       <tr>
                         <td colSpan={9}>
                           <Loader />
                         </td>
                       </tr>
-                    ) : !ordersLoading &&
-                      orders &&
-                      orders?.result?.length > 0 ? (
-                      orders?.result?.map((item: any, index: number) => (
+                    ) : !payLoading &&
+                      paymentHistory &&
+                      paymentHistory?.result?.length > 0 ? (
+                      paymentHistory?.result?.map((item: any, index: number) => (
                         <tr
+
                           key={index}
-                          onClick={() =>
-                            navigate(`/orders/detail?_id=${item?._id}`)
-                          }
+                          // onClick={
+                          //   item?.userDetails?.role === "retailer"
+                          //     ? () => navigate(`/retailers/detail?_id=${item?.userDetails?._id}`)
+                          //     : undefined
+                          // }
                           style={{ cursor: "pointer" }}
                         >
                           <td>
                             {/* <Link
-                              to={`/orders/detail?_id=${index + 1}`}
+                              to={`/sales-executives/detail?_id=${index + 1}`}
                               style={{ whiteSpace: "nowrap" }}
                             > */}
-                            <strong style={{ whiteSpace: "nowrap" }}>
-                              {item?.orderId}
-                            </strong>
+
+                            {(paymentHistory?.currentPage - 1) * limit + index + 1}
                             {/* </Link> */}
                           </td>
                           <td>
-                            {/* <Link
-                              style={{ width: "50px", height: "50px" }}
-                              className="d-flex align-items-center justify-content-center"
-                              to={`/stock/detail?_id=${item?.stockIdByVendor}`}
-                              onClick={(e) => e.stopPropagation()}
-                            > */}
-                            <img
-                              className="mr-1"
-                              src={generateFilePath(
-                                item?.productDetails?.imageUrl[0]
-                              )}
-                              // src={item?.imageUrl[0]}
-                              alt="product"
-                              width="40"
-                              height="40"
-                            // crossOrigin="anonymous"
-                            />
-                            {/* </Link> */}
+                            <strong> {item?.subId} </strong>
                           </td>
+                          <td>{item?.userDetails?.userName} </td>
+                          <td>{item?.userDetails?.phoneNumber} </td>
+                          <td>{item?.userDetails?.email} </td>
+                          <td>{item?.planDetails?.plan}  </td>
+                          <td> {formatDate(item?.purchased_Date)}   </td>
+                          <td> {formatDate(item?.plan_end_date)}  </td>
+                          <td>{item?.total_amount} AED </td>
                           <td>
-                            {/* <Link
-                              to={`/stock/detail?_id=${item?.stockIdByVendor}`}
-                              onClick={(e) => e.stopPropagation()}
-                            > */}
-                            {`${item?.productDetails?.productName} - ${item?.productDetails?.width
-                              }${item?.productDetails?.height
-                                ? `/${item?.productDetails?.height}`
-                                : ""
-                              } R${item?.productDetails?.size}`}
-                            {/* </Link> */}
+                            {item?.paymentStatus ? (
+                          <span
+                            className={`ecommerce-status ${item?.paymentStatus === "paid"
+                              ? "completed"
+                              : item?.paymentStatus === "failed"
+                                ? "failed"
+                                : "on-hold"
+                              } text-dark font-weight-500`}
+                            style={{ textTransform: "capitalize" }}
+                          >
+                            {item?.paymentStatus}
+                          </span>
+                        ) : (
+                          "-"
+                        )}
                           </td>
-                          <td>
-                            <Link
-                              to={`/vendors/detail?_id=${item?.vendorId}`}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              {item?.kycDetails?.business_name || item?.vendorDetails?.userName}
-                            </Link>
-                          </td>
-                          {/* <td>{item?.quantity || 0} </td> */}
-                          <td>{item?.totalPrice || 0} AED</td>
-                          <td>
-                            {item?.orderDate
-                              ? dayjs(item?.orderDate).format("DD-MM-YYYY")
-                              : "-"}
-                          </td>
-                          <td>
-                            <div className={`ecommerce-status ${item?.status}`}>
-                              {capitalize(item?.status)}
-                            </div>
-                          </td>
-                          {/* <td onClick={(e) => e.stopPropagation()}>
-                            <div className="d-flex align-items-center justify-content-around">
-                              {isEditOpen &&
-                              selectedStock &&
-                              selectedStock?._id === item?._id ? (
-                                <>
-                                  <button className="action_btn" type="submit">
-                                    <i className="fas fa-check"></i>
-                                  </button>
-                                  <div
-                                    className="action_btn"
-                                    onClick={() => {
-                                      formik.resetForm();
-                                      setSelectedStock(null);
-                                      setEditOpen(false);
-                                    }}
-                                  >
-                                    <i className="fas fa-x-mark"></i>
-                                  </div>
-                                </>
-                              ) : (
-                                <>
-                                  <div
-                                    className="action_btn"
-                                    onClick={() => {
-                                      setSelectedStock(item);
-                                      setEditOpen(true);
-                                    }}
-                                  >
-                                    <i className="fas fa-pencil-alt"></i>
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          </td> */}
+
+
                         </tr>
                       ))
                     ) : (
@@ -420,7 +332,7 @@ const RetailerOrdersList = ({
             </Card> */}
           </Col>
         </Row>
-      </div>
+      </div >
       {/* <ConfirmationPopup
         submit={() => handleDeleteStock()}
         isOpen={isDeleteOpen}
@@ -431,4 +343,4 @@ const RetailerOrdersList = ({
   );
 };
 
-export default RetailerOrdersList;
+export default PaymentHistoryList;

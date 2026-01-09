@@ -382,4 +382,19 @@ input [type="number"]::-webkit-outer-spin-button {
 
 
 
+.btn-black {
+  background-color: #000;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
 
+/* Explicitly disable hover/focus/active changes */
+.btn-black:hover,
+.btn-black:focus,
+.btn-black:active {
+  background-color: #000;
+  color: #fff;
+  outline: none;
+}

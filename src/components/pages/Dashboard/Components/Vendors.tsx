@@ -7,11 +7,12 @@ import { Link } from "react-router-dom";
 import { useGetAllTopUsersAndOrders, usegetchartData, convertTimelineToApexSeries } from "src/services/dashboard.service";
 import { User } from "src/types/types";
 import { fadeIn } from "src/utils/data/keyframes";
+import { useNavigate } from "react-router-dom";
 
 const Vendors = () => {
   const [filter, setFilter] = useState<string>("month");
   const [chartResult, setChartResult] = useState<any[]>([]);
-
+  const navigate = useNavigate()
   // QUERIES
   const { data: topVendors } = useGetAllTopUsersAndOrders("vendor");
 
@@ -20,11 +21,14 @@ const Vendors = () => {
     const currentYear = new Date().getFullYear();
 
     switch (filterType) {
-      case "year":
-        const startYear = 2018;
-        return Array.from({ length: currentYear - startYear + 1 }, (_, i) =>
-          (startYear + i).toString()
+
+
+      case "year": {
+        const totalSlots = 5; // same as backend
+        return Array.from({ length: totalSlots }, (_, i) =>
+          (currentYear - 4 + i).toString()
         );
+      }
 
       case "month":
         return [
@@ -150,9 +154,9 @@ const Vendors = () => {
     const obj: any = {};
 
     obj.role = "vendor"
-    obj.year="2026"
+    obj.year = "2026"
     // obj.chartType="user"
-    
+
     if (filter) {
       obj.filter = filter;
     }
@@ -200,7 +204,14 @@ const Vendors = () => {
           <Col lg={5} className=" pt-3 ">
             <Card className="card-modern h-100">
               <Card.Header>
-                <Card.Title>Top Vendors</Card.Title>
+                <div style={{ display: "flex", justifyContent: "space-between" }} >
+
+                  <Card.Title>Top Vendors</Card.Title>
+                  <button onClick={()=>{navigate("/vendors")}} style={{ height: "40px" }} className="btn-black">
+                    View More
+                  </button>
+
+                </div>
               </Card.Header>
               <Card.Body className="h-100 pt-2">
                 <Table
@@ -219,7 +230,7 @@ const Vendors = () => {
                   <tbody>
                     {topVendors &&
                       topVendors?.length &&
-                      topVendors?.map(
+                      topVendors?.slice(0, 8)?.map(
                         (
                           item: {
                             orderCount: number;
@@ -233,6 +244,7 @@ const Vendors = () => {
                             <td>
                               <Link
                                 to={`/vendors/detail?_id=${item?.vendorId}`}
+                                style={{ textDecoration: "none", color: "#000" }}
                               >
                                 {item?.vendorName}
                               </Link>
@@ -282,12 +294,12 @@ const Vendors = () => {
               <Card.Body className="h-100 pt-2">
                 <Row>
                   <Col className="col-auto">
-                    <strong className="text-color-dark text-6">{chartData?.summary?.thisMonth}</strong>
-                    <h3 className="text-4 mt-0 mb-2">This Month</h3>
+                    <strong className="text-color-dark text-6">{chartData?.summary?.currentPeriod}</strong>
+                    <h3 className="text-4 mt-0 mb-2">This {filter}</h3>
                   </Col>
                   <Col className="col-auto">
-                    <strong className="text-color-dark text-6">{chartData?.summary?.lastMonth}</strong>
-                    <h3 className="text-4 mt-0 mb-2">Last Month</h3>
+                    <strong className="text-color-dark text-6">{chartData?.summary?.previousPeriod}</strong>
+                    <h3 className="text-4 mt-0 mb-2">Last {filter}</h3>
                   </Col>
                   <Col className="col-auto">
                     <strong className="text-color-dark text-6">{chartData?.summary?.totalUsers}</strong>

@@ -10,8 +10,9 @@ import Pagination from "src/components/common/Pagination";
 const RetailerClaimList = ({
   claims,
   claimsLoading = false,
- setPage = () => { },
+  setPage = () => { },
   setSearch = () => { }, // fallback so debounce doesn’t break
+  setStatus = () => { }, // fallback so debounce doesn’t break
   setLimit,
   page = 1,
   limit = 10,
@@ -20,33 +21,47 @@ const RetailerClaimList = ({
   retailerID: string;
   claims: any;
   claimsLoading: boolean;
-   setPage?: Dispatch<React.SetStateAction<number>>;
+  setPage?: Dispatch<React.SetStateAction<number>>;
   setLimit?: Dispatch<React.SetStateAction<number>>;
   setSearch?: Dispatch<React.SetStateAction<any>>;
+  setStatus?: Dispatch<React.SetStateAction<any>>;
   page?: number;
   limit?: number;
   search?: string;
-  
+
+
 }) => {
   const navigate = useNavigate();
 
   //STATES
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
- 
+
   const totalRecords = claims?.total || 0;
   const totalPages = claims?.totalPages || 0;
 
-   const debouncedHandleSearch = useCallback(
-        debounce((text) => {
-          try {
-            setSearch(text);
-          } catch (error) {
-            console.log(error, "error in the debounce function");
-          }
-        }, 1000),
-        []
-      );
+  const debouncedHandleSearch = useCallback(
+    debounce((text) => {
+      try {
+        setSearch(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
+
+
+  const debouncedHandleStatus = useCallback(
+    debounce((text) => {
+      try {
+        setStatus(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
 
   return (
     <>
@@ -60,7 +75,7 @@ const RetailerClaimList = ({
                 <Row className="align-items-lg-center justify-content-end mb-3">
                   <Col>
                     <h5 className="m-0 card-title h5 font-weight-bold">
-                     Claims
+                      Claims
                     </h5>
                   </Col>
 
@@ -99,7 +114,7 @@ const RetailerClaimList = ({
                           style={{ width: "250px" }}
                           value={search}
                           onChange={(e) =>
-                                debouncedHandleSearch(e.target.value)
+                            debouncedHandleSearch(e.target.value)
                           }
                         />
                       </InputGroup>
@@ -128,7 +143,42 @@ const RetailerClaimList = ({
                     {/* <th>Quantity</th> */}
                     <th>Total Price</th>
                     <th>Claim Date</th>
-                    <th>Status</th>
+                    <th>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        <span>Status</span>
+
+                        <Form.Control
+                          as="select"
+                          size="sm"
+                          style={{
+                            width: "110px",
+                            color: "#000",
+                          }}
+                          name="verification"
+                          onChange={(e: any) =>
+                            debouncedHandleStatus(e.target.value)
+                          }
+                        >
+                          <option value="all">All</option>
+                          <option value="approved">Approved</option>
+                          <option value="pending">Pending</option>
+                          <option value="rejected">Rejected</option>
+                        </Form.Control>
+                      </div>
+                    </th>
+
+
+
+
+
+
                     {/* <th className="text-center" style={{ width: "80px" }}>
                         Actions
                       </th> */}
@@ -148,7 +198,7 @@ const RetailerClaimList = ({
                           navigate(`/claims/detail?_id=${item?._id}`)
                         }
                         key={index}
-                        style={{cursor:"pointer"}}
+                        style={{ cursor: "pointer" }}
                       >
                         <td>
                           {/* <Link
@@ -160,7 +210,7 @@ const RetailerClaimList = ({
                             {item?.orderId}
                           </Link> */}
 
-                          <strong  style={{ whiteSpace: "nowrap" }}>
+                          <strong style={{ whiteSpace: "nowrap" }}>
                             {item?.claimId}
                           </strong>
                         </td>
@@ -180,22 +230,21 @@ const RetailerClaimList = ({
                               alt="product"
                               width="40"
                               height="40"
-                              // crossOrigin="anonymous"
+                            // crossOrigin="anonymous"
                             />
                           </Link>
                         </td>
                         <td>
                           {item?.productDetails?.productName}-{" "}
-                            {`${item?.productDetails?.width}${
-                              item?.productDetails?.height
-                                ? `/${item.productDetails?.height}`
-                                : ""
+                          {`${item?.productDetails?.width}${item?.productDetails?.height
+                            ? `/${item.productDetails?.height}`
+                            : ""
                             } R${item?.productDetails?.size}`}
                         </td>
                         <td>
-                          
-                            {item?.vendorDetails?.business_name || "-"}
-                        
+
+                          {item?.vendorDetails?.business_name || "-"}
+
                         </td>
                         {/* <td>{item?.quantity || 0} </td> */}
                         <td>{item?.orderDetails?.totalPrice?.toFixed(2) || 0} AED</td>

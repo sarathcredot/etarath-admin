@@ -54,7 +54,7 @@ const ProductsList = ({
   header = false,
   productsData,
   isLoading,
-  setPage = () => {},
+  setPage = () => { },
   setLimit,
   setSearch,
   page = 1,
@@ -222,8 +222,37 @@ const ProductsList = ({
                     <th>Name</th>
                     <th>Brand</th>
                     {/* <th>Category</th> */}
+                    <th> Status </th>
 
-                    <th>Status</th>
+                    {/* <th>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        <span>Status</span>
+
+                        <Form.Control
+                          as="select"
+                          size="sm"
+                          style={{
+                            width: "110px",
+                            color: "#000",
+                          }}
+                          name="issuspend"
+                          onChange={(e: any) =>
+                            debouncedHandleSearchFillterisSupaend(e.target.value)
+                          }
+                        >
+                          <option value="all">All</option>
+                          <option value="active">Active</option>
+                          <option value="blocked">Blocked</option>
+                        </Form.Control>
+                      </div>
+                    </th> */}
                     <th className="text-center" style={{ width: "80px" }}>
                       Actions
                     </th>
@@ -242,14 +271,14 @@ const ProductsList = ({
                         <tr key={index}>
                           <td>
                             {/* <Link to={`/products/detail?_id=${index + 1}`}> */}
-                              {/* <strong> */}
-                                {/* {index +
+                            {/* <strong> */}
+                            {/* {index +
                                   (productsData?.pagination?.page - 1) *
                                     productsData?.pagination?.limit +
                                   1} */}
-                                {/* {index + 1} */}
-                                  {(productsData?.currentPage - 1) * limit + index + 1}
-                              {/* </strong> */}
+                            {/* {index + 1} */}
+                            {(productsData?.currentPage - 1) * limit + index + 1}
+                            {/* </strong> */}
                             {/* </Link> */}
                           </td>
                           <td>
@@ -264,13 +293,13 @@ const ProductsList = ({
                                 alt="product"
                                 width="40"
                                 height="40"
-                                // crossOrigin="anonymous"
+                              // crossOrigin="anonymous"
                               />
                             </div>
                           </td>
                           <td>
                             {/* <Link to={`/products/detail?_id=${index + 1}`}> */}
-                              {item?.productName}
+                            {item?.productName}
                             {/* </Link> */}
                           </td>
                           <td>{item?.brand}</td>
@@ -279,9 +308,9 @@ const ProductsList = ({
                           <td>
                             <div
                               className="d-flex align-items-center"
-                              // onClick={() => {
-                              //   setStatusOpen(true);
-                              // }}
+                            // onClick={() => {
+                            //   setStatusOpen(true);
+                            // }}
                             >
                               <PtSwitch
                                 className="mr-2"

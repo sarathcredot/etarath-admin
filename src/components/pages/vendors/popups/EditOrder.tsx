@@ -88,7 +88,7 @@ const EditOrder = ({ isOpen, toggle, orderId, data }: Props) => {
       <Modal show={isOpen} onHide={toggle} centered={true} size="lg">
         <Modal.Header>
           {/* <Modal.Title>Are you sure?</Modal.Title> */}
-          <h3 className="my-2">Edit subscription expire data</h3>
+          <h3 className="my-2">Edit subscription expiry date</h3>
         </Modal.Header>
         <Form onSubmit={formik.handleSubmit}>
           <Modal.Body>

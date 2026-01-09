@@ -8,6 +8,7 @@ import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 
 import EditVendor from "./popups/EditVendor";
 import EditOrder from "./popups/EditOrder";
+import SubRenew from "./popups/SubRenew";
 import {
   useGetAgentsByVendorId,
   useGetOrdersByVendorId,
@@ -35,8 +36,9 @@ import CustomersList from "./CustomersList";
 
 
 import { useGetPreferenceByUserId } from "src/services/preference.service";
-import { useGetSubscriptionOrderById } from "src/services/subscription-orders";
+import { useGetSubscriptionOrderById, useGetAllPaymentHistoryByUserid } from "src/services/subscription-orders";
 import VendorWarehousesList from "./VendorWarehousesList";
+import PaymentHistoryList from "./PaymentHistory";
 import { useGetAllVendorWarehouses, useGetAllVendorCustomers } from "src/services/warehouse.service";
 
 const VendorsDetailPage = () => {
@@ -51,12 +53,14 @@ const VendorsDetailPage = () => {
   const [isStatusOpen, setStatusOpen] = useState<boolean>(false);
   const [isStatusOpenSub, setStatusOpenSub] = useState<boolean>(false);
   const [isEditOpenSub, setEditOpenSub] = useState<boolean>(false);
+  const [isEditOpenSubRenew, setEditOpenSubRenew] = useState<boolean>(false);
 
 
   const [verifyKyc, setVerifyKyc] = useState<boolean>(false);
   const [is_kyc_approve_open, set_is_kyc_approve_open] =
     useState<boolean>(false);
   const [is_kyc_reject_open, set_is_kyc_reject_open] = useState<boolean>(false);
+  const [subRenew, setSubRenew] = useState<boolean>(false);
   const [isKycOpen, setKycOpen] = useState<boolean>(false);
   //pagination
   const [orderPage, setOrderPage] = useState<number>(1);
@@ -88,6 +92,12 @@ const VendorsDetailPage = () => {
   const [cuLimit, setCuLimit] = useState<number>(10);
   const [cuSearch, setCuSearch] = useState<string>("");
   const [cuStatus, setCuStatus] = useState<string>("all");
+
+
+  const [payPage, setPayPage] = useState<number>(1);
+  const [payLimit, setPayLimit] = useState<number>(10);
+  const [paySearch, setPaySearch] = useState<string>("");
+  const [payStatus, setPayStatus] = useState<string>("all");
 
 
 
@@ -259,6 +269,33 @@ const VendorsDetailPage = () => {
   }, [cuPage, cuLimit, cuSearch, vendorID, cuStatus]);
 
 
+  // agent use memo
+
+  const payQueryObj = useMemo(() => {
+    const obj: any = {};
+
+    if (payPage) {
+      obj.page = payPage;
+    }
+
+    if (payLimit) {
+      obj.limit = payLimit;
+    }
+
+    if (paySearch) {
+      obj.search = paySearch;
+    }
+
+    if (vendorID) {
+      obj.vendorID = vendorID;
+    }
+    if (payStatus) {
+
+      obj.status = payStatus
+    }
+
+    return obj;
+  }, [payPage, payLimit, paySearch, vendorID, payStatus]);
 
 
 
@@ -298,6 +335,12 @@ const VendorsDetailPage = () => {
     vendorID ? vendorID : "",
     !!vendorID,
     waerQueryObj
+  );
+
+  const { data: paymentHistory, isLoading: paymentHistoryLoading } = useGetAllPaymentHistoryByUserid(
+    vendorID ? vendorID : "",
+    !!vendorID,
+    payQueryObj
   );
 
 
@@ -869,6 +912,15 @@ const VendorsDetailPage = () => {
                         className="d-flex align-items-center"
                         style={{ gap: 10 }}
                       >
+                        <Button
+                          className="font-weight-semibold"
+                          variant="dark"
+                          onClick={() => {
+                            setSubRenew(true)
+                          }}
+                        >
+                          Renew Subscription
+                        </Button>
                         {/* <div
                           title="Edit Vendor"
                           className="action_btn bg-dark"
@@ -877,6 +929,7 @@ const VendorsDetailPage = () => {
                           }}
                         >
                           <i className="fas fa-pencil-alt text-light"></i>
+                          Renew Subscription
                         </div> */}
                       </div>
                     ) : (
@@ -893,7 +946,7 @@ const VendorsDetailPage = () => {
                   </div>
                   <Row>
                     <Col>
-                      <div>
+                      {/* <div>
                         <h6>Subscription Order ID</h6>
                         <h5
                           className=" text-dark font-weight-500 "
@@ -901,14 +954,14 @@ const VendorsDetailPage = () => {
                         >
                           {vendorActivePlan?.subId || "-"}
                         </h5>
-                      </div>
+                      </div> */}
                       <div>
                         <h6>Subscription Plan</h6>
                         <h5
                           className=" text-dark font-weight-500 "
                           style={{ textTransform: "capitalize" }}
                         >
-                          {vendorActivePlan?.planId?.plan || "-"}
+                          {vendorActivePlan?.planDetails?.plan || "-"}
                         </h5>
                       </div>
                       <div>
@@ -950,16 +1003,24 @@ const VendorsDetailPage = () => {
                         </h5>
                       </div>
                       <div>
-                        <h6>Start Date</h6>
+                        <h6>Trial End Date</h6>
                         <h5
                           className=" text-dark font-weight-500 "
                           style={{ textTransform: "capitalize" }}
                         >
-                          {formatDate(vendorActivePlan?.plan_start_date)}
+                          {
+                            vendorActivePlan?.trial_end_date ?
+
+                              (formatDate(vendorActivePlan?.trial_end_date))
+
+                              : "N/A"
+
+                          }
+                          {/* {formatDate(vendorActivePlan?.plan_start_date)} */}
                         </h5>
                       </div>
                       <div>
-                        <h6>End Date</h6>
+                        <h6>Plan End Date</h6>
                         <h5
                           className=" text-dark font-weight-500 "
                           style={{ textTransform: "capitalize", display: "flex", gap: "5px" }}
@@ -974,7 +1035,7 @@ const VendorsDetailPage = () => {
                           </div>
                         </h5>
                       </div>
-                      <div>
+                      {/* <div>
                         <h6>Next Billing Date</h6>
                         <h5
                           className=" text-dark font-weight-500 "
@@ -982,19 +1043,40 @@ const VendorsDetailPage = () => {
                         >
                           {formatDate(vendorActivePlan?.next_billing_date)}
                         </h5>
-                      </div>
+                      </div> */}
                     </Col>
                     <Col>
                       <div>
                         <h6>Trial Period</h6>
+                        {/* <h5>
+                          {
+                          vendorActivePlan?.trial_period ?
+
+                            className = " text-dark font-weight-500 "
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {vendorActivePlan?.trial_period} Days
+
+                          : "NA"
+                        }
+                        </h5> */}
+
                         <h5
                           className=" text-dark font-weight-500 "
                           style={{ textTransform: "capitalize" }}
                         >
-                          {vendorActivePlan?.trial_period || "-"} Days
+                          {
+                            vendorActivePlan?.trial_period ?
+
+                              (vendorActivePlan?.trial_period)
+
+                              : "N/A"
+
+                          }
+                          {/* {formatDate(vendorActivePlan?.plan_start_date)} */}
                         </h5>
                       </div>
-                      <div>
+                      {/* <div>
                         <h6>Payment Status</h6>
                         {vendorActivePlan?.paymentStatus ? (
                           <span
@@ -1011,7 +1093,7 @@ const VendorsDetailPage = () => {
                         ) : (
                           "-"
                         )}
-                      </div>
+                      </div> */}
                     </Col>
                   </Row>
                 </Col>
@@ -1160,6 +1242,21 @@ const VendorsDetailPage = () => {
                 search={stockSearch}
               />
             </Tab>
+            <Tab eventKey="warehouses" title="Warehouses">
+              <VendorWarehousesList
+                vendorId={vendorID ? vendorID : ""}
+                warehouses={warehouses}
+                warehousesLoading={warehousesLoading}
+                setPage={setWaerPage}
+                setLimit={setWaerLimit}
+                setSearch={setWaerSearch}
+                setStatus={setWaerStatus}
+                page={waerPage}
+                limit={waerLimit}
+                search={waerSearch}
+
+              />
+            </Tab>
             <Tab eventKey="orders" title="Orders">
               <VendorOrdersList
                 vendorId={vendorID ? vendorID : ""}
@@ -1188,21 +1285,7 @@ const VendorsDetailPage = () => {
                 search={claimSearch}
               />
             </Tab>
-            <Tab eventKey="warehouses" title="Warehouses">
-              <VendorWarehousesList
-                vendorId={vendorID ? vendorID : ""}
-                warehouses={warehouses}
-                warehousesLoading={warehousesLoading}
-                setPage={setWaerPage}
-                setLimit={setWaerLimit}
-                setSearch={setWaerSearch}
-                setStatus={setWaerStatus}
-                page={waerPage}
-                limit={waerLimit}
-                search={waerSearch}
 
-              />
-            </Tab>
             <Tab eventKey="salesExecutive" title="Sales Executive">
               <SalesExecutivesList
                 vendorId={vendorID ? vendorID : ""}
@@ -1232,6 +1315,23 @@ const VendorsDetailPage = () => {
                 search={cuSearch}
               />
             </Tab>
+
+
+            <Tab eventKey="payment history" title="Payment History">
+              <PaymentHistoryList
+                vendorId={vendorID ? vendorID : ""}
+                paymentHistory={paymentHistory}
+                payLoading={paymentHistoryLoading}
+                setPage={setPayPage}
+                setLimit={setPayLimit}
+                setSearch={setPaySearch}
+                setStatus={setPayStatus}
+                page={payPage}
+                limit={payLimit}
+                search={paySearch}
+              />
+            </Tab>
+
 
 
 
@@ -1337,7 +1437,7 @@ const VendorsDetailPage = () => {
         submit={() => { setStatusOpenSub(false), setEditOpenSub(true) }}
         isOpen={isStatusOpenSub}
         toggle={() => setStatusOpenSub(!isStatusOpenSub)}
-        text={"Are you sure that you want to update subscription expire data?"}
+        text={"Are you sure that you want to update subscription expiry date?"}
       />
 
 
@@ -1347,6 +1447,19 @@ const VendorsDetailPage = () => {
         toggle={() => set_is_kyc_approve_open(!is_kyc_approve_open)}
         text={"Are you sure that you want to approve this kyc?"}
       />
+
+
+      <ConfirmationPopup
+        submit={() => { setSubRenew(false), setEditOpenSubRenew(true) }}
+        isOpen={subRenew}
+        toggle={() => setSubRenew(!subRenew)}
+        text={"Are you sure you want to renew this subscription?"}
+      />
+
+
+
+
+
       <ConfirmationPopup
         submit={() => handleKycVerification(vendor?._id, "rejected")}
         isOpen={is_kyc_reject_open}
@@ -1375,6 +1488,13 @@ const VendorsDetailPage = () => {
         orderId={vendorActivePlan?._id}
         isOpen={isEditOpenSub}
         toggle={() => setEditOpenSub(!isEditOpenSub)}
+        data={vendorActivePlan}
+      />
+
+      <SubRenew
+        orderId={vendorActivePlan?._id}
+        isOpen={isEditOpenSubRenew}
+        toggle={() => setEditOpenSubRenew(!isEditOpenSubRenew)}
         data={vendorActivePlan}
       />
     </>

@@ -22,6 +22,7 @@ const AddAttribute = ({ isOpen, toggle, type }: Props) => {
     initialValues: {
       attribute: "",
       type: "",
+      priority: 0
     },
     validationSchema: AttributeValidationSchema,
 
@@ -87,6 +88,38 @@ const AddAttribute = ({ isOpen, toggle, type }: Props) => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
+
+              <Col lg={12} className=" px-2 py-1 ">
+                <Form.Group className="align-items-center">
+                  <Form.Label className="col-form-label">Priority</Form.Label>
+                  <Form.Control
+                    style={{ color: "#000" }}
+                    //   size="md"
+                    as="select"
+                    name="priority"
+                    value={formik.values.priority}
+                    onChange={(e) =>
+                      formik.setFieldValue("priority", Number(e.target.value))
+                    }
+                    isInvalid={
+                      !!formik.errors.priority && formik.touched.priority
+                    }
+                  >
+                    <option disabled selected hidden value="">
+                      Select Priority
+                    </option>
+                    {[1, 2, 3, 4, 5].map((item: number, index: number) => (
+                      <option key={index} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </Form.Control>
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.priority}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+
             </Row>
           </Modal.Body>
           <Modal.Footer>
@@ -95,13 +128,14 @@ const AddAttribute = ({ isOpen, toggle, type }: Props) => {
                 <Button variant="default" onClick={toggle} className="mr-2">
                   Cancel
                 </Button>
-                <Button
-                  variant="dark"
+                <button
+                  // variant="dark"
                   // style={{ background: "#000" }}
+                  className="btn-black"
                   type="submit"
                 >
                   Submit
-                </Button>
+                </button>
               </Col>
             </Row>
           </Modal.Footer>

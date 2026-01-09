@@ -49,8 +49,10 @@ export const usePurchasePlan = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["vendor"] });
       queryClient.invalidateQueries({ queryKey: ["vendors"] });
+      queryClient.invalidateQueries({ queryKey: ["retailer"] });
       queryClient.invalidateQueries({ queryKey: ["subscription-orders"] });
       queryClient.invalidateQueries({ queryKey: ["subscription-order"] });
+      queryClient.invalidateQueries({ queryKey: ["subscription-payment-history"] });
     },
   });
 };
@@ -75,3 +77,22 @@ export const useUpdateExpireData = () => {
 };
 
 
+
+
+
+// GET SUBSCRIPTION ORDER transation userId
+export const getAllPaymentHistoryByUserid = async (id: string , queryParams?:any) => {
+  return await axiosAuth.get(`${baseUrl}/${id}`,{
+    params:{
+      ...queryParams
+    }
+  });
+};
+
+export const useGetAllPaymentHistoryByUserid = (id?: string, enabled?: any,queryParams?:any) => {
+  return useQuery({
+    queryKey: ["subscription-payment-history", id , queryParams],
+    queryFn: () => getAllPaymentHistoryByUserid(id!,queryParams).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};

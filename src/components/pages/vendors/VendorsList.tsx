@@ -193,9 +193,9 @@ const VendorsList = ({
                     </div>
                   </Col>
                   <Col xl="auto" className="">
-                    <Button
-                      className="font-weight-semibold px-3"
-                      variant="dark"
+                    <button
+                      className="btn-black"
+                      // variant="dark"
                       // style={{ background: "#000" }}
                       // onClick={() => navigate("/vendors/add-vendor")}
                       onClick={() => {
@@ -204,7 +204,7 @@ const VendorsList = ({
                       }}
                     >
                       + Add Vendor
-                    </Button>
+                    </button>
                   </Col>
                 </Row>
               </div>

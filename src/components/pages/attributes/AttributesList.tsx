@@ -168,13 +168,14 @@ const AttributesList = ({
                     </div>
                   </Col>
                   <Col xl="auto" className="mb-2 mb-xl-0">
-                    <Button
-                      className="font-weight-semibold"
-                      variant="dark"
+                    <button
+                      // className="font-weight-semibold"
+                      // variant="dark"
+                      className="btn-black"
                       onClick={() => setIsOpen(true)}
                     >
                       + Add Attribute
-                    </Button>
+                    </button>
                   </Col>
                   {/* <Col
                         lg="auto"

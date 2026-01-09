@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Chart from "react-apexcharts";
 import { Reveal } from "react-awesome-reveal";
 import { Button, Card, Col, Form, Row, Table } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { convertTimelineToApexSeries, useGetAllTopUsersAndOrders, usegetchartData } from "src/services/dashboard.service";
 import { User } from "src/types/types";
 import { fadeIn } from "src/utils/data/keyframes";
@@ -83,23 +83,26 @@ const Retailers = () => {
   const [filter, setFilter] = useState<string>("month");
   const [chartResult, setChartResult] = useState<any[]>([]);
 
+  const navigate = useNavigate()
+
 
   // QUERIES
   const { data: topRetailers } = useGetAllTopUsersAndOrders(
     "retailer",
     true
   );
-  
+
 
   const getCategories = (filterType: string) => {
     const currentYear = new Date().getFullYear();
 
     switch (filterType) {
-      case "year":
-        const startYear = 2018;
-        return Array.from({ length: currentYear - startYear + 1 }, (_, i) =>
-          (startYear + i).toString()
+      case "year": {
+        const totalSlots = 5; // same as backend
+        return Array.from({ length: totalSlots }, (_, i) =>
+          (currentYear - 4 + i).toString()
         );
+      }
 
       case "month":
         return [
@@ -275,7 +278,14 @@ const Retailers = () => {
           <Col lg={5} className=" pt-3 ">
             <Card className="card-modern h-100">
               <Card.Header>
-                <Card.Title>Top Retailers</Card.Title>
+                <div style={{ display: "flex", justifyContent: "space-between" }} >
+
+                  <Card.Title>Top Retailers</Card.Title>
+                  <button onClick={() => { navigate("/retailers") }} style={{ height: "40px" }} className="btn-black">
+                    View More
+                  </button>
+
+                </div>
               </Card.Header>
               <Card.Body className="h-100 pt-2">
                 <Table
@@ -306,6 +316,7 @@ const Retailers = () => {
                             <td>
                               <Link
                                 to={`/retailers/detail?_id=${item?.retailerId}`}
+                                style={{ textDecoration: "none", color: "#000" }}
                               >
                                 {item?.retailer}
                               </Link>
@@ -352,14 +363,14 @@ const Retailers = () => {
               <Card.Body className="h-100 pt-2">
                 <Row>
                   <Col className="col-auto">
-                    <strong className="text-color-dark text-6">     
-                             {chartData?.summary?.thisMonth}     
+                    <strong className="text-color-dark text-6">
+                      {chartData?.summary?.currentPeriod}
                     </strong>
-                    <h3 className="text-4 mt-0 mb-2">This Month</h3>
+                    <h3 className="text-4 mt-0 mb-2">This {filter}</h3>
                   </Col>
                   <Col className="col-auto">
-                    <strong className="text-color-dark text-6">{chartData?.summary?.lastMonth}</strong>
-                    <h3 className="text-4 mt-0 mb-2">Last Month</h3>
+                    <strong className="text-color-dark text-6">{chartData?.summary?.previousPeriod}</strong>
+                    <h3 className="text-4 mt-0 mb-2">Last {filter}</h3>
                   </Col>
                   <Col className="col-auto">
                     <strong className="text-color-dark text-6">{chartData?.summary?.totalUsers}</strong>
