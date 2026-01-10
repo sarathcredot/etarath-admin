@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 
-export default function KycForm({ formik }: any) {
+export default function KycForm({ formik, isEdit = false }: any) {
 
   const [locations, setLocations] = useState<{ label: string; value: string }[]>([]);
   const uaeCountry: any = Country.getAllCountries().find(c => c.isoCode === "AE"); // UAE country code
@@ -165,7 +165,7 @@ export default function KycForm({ formik }: any) {
             onBlur={() =>
               formik.setFieldTouched("shop_contact_number", true)
             }
-            // disabled={isEdit}
+            disabled={isEdit}
             className={`phone-bootstrap ${formik.touched.shop_contact_number &&
               formik.errors.shop_contact_number
               ? "is-invalid"
@@ -495,6 +495,28 @@ export default function KycForm({ formik }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
+
+      <Col lg={12} className="px-2 py-1">
+        <Form.Group>
+          <Form.Label className="col-form-label">Description</Form.Label>
+          <Form.Control
+            as="textarea"
+            name="description"
+            placeholder=" Description"
+            value={formik.values.description}
+            onChange={formik.handleChange}
+          // isInvalid={
+          //   formik.touched.business_name && !!formik.errors.business_name
+          // }
+          />
+          {/* <Form.Control.Feedback type="invalid">
+                        {formik.errors.business_name}
+                      </Form.Control.Feedback> */}
+        </Form.Group>
+      </Col>
+
+
+
     </Row>
   );
 }

@@ -921,16 +921,16 @@ const VendorsDetailPage = () => {
                         >
                           Renew Subscription
                         </Button>
-                        {/* <div
-                          title="Edit Vendor"
+                        <div
+                          title="Edit subscription "
                           className="action_btn bg-dark"
                           onClick={() => {
-                            navigate(`/vendors/edit-vendor?_id=${vendor?._id}`);
+                            navigate(`/vendors/edit-vendor?_id=${vendor?._id}&section=${3}`);
                           }}
                         >
                           <i className="fas fa-pencil-alt text-light"></i>
-                          Renew Subscription
-                        </div> */}
+                         
+                        </div>
                       </div>
                     ) : (
                       <Button

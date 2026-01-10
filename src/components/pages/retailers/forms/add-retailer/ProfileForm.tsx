@@ -9,7 +9,7 @@ import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 
 
-export default function ProfileForm({ formik }: any) {
+export default function ProfileForm({ formik, isEdit = false }: any) {
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
 
   console.log("retailer profile formik = ", formik.values);
@@ -129,7 +129,7 @@ export default function ProfileForm({ formik }: any) {
                 onBlur={() =>
                   formik.setFieldTouched("phoneNumber", true)
                 }
-                // disabled={isEdit}
+                disabled={isEdit}
                 className={`phone-bootstrap ${formik.touched.phoneNumber &&
                   formik.errors.phoneNumber
                   ? "is-invalid"
@@ -159,6 +159,7 @@ export default function ProfileForm({ formik }: any) {
                 type="email"
                 name="email"
                 placeholder="Email"
+                disabled={isEdit}
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 isInvalid={formik.touched.email && !!formik.errors.email}
@@ -255,6 +256,8 @@ export default function ProfileForm({ formik }: any) {
                 </Form.Control.Feedback> */}
         </Form.Group>
       </Col>
+
+
 
       <MediaGalleryModal
         isOpen={isUploadOpen}

@@ -66,6 +66,7 @@ export default function AddVendorPage() {
       business_hours: "",
       vendor_logo: "" as any,
       shop_photo_logo: "" as any,
+      description:"" as any,
 
       vendorId: "",
     },

@@ -14,7 +14,7 @@ export const durationTypes = [
     label: "Yearly",
   },
 ];
-export default function SubscriptionForm({ formik }: any) {
+export default function SubscriptionForm({ formik, edit = false }: any) {
   // QUERIES
   const {
     data: brands,
@@ -28,7 +28,7 @@ export default function SubscriptionForm({ formik }: any) {
     isLoading: boolean;
   };
 
-  console.log("plan v",{
+  console.log("plan v", {
     planId: formik.values.planId,
     durationType: formik.values.durationType,
   });
@@ -39,6 +39,7 @@ export default function SubscriptionForm({ formik }: any) {
         <Form.Label className="col-form-label">Subscription Plan</Form.Label>
         <Select
           name="planId"
+          isDisabled={edit}
           options={plans?.map((item: any) => ({
             value: item?._id,
             label: item?.plan?.toUpperCase(),
@@ -72,6 +73,7 @@ export default function SubscriptionForm({ formik }: any) {
         </Form.Label>
         <Select
           name="durationType"
+          isDisabled={edit}
           options={durationTypes}
           value={durationTypes.find(
             (opt) => opt.value === formik.values.durationType
@@ -98,6 +100,77 @@ export default function SubscriptionForm({ formik }: any) {
           </div>
         )}
       </Col>
+
+      {
+        edit &&
+        <>
+          <Col lg={12} className="px-4 py-1  ">
+            <Form.Group as={Row} className="align-items-center">
+              <Form.Label className="col-form-label">Plan start date</Form.Label>
+              <Form.Control
+                type="date"
+                placeholder="plan start date"
+                name="plan_start_date"
+                value={formik.values.plan_start_date}
+                onChange={formik.handleChange}
+              // isInvalid={
+              //   !!formik.errors.endDate && !!formik.touched.endDate
+              // }
+              />
+              {/* <Form.Control.Feedback type="invalid">
+            {formik.errors.endDate}
+          </Form.Control.Feedback> */}
+            </Form.Group>
+          </Col>
+
+          <Col lg={12} className="px-4 py-1  ">
+            <Form.Group as={Row} className="align-items-center">
+              <Form.Label className="col-form-label"> Plan expiry date</Form.Label>
+              <Form.Control
+                type="date"
+                placeholder="plan end datejkl"
+                name="plan_end_date"
+                value={formik.values.plan_end_date}
+                onChange={formik.handleChange}
+              // isInvalid={
+              //   !!formik.errors.endDate && !!formik.touched.endDate
+              // }
+              />
+              {/* <Form.Control.Feedback type="invalid">
+            {formik.errors.endDate}
+          </Form.Control.Feedback> */}
+            </Form.Group>
+          </Col>
+
+          {
+            formik.values.trial_end_date && <Col lg={12} className="px-4 py-1  ">
+              <Form.Group as={Row} className="align-items-center">
+                <Form.Label className="col-form-label"> Trial end date</Form.Label>
+                <Form.Control
+                  type="date"
+                  placeholder="plan end datejkl"
+                  name="trial_end_date"
+                  value={formik.values.trial_end_date}
+                  onChange={formik.handleChange}
+                // isInvalid={
+                //   !!formik.errors.endDate && !!formik.touched.endDate
+                // }
+                />
+                {/* <Form.Control.Feedback type="invalid">
+            {formik.errors.endDate}
+          </Form.Control.Feedback> */}
+              </Form.Group>
+            </Col>
+          }
+
+
+
+        </>
+      }
+
+
+
+
     </Row>
   );
 }

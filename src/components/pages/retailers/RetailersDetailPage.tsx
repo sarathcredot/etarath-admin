@@ -784,6 +784,16 @@ const RetailersDetailPage = () => {
                         >
                           Renew Subscription
                         </Button>
+                        <div
+                          title="Edit subscription "
+                          className="action_btn bg-dark"
+                          onClick={() => {
+                            navigate(`/retailers/edit-retailer?_id=${retailerID}&section=${3}`);
+                          }}
+                        >
+                          <i className="fas fa-pencil-alt text-light"></i>
+
+                        </div>
                       </div>
                     ) : (
                       <Button

@@ -42,6 +42,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
     useGetSubscriptionOrderById,
     usePurchasePlan,
+    useUpdateExpireData,
 } from "src/services/subscription-orders";
 
 export default function AddRetailerPage() {
@@ -53,7 +54,7 @@ export default function AddRetailerPage() {
 
     // ✅ Only 3 tabs right now (Profile, Business, Preferences)
     // If you enable Subscription tab later, change this to 3.
-    const MAX_STEP = 2;
+    const MAX_STEP = 3;
 
     const getSafeSection = (raw: string | null) => {
         const n = Number(raw);
@@ -89,7 +90,7 @@ export default function AddRetailerPage() {
     const { mutateAsync: updateRetailer } = useUpdateRetailer();
     const { mutateAsync: updateRetailerKyc } = useUpdateVendorKyc();
     const { mutateAsync: updatePreference } = useUpdatePreference();
-    const { mutateAsync: purchasePlan } = usePurchasePlan();
+    const { mutateAsync: updateSubscription } = useUpdateExpireData();
     const { mutateAsync: uploadFile } = useUploadFile();
 
     // ------------------------------
@@ -106,6 +107,7 @@ export default function AddRetailerPage() {
             imgUrl: "" as any,
             role: "",
             priority: 0,
+
         },
 
         validationSchema: VendorValidationSchema,
@@ -166,6 +168,7 @@ export default function AddRetailerPage() {
             business_hours: "",
             shop_contact_number: "",
             shop_photo_logo: "" as any,
+            description: "" as any,
             retailerId: "",
         },
 
@@ -248,17 +251,19 @@ export default function AddRetailerPage() {
 
                 if (res.status === 200) {
                     toast.dismiss();
-                    toast("Updation completed successfully!", {
-                        containerId: "default",
-                        className: "no-icon notification-success",
-                    });
+                    // toast("Updation completed successfully!", {
+                    //     containerId: "default",
+                    //     className: "no-icon notification-success",
+                    // });
 
-                    setStepIndex(0);
-                    subscriptionFormik.resetForm();
-                    preferenceFormik.resetForm();
-                    kycFormik.resetForm();
-                    profileFormik.resetForm();
+                    // setStepIndex(0);
+                    // subscriptionFormik.resetForm();
+                    // preferenceFormik.resetForm();
+                    // kycFormik.resetForm();
+                    // profileFormik.resetForm();
                     navigate(-1);
+                    setStepIndex(3);
+                    await subscriptionFormik.submitForm();
                 }
             } catch (error: any) {
                 toast.dismiss();
@@ -274,6 +279,9 @@ export default function AddRetailerPage() {
         initialValues: {
             planId: "",
             durationType: "",
+            plan_end_date: "" as any,
+            plan_start_date: "" as any,
+            trial_end_date: "" as any
         },
 
         validationSchema: VendorSubscriptionValidationSchema,
@@ -285,15 +293,14 @@ export default function AddRetailerPage() {
             });
 
             try {
-                const res = await purchasePlan({
-                    userId: retailer?._id,
-                    planId: values.planId,
-                    durationType: values.durationType,
+                const res = await updateSubscription({
+                    id: retailerActivePlan?._id,
+                    data: values
                 });
 
                 if (res.status === 200) {
                     toast.dismiss();
-                    toast("Retailer created successfully!", {
+                    toast("Updation completed successfully!", {
                         containerId: "default",
                         className: "no-icon notification-success",
                     });
@@ -333,6 +340,7 @@ export default function AddRetailerPage() {
             imgUrl: retailer?.imgUrl || ("" as any),
             role: "retailer",
             priority: retailer?.priority || 0,
+
         });
 
         kycFormik.setValues({
@@ -359,6 +367,7 @@ export default function AddRetailerPage() {
             business_hours: retailer?.kyc?.business_hours || "",
             shop_contact_number: retailer?.kyc?.shop_contact_number || "",
             shop_photo_logo: retailer?.kyc?.shop_photo_logo || "",
+            description: retailer?.kyc?.description || "",
             retailerId: retailer?._id || "",
         });
     }, [retailer, retailerIdobj]);
@@ -383,15 +392,23 @@ export default function AddRetailerPage() {
 
         subscriptionFormik.setValues({
             durationType: retailerActivePlan?.durationType || "",
-            planId: retailerActivePlan?.planId?._id || "",
+            planId: retailerActivePlan?.planId || "",
+            plan_end_date: new Date(retailerActivePlan.plan_end_date).toISOString()
+                .split("T")[0] || "",
+            plan_start_date: new Date(retailerActivePlan?.plan_start_date).toISOString()
+                .split("T")[0] || "",
+            trial_end_date: retailerActivePlan?.trial_end_date ? new Date(retailerActivePlan?.trial_end_date).toISOString()
+                .split("T")[0] : ""
         });
     }, [retailerActivePlan, retailerIdobj]);
 
     const handleWizardFinish = () => {
-        if (stepIndex === 0) profileFormik.submitForm();
-        if (stepIndex === 1) kycFormik.submitForm();
-        if (stepIndex === 2) preferenceFormik.submitForm();
-        if (stepIndex === 3) subscriptionFormik.submitForm();
+        // if (stepIndex === 0) profileFormik.submitForm();
+        // if (stepIndex === 1) kycFormik.submitForm();
+        // if (stepIndex === 2) preferenceFormik.submitForm();
+        // if (stepIndex === 3) subscriptionFormik.submitForm();
+
+        profileFormik.submitForm();
     };
 
     return (
@@ -428,26 +445,26 @@ export default function AddRetailerPage() {
                             <span>3</span> Preferences
                         </WizardNavItem>
 
-                        {/* <WizardNavItem>
-              <span>4</span> Subscription
-            </WizardNavItem> */}
+                        <WizardNavItem>
+                            <span>4</span> Subscription
+                        </WizardNavItem>
                     </WizardNav>
 
                     <WizardTab>
-                        <ProfileForm formik={profileFormik} />
+                        <ProfileForm isEdit={true} formik={profileFormik} />
                     </WizardTab>
 
                     <WizardTab>
-                        <KycForm formik={kycFormik} />
+                        <KycForm isEdit={true} formik={kycFormik} />
                     </WizardTab>
 
                     <WizardTab>
                         <PreferenceForm formik={preferenceFormik} />
                     </WizardTab>
 
-                    {/* <WizardTab>
-            <SubscriptionForm formik={subscriptionFormik} />
-          </WizardTab> */}
+                    <WizardTab>
+                        <SubscriptionForm edit={true} formik={subscriptionFormik} />
+                    </WizardTab>
 
                     <WizardPager />
                 </Wizard>

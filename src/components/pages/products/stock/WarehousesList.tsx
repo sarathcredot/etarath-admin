@@ -22,6 +22,7 @@ const WarehousesList = ({
   setPage = () => { },
   setSearch = () => { }, // fallback so debounce doesn’t break
   setFilter = () => { }, // fallback so debounce doesn’t break
+  setStatus = () => { }, // fallback so debounce doesn’t break
   setLimit,
   page = 1,
   limit = 10,
@@ -36,6 +37,7 @@ const WarehousesList = ({
   setLimit?: Dispatch<React.SetStateAction<number>>;
   setSearch?: Dispatch<React.SetStateAction<any>>;
   setFilter?: Dispatch<React.SetStateAction<any>>;
+  setStatus?: Dispatch<React.SetStateAction<any>>;
   page?: number;
   limit?: number;
   search?: string;
@@ -144,6 +146,18 @@ const WarehousesList = ({
     }, 1000),
     []
   );
+
+  const debouncedHandleStatus = useCallback(
+    debounce((text) => {
+      try {
+        setStatus(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
+
 
 
   const formik = useFormik({
@@ -285,7 +299,35 @@ const WarehousesList = ({
                         </Form.Control>
                       </div>
                     </th>
-                    <th>Status</th>
+                    <th>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        <span>Status</span>
+
+                        <Form.Control
+                          as="select"
+                          size="sm"
+                          style={{
+                            width: "110px",
+                            color: "#000",
+                          }}
+                          name="issuspend"
+                          onChange={(e: any) =>
+                            debouncedHandleStatus(e.target.value)
+                          }
+                        >
+                          <option value="all">All</option>
+                          <option value="active">Active</option>
+                          <option value="blocked">Blocked</option>
+                        </Form.Control>
+                      </div>
+                    </th>
                     <th className="text-center" style={{ width: "80px" }}>
                       Actions
                     </th>

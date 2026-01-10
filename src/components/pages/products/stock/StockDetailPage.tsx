@@ -39,6 +39,7 @@ const StockDetailPage = () => {
   const [waerLimit, setWaerLimit] = useState<number>(10);
   const [waerSearch, setWaerSearch] = useState<string>("");
   const [filter, setFilter] = useState("all")
+  const [status, setStatus] = useState("all")
 
 
   //USE MEMO
@@ -60,6 +61,8 @@ const StockDetailPage = () => {
     if (stockId) {
       obj.stockId = stockId;
     }
+
+
 
     return obj;
   }, [page, limit, search]);
@@ -88,8 +91,12 @@ const StockDetailPage = () => {
       obj.filter = filter
     }
 
+    if (status) {
+      obj.status = status
+    }
+
     return obj;
-  }, [waerPage, waerLimit, waerSearch, stockId, filter]);
+  }, [waerPage, waerLimit, waerSearch, stockId, filter,status]);
 
 
 
@@ -450,6 +457,7 @@ const StockDetailPage = () => {
               setLimit={setWaerLimit}
               setSearch={setWaerSearch}
               setFilter={setFilter}
+              setStatus={setStatus}
               page={waerPage}
               limit={waerLimit}
               search={waerSearch}

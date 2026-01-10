@@ -57,7 +57,8 @@ export default function EditRetailerPage() {
       eidFile: "" as any,
       imgUrl: "" as any,
       role: "retailer",
-      priority: 0
+      priority: 0,
+      description: "" as any
     },
 
     validationSchema: VendorValidationSchema,
@@ -153,7 +154,7 @@ export default function EditRetailerPage() {
             let response = await uploadFile(formData);
             values.documents.vatDoc = response.data.data;
           }
-          
+
           if (typeof values?.shop_photo_logo !== "string") {
             let formData = new FormData();
             formData.append("file", values?.shop_photo_logo);

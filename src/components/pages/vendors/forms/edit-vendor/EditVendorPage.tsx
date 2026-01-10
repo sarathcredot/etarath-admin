@@ -43,6 +43,7 @@ import ContactForm from "../add-vendor/ContactForm";
 import PreferenceForm from "../add-vendor/PreferenceForm";
 import SubscriptionForm from "../add-vendor/SubscriptionForm";
 import { User } from "src/types/types";
+import { useUpdateExpireData } from "src/services/subscription-orders";
 
 export default function EditVendorPage() {
   const [searchParams] = useSearchParams();
@@ -56,12 +57,12 @@ export default function EditVendorPage() {
 
 
 
-  useEffect(()=>{
+  useEffect(() => {
 
 
     setStepIndex(section)
 
-  },[section])
+  }, [section])
 
 
 
@@ -91,6 +92,7 @@ export default function EditVendorPage() {
   const { mutateAsync: updatePreference } = useUpdatePreference();
   const { mutateAsync: purchasePlan } = usePurchasePlan();
   const { mutateAsync: uploadFile } = useUploadFile();
+  const { mutateAsync: updateSubscription } = useUpdateExpireData()
 
   // ------------------------------
   // FORM + VALIDATION
@@ -114,6 +116,7 @@ export default function EditVendorPage() {
       business_hours: "",
       vendor_logo: "" as any,
       shop_photo_logo: "" as any,
+      description: "" as any,
 
       vendorId: "",
     },
@@ -250,21 +253,15 @@ export default function EditVendorPage() {
         });
         if (res.status === 200) {
           toast.dismiss();
-
-          toast("Updation completed successfully!", {
-            containerId: "default",
-            className: "no-icon notification-success",
-          });
-
           setStepIndex(0);
-          subscriptionFormik.resetForm();
-          preferenceFormik.resetForm();
-          contactFormik.resetForm();
-          profileFormik.resetForm();
+          // subscriptionFormik.resetForm();
+          // preferenceFormik.resetForm();
+          // contactFormik.resetForm();
+          // profileFormik.resetForm();
           navigate(-1);
 
-          // setStepIndex(3);
-          // await subscriptionFormik.submitForm();
+          setStepIndex(3);
+          await subscriptionFormik.submitForm();
         }
       } catch (error: any) {
         toast.dismiss();
@@ -279,21 +276,24 @@ export default function EditVendorPage() {
     initialValues: {
       planId: "",
       durationType: "",
+      plan_end_date: "" as any,
+      plan_start_date: "" as any,
+      trial_end_date: "" as any
+
     },
 
     validationSchema: VendorSubscriptionValidationSchema,
 
     onSubmit: async (values) => {
       console.log("SUBSCRIPTION SUBMIT:", values);
-      toast.loading("purchasing subscription plan", {
+      toast.loading("Upading subscription plan", {
         containerId: "default",
         className: "no-icon notification-warning",
       });
       try {
-        const res = await purchasePlan({
-          userId: vendor?._id,
-          planId: values.planId,
-          durationType: values.durationType,
+        const res = await updateSubscription({
+          id: vendorActivePlan?._id,
+          data: values
         });
         if (res.status === 200) {
           toast.dismiss();
@@ -324,10 +324,12 @@ export default function EditVendorPage() {
   });
 
   const handleWizardFinish = () => {
-    if (stepIndex === 0) contactFormik.submitForm();
-    if (stepIndex === 1) profileFormik.submitForm();
-    if (stepIndex === 2) preferenceFormik.submitForm();
-    if (stepIndex === 3) subscriptionFormik.submitForm();
+    // if (stepIndex === 0) contactFormik.submitForm();
+    // if (stepIndex === 1) profileFormik.submitForm();
+    // if (stepIndex === 2) preferenceFormik.submitForm();
+    // if (stepIndex === 3) subscriptionFormik.submitForm();
+
+    profileFormik.submitForm();
   };
 
   console.log({ stepIndex });
@@ -396,6 +398,7 @@ export default function EditVendorPage() {
           vendor_logo: vendor?.kyc?.vendor_logo || "",
           shop_photo_logo: vendor?.kyc?.shop_photo_logo || "",
           vendorId: vendor?._id || "",
+          description: vendor?.kyc?.description as any,
         });
       }
     }
@@ -421,8 +424,14 @@ export default function EditVendorPage() {
   useEffect(() => {
     if (vendorActivePlan) {
       subscriptionFormik.setValues({
-        planId: vendorActivePlan?.planId?._id || "",
+        planId: vendorActivePlan?.planId || "",
         durationType: vendorActivePlan?.durationType || "",
+        plan_end_date: new Date(vendorActivePlan.plan_end_date).toISOString()
+          .split("T")[0] || "",
+        plan_start_date: new Date(vendorActivePlan?.plan_start_date).toISOString()
+          .split("T")[0] || "",
+        trial_end_date: vendorActivePlan?.trial_end_date ? new Date(vendorActivePlan?.trial_end_date).toISOString()
+          .split("T")[0] : ""
       });
     }
   }, [vendorActivePlan]);
@@ -480,9 +489,9 @@ export default function EditVendorPage() {
               <span>3</span> Preferences
             </WizardNavItem>
 
-            {/* <WizardNavItem>
+            <WizardNavItem>
               <span>4</span> Subscription
-            </WizardNavItem> */}
+            </WizardNavItem>
           </WizardNav>
 
           {/* ------------------------- */}
@@ -496,7 +505,7 @@ export default function EditVendorPage() {
           {/* STEP 2: CONTACT           */}
           {/* ------------------------- */}
           <WizardTab>
-            <ContactForm formik={contactFormik} />
+            <ContactForm isEdit={true} formik={contactFormik} />
           </WizardTab>
 
           {/* ------------------------- */}
@@ -509,9 +518,9 @@ export default function EditVendorPage() {
           {/* ------------------------- */}
           {/* STEP 4: SUBSCRIPTION      */}
           {/* ------------------------- */}
-          {/* <WizardTab>
-            <SubscriptionForm formik={subscriptionFormik} />
-          </WizardTab> */}
+          <WizardTab>
+            <SubscriptionForm edit={true} formik={subscriptionFormik} />
+          </WizardTab>
 
           {/* ------------------------- */}
           {/* BUILT-IN WIZARD BUTTONS   */}

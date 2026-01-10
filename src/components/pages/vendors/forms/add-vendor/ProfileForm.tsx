@@ -189,9 +189,9 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
                 }
                 disabled={isEdit}
                 className={`phone-bootstrap ${formik.touched.phoneNumber &&
-                    formik.errors.phoneNumber
-                    ? "is-invalid"
-                    : ""
+                  formik.errors.phoneNumber
+                  ? "is-invalid"
+                  : ""
                   }`}
               />
 
@@ -216,7 +216,7 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 isInvalid={formik.touched.email && !!formik.errors.email}
-                disabled={isEdit}
+                // disabled={isEdit}
               />
               <Form.Control.Feedback type="invalid">
                 {formik.errors.email}
@@ -571,6 +571,26 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
+
+      <Col lg={12} className="px-2 py-1">
+        <Form.Group>
+          <Form.Label className="col-form-label">Description</Form.Label>
+          <Form.Control
+            as="textarea"
+            name="description"
+            placeholder=" Description"
+            value={formik.values.description}
+           onChange={formik.handleChange}
+            // isInvalid={
+            //   formik.touched.business_name && !!formik.errors.business_name
+            // }
+          />
+          {/* <Form.Control.Feedback type="invalid">
+            {formik.errors.business_name}
+          </Form.Control.Feedback> */}
+        </Form.Group>
+      </Col>
+
 
 
 

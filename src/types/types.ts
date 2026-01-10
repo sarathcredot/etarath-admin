@@ -48,6 +48,7 @@ export type User = {
     shop_photo_logo: string;
     vendor_logo: string;
     kycStatus: string;
+    description:string;
   };
 };
 
