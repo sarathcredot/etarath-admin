@@ -9,6 +9,7 @@ import { Country, State, City } from 'country-state-city';
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { isValidPhoneNumber } from "react-phone-number-input";
+import ImageCropModal from "src/components/features/modals/ImageCropModal";
 
 
 
@@ -19,6 +20,19 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
   const vatDocInputRef = useRef<HTMLInputElement | null>(null);
   const shopPhotoInputRef = useRef<HTMLInputElement | null>(null);
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
+
+
+  // image new added
+
+  const [cropOpen, setCropOpen] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+
+  const handleImageSelect = (e: any) => {
+    const file: any = e.target.files[0];
+    if (!file) return;
+    setImageSrc(URL.createObjectURL(file));
+    setCropOpen(true);
+  };
 
   const [locations, setLocations] = useState<{ label: string; value: string }[]>([]);
   const uaeCountry: any = Country.getAllCountries().find(c => c.isoCode === "AE"); // UAE country code
@@ -42,189 +56,10 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
 
   return (
     <Row className="px-1 px-md-3">
-      <Col
-        lg={12}
-        className="px-2 py-1 "
-        style={{ display: "flex", alignItems: "center", gap: 10 }}
-      >
-        <Row className="px-2 ">
-          {formik.values.vendor_logo ? (
-            <Col className="px-2 py-1 ">
-              <div>
-                Logo
-                <div className="user_image_div mt-2" style={{ width: "190px" }}>
-                  <img
-                    // src={generateFilePath(img)}
-                    src={
-                      typeof formik.values.vendor_logo === "string"
-                        ? generateFilePath(formik.values.vendor_logo)
-                        : formik.values.vendor_logo.copy_link
-                          ? formik.values.vendor_logo.copy_link
-                          : URL.createObjectURL(formik.values.vendor_logo?.file)
-                    }
-                    alt="profile"
-                    width={"100%"}
-                    height={"100%"}
-                    style={{ objectFit: "cover" }}
-                  // crossOrigin="anonymous"
-                  />
-                  <div
-                    onClick={() => setIsUploadOpen(true)}
-                    className="edit_div"
-                  >
-                    <i className="bx bxs-edit fa "></i>
-                  </div>
-                </div>
-              </div>
-            </Col>
-          ) : (
-            <Col className="px-2 py-1 ">
-              <div>
-                Logo
-                <div
-                  className="user_image_div mt-2"
-                  style={{ width: "190px" }}
-                  onClick={() => setIsUploadOpen(true)}
-                >
-                  <Button variant="dark" className="my-5">
-                    Upload Logo
-                  </Button>
-                </div>
-              </div>
-              {formik.touched.vendor_logo && formik.errors.vendor_logo && (
-                <div className="text-danger small mt-1 px-2">
-                  {formik.errors.vendor_logo}
-                </div>
-              )}
-            </Col>
-          )}
-        </Row>
-        <Row className="mx-0 w-100">
-          <Col lg={12} className="px-2 py-1">
-            <Form.Group>
-              <Form.Label className="col-form-label">Business Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="business_name"
-                placeholder=" Business Name"
-                value={formik.values.business_name}
-                onChange={formik.handleChange}
-                isInvalid={
-                  formik.touched.business_name && !!formik.errors.business_name
-                }
-              />
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.business_name}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Col>
+
+     
 
 
-          {/* <Col lg={12} className=" px-2 py-1">
-            <Form.Group>
-              <Form.Label className="col-form-label">Phone Number</Form.Label>
-              <Form.Control
-                type="number"
-                name="phoneNumber"
-                placeholder=" Phone Number"
-                value={formik.values.phoneNumber}
-                onChange={formik.handleChange}
-                isInvalid={
-                  formik.touched.phoneNumber && !!formik.errors.phoneNumber
-                }
-                disabled={isEdit}
-              />
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.phoneNumber}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Col> */}
-
-
-
-          {/* <Col lg={12} className="px-2 py-1">
-            <Form.Group>
-              <Form.Label className="col-form-label">Phone Number</Form.Label>
-
-              <PhoneInput
-                defaultCountry="IN"
-                international
-                countryCallingCodeEditable={false}
-                placeholder="Phone Number"
-                value={formik.values.phoneNumber}
-                onChange={(value) => formik.setFieldValue("phoneNumber", value)}
-                onBlur={() => formik.setFieldTouched("phoneNumber", true)}
-                disabled={isEdit}
-                className={`phone-bootstrap ${formik.touched.phoneNumber && formik.errors.phoneNumber
-                    ? "is-invalid"
-                    : ""
-                  }`}
-              />
-
-              {formik.touched.phoneNumber && formik.errors.phoneNumber && (
-                <div className="invalid-feedback d-block">
-                  {formik.errors.phoneNumber}
-                </div>
-              )}
-            </Form.Group>
-          </Col> */}
-
-          <Col lg={12} className="px-2 py-1">
-            <Form.Group>
-              <Form.Label className="col-form-label">
-                Phone Number
-              </Form.Label>
-
-              <PhoneInput
-                international
-                defaultCountry="IN"
-                countryCallingCodeEditable={true}   // ✅ manual +91 allowed
-                placeholder="Phone Number"
-                value={formik.values.phoneNumber}
-                onChange={(value) =>
-                  formik.setFieldValue("phoneNumber", value)
-                }
-                onBlur={() =>
-                  formik.setFieldTouched("phoneNumber", true)
-                }
-                disabled={isEdit}
-                className={`phone-bootstrap ${formik.touched.phoneNumber &&
-                  formik.errors.phoneNumber
-                  ? "is-invalid"
-                  : ""
-                  }`}
-              />
-
-              {formik.touched.phoneNumber &&
-                formik.errors.phoneNumber && (
-                  <div className="invalid-feedback d-block">
-                    {formik.errors.phoneNumber}
-                  </div>
-                )}
-            </Form.Group>
-          </Col>
-
-
-
-          <Col lg={12} className=" px-2 py-1">
-            <Form.Group>
-              <Form.Label className="col-form-label">Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                isInvalid={formik.touched.email && !!formik.errors.email}
-                // disabled={isEdit}
-              />
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.email}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Col>
-        </Row>
-      </Col>
 
       <Col lg={6} className="px-2 py-1  ">
         <Form.Label className="col-form-label">Shop Location</Form.Label>
@@ -580,10 +415,10 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
             name="description"
             placeholder=" Description"
             value={formik.values.description}
-           onChange={formik.handleChange}
-            // isInvalid={
-            //   formik.touched.business_name && !!formik.errors.business_name
-            // }
+            onChange={formik.handleChange}
+          // isInvalid={
+          //   formik.touched.business_name && !!formik.errors.business_name
+          // }
           />
           {/* <Form.Control.Feedback type="invalid">
             {formik.errors.business_name}
@@ -591,7 +426,14 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
         </Form.Group>
       </Col>
 
-
+      <ImageCropModal
+        image={imageSrc}
+        isOpen={cropOpen}
+        onClose={() => setCropOpen(false)}
+        onSave={(file: any) => {
+          formik.setFieldValue("vendor_logo", file);
+        }}
+      />
 
 
 
