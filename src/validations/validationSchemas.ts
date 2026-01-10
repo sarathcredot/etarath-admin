@@ -1,5 +1,7 @@
 import { EditorState } from "draft-js";
 import * as Yup from "yup";
+import { isValidPhoneNumber } from "react-phone-number-input";
+
 
 export const LoginValidationSchema = Yup.object().shape({
   emailOrPhoneNumber: Yup.string().required("Email is required"),
@@ -279,7 +281,7 @@ export const PlanEditValidationSchema = Yup.object().shape({
   description: Yup.string().trim().required("Description is required"),
 });
 
-export const VendorProfileValidationSchema = Yup.object({
+export const VendorProfileValidationSchemaOld = Yup.object({
   business_name: Yup.string().required("Required"),
   phoneNumber: Yup.string().required("Required"),
   email: Yup.string().email("Invalid email").required("Required"),
@@ -299,6 +301,50 @@ export const VendorProfileValidationSchema = Yup.object({
   shop_photo_logo: Yup.mixed().required("Upload Shop Photo"),
   // subscription_plan: Yup.string().required("Required"),
 });
+
+
+export const VendorProfileValidationSchema = Yup.object({
+  business_name: Yup.string().required("Required"),
+
+  phoneNumber: Yup.string()
+    .required("Required")
+    .test("valid-phone", "Invalid phone number", (value) => {
+      if (!value) return false;
+
+      // If user types a space like "+91 4803..." normalize it
+      const normalized = value.replace(/\s+/g, "");
+
+      try {
+        return isValidPhoneNumber(normalized);
+      } catch (e) {
+        return false;
+      }
+    }),
+
+  email: Yup.string().email("Invalid email").required("Required"),
+  location: Yup.string().required("Required"),
+  tradeLicenseNumber: Yup.string().required("Required"),
+  tradeLicenseRegistrationDate: Yup.string().required("Required"),
+  tradeLicenseExpiryDate: Yup.string().required("Required"),
+
+  documents: Yup.object().shape({
+    tradeLicense: Yup.mixed().required(
+      "Upload Trade License/ Business Registration"
+    ),
+  }),
+
+  business_address: Yup.string().required("Required"),
+  post: Yup.string().required("Required"),
+  business_hours: Yup.string().required("Required"),
+  vendor_logo: Yup.mixed().required("Upload Logo"),
+  shop_photo_logo: Yup.mixed().required("Upload Shop Photo"),
+  // subscription_plan: Yup.string().required("Required"),
+});
+
+
+
+
+
 export const VendorContactValidationSchema = Yup.object({
   userName: Yup.string().required("Required"),
   designation: Yup.string().required("Required"),

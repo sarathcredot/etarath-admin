@@ -6,7 +6,7 @@ const baseUrl = `${url}/admin/subcription-orders`;
 
 // GET ALL SUBSCRIPTION ORDERS BY PLAN ID
 export const getAllPlanOrdersById = async (id: string, queryParams?: any) => {
-  return await axiosAuth.get(`${baseUrl}/${id}`, {
+  return await axiosAuth.get(`${baseUrl}/${id}/all-active`, {
     params: {
       ...queryParams
     }
@@ -19,11 +19,14 @@ export const useGetAllPlanOrdersById = (
   queryParams?: any
 ) => {
   return useQuery({
-    queryKey: ["subscription-orders", id, queryParams],
+    queryKey: ["subscription-orderssss", id, queryParams],
     queryFn: () => getAllPlanOrdersById(id, queryParams).then((res) => res?.data?.data),
     enabled: enabled,
   });
 };
+
+
+
 // GET SUBSCRIPTION ORDER BY ORDER ID
 export const getSubscriptionOrderById = async (id: string) => {
   return await axiosAuth.get(`${baseUrl}/${id}/order/${id}`);

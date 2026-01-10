@@ -38,6 +38,7 @@ const StockDetailPage = () => {
   const [waerPage, setWaerPage] = useState<number>(1);
   const [waerLimit, setWaerLimit] = useState<number>(10);
   const [waerSearch, setWaerSearch] = useState<string>("");
+  const [filter, setFilter] = useState("all")
 
 
   //USE MEMO
@@ -83,9 +84,12 @@ const StockDetailPage = () => {
     if (stockId) {
       obj.stockId = stockId;
     }
+    if (filter) {
+      obj.filter = filter
+    }
 
     return obj;
-  }, [waerPage, waerLimit, waerSearch, stockId]);
+  }, [waerPage, waerLimit, waerSearch, stockId, filter]);
 
 
 
@@ -445,6 +449,7 @@ const StockDetailPage = () => {
               setPage={setWaerLimit}
               setLimit={setWaerLimit}
               setSearch={setWaerSearch}
+              setFilter={setFilter}
               page={waerPage}
               limit={waerLimit}
               search={waerSearch}

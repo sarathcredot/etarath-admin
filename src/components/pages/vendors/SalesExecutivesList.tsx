@@ -234,13 +234,15 @@ const SalesExecutivesList = ({
                   </Col>
 
                   <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
-                    <Button
-                      className="font-weight-semibold"
-                      variant="dark"
+                    <button
+                      // className="font-weight-semibold"
+                      // variant="dark"
+                      className="btn-black"
+                      style={{ height: "40px" }}
                       onClick={() => setAddOpen(true)}
                     >
                       + Add
-                    </Button>
+                    </button>
                   </Col>
 
                 </Row>

@@ -21,6 +21,7 @@ const WarehousesList = ({
   warehouses,
   setPage = () => { },
   setSearch = () => { }, // fallback so debounce doesn’t break
+  setFilter = () => { }, // fallback so debounce doesn’t break
   setLimit,
   page = 1,
   limit = 10,
@@ -34,6 +35,7 @@ const WarehousesList = ({
   setPage?: Dispatch<React.SetStateAction<number>>;
   setLimit?: Dispatch<React.SetStateAction<number>>;
   setSearch?: Dispatch<React.SetStateAction<any>>;
+  setFilter?: Dispatch<React.SetStateAction<any>>;
   page?: number;
   limit?: number;
   search?: string;
@@ -125,6 +127,17 @@ const WarehousesList = ({
     debounce((text) => {
       try {
         setSearch(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
+
+  const debouncedHandleFilter = useCallback(
+    debounce((text) => {
+      try {
+        setFilter(text);
       } catch (error) {
         console.log(error, "error in the debounce function");
       }
@@ -242,7 +255,36 @@ const WarehousesList = ({
                     </th>
                     <th></th>
                     <th>location</th>
-                    <th>Quantity</th>
+
+                    <th>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        <span>Quantity</span>
+
+                        <Form.Control
+                          as="select"
+                          size="sm"
+                          style={{
+                            width: "110px",
+                            color: "#000",
+                          }}
+                          name="issuspend"
+                          onChange={(e: any) =>
+                            debouncedHandleFilter(e.target.value)
+                          }
+                        >
+                          <option value="all">All</option>
+                          <option value="high">High</option>
+                          <option value="low">Low</option>
+                        </Form.Control>
+                      </div>
+                    </th>
                     <th>Status</th>
                     <th className="text-center" style={{ width: "80px" }}>
                       Actions
@@ -359,7 +401,7 @@ const WarehousesList = ({
                               selectedStock &&
                               selectedStock?.availableWarehouses?.warehouseId === item?.availableWarehouses?.warehouseId ? (
                               <>
-                                <button onClick={()=>{formik.submitForm()}} className="action_btn" type="submit">
+                                <button onClick={() => { formik.submitForm() }} className="action_btn" type="submit">
                                   <i className="fas fa-check"></i>
                                 </button>
                                 <div

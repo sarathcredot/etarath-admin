@@ -49,6 +49,7 @@ const BrandsList = ({
   page = 1,
   limit = 10,
   search = "",
+  setStatus = () => { }, // fallback so debounce doesn’t break
 }: {
   header?: boolean;
   brandsData?: any;
@@ -56,6 +57,7 @@ const BrandsList = ({
   setPage?: Dispatch<React.SetStateAction<number>>;
   setLimit?: Dispatch<React.SetStateAction<number>>;
   setSearch?: Dispatch<React.SetStateAction<any>>;
+  setStatus?: Dispatch<React.SetStateAction<any>>;
   page?: number;
   limit?: number;
   search?: string;
@@ -140,6 +142,17 @@ const BrandsList = ({
     debounce((text) => {
       try {
         setSearch(text);
+      } catch (error) {
+        console.log(error, "error in the debounce function");
+      }
+    }, 1000),
+    []
+  );
+
+  const debouncedHandleStatus = useCallback(
+    debounce((text) => {
+      try {
+        setStatus(text);
       } catch (error) {
         console.log(error, "error in the debounce function");
       }
@@ -245,7 +258,35 @@ const BrandsList = ({
                     <th>Brand</th>
                     <th>Priority</th>
                     <th>Product Count</th>
-                    <th>Status</th>
+                    <th>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        <span>Status</span>
+
+                        <Form.Control
+                          as="select"
+                          size="sm"
+                          style={{
+                            width: "110px",
+                            color: "#000",
+                          }}
+                          name="issuspend"
+                          onChange={(e: any) =>
+                            debouncedHandleStatus(e.target.value)
+                          }
+                        >
+                          <option value="all">All</option>
+                          <option value="active">Active</option>
+                          <option value="blocked">Blocked</option>
+                        </Form.Control>
+                      </div>
+                    </th>
                     <th className="text-center" style={{ width: "80px" }}>
                       Actions
                     </th>

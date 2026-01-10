@@ -10,6 +10,8 @@ const BrandPage = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState<number>(10);
   const [search, setSearch] = useState<string>("");
+  const [status, setStatus] = useState<string>("all");
+
 
   //USE MEMO
   const queryObj = useMemo(() => {
@@ -30,8 +32,12 @@ const BrandPage = () => {
       obj.search = search;
     }
 
+    if (status) {
+      obj.status = status
+    }
+
     return obj;
-  }, [page, limit, search]);
+  }, [page, limit, search, status]);
 
   //QUERY
 
@@ -77,9 +83,11 @@ const BrandPage = () => {
             setPage={setPage}
             setLimit={setLimit}
             setSearch={setSearch}
+            setStatus={setStatus}
             page={page}
             limit={limit}
             search={search}
+
           />
         </Card.Body>
       </Card>

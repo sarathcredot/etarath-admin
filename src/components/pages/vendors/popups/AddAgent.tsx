@@ -18,6 +18,8 @@ import { Country, State, City } from "country-state-city";
 import { useCreateWarehouse } from "src/services/warehouse.service";
 import { useUploadFile } from "src/services/fileUpload.service";
 import { useCreateAgent } from "src/services/salesAgent.service"
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
 
 type Props = {
   isOpen: boolean;
@@ -238,7 +240,10 @@ const AddAgent = ({ isOpen, toggle, vendorId }: Props) => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              <Col lg={12} className="px-4 py-1  ">
+
+
+
+              {/* <Col lg={12} className="px-4 py-1  ">
                 <Form.Group as={Row} className="align-items-center">
                   <Form.Label className="col-form-label">
                     Phone Number
@@ -257,7 +262,45 @@ const AddAgent = ({ isOpen, toggle, vendorId }: Props) => {
                     {formik.errors.phoneNumber}
                   </Form.Control.Feedback>
                 </Form.Group>
+              </Col> */}
+
+              <Col lg={12} className="px-2 py-1">
+                <Form.Group>
+                  <Form.Label className="col-form-label">
+                    Phone Number
+                  </Form.Label>
+
+                  <PhoneInput
+                    international
+                    defaultCountry="IN"
+                    countryCallingCodeEditable={true}   // ✅ manual +91 allowed
+                    placeholder="Phone Number"
+                    value={formik.values.phoneNumber}
+                    onChange={(value) =>
+                      formik.setFieldValue("phoneNumber", value)
+                    }
+                    onBlur={() =>
+                      formik.setFieldTouched("phoneNumber", true)
+                    }
+                    // disabled={isEdit}
+                    className={`phone-bootstrap ${formik.touched.phoneNumber &&
+                      formik.errors.phoneNumber
+                      ? "is-invalid"
+                      : ""
+                      }`}
+                  />
+
+                  {formik.touched.phoneNumber &&
+                    formik.errors.phoneNumber && (
+                      <div className="invalid-feedback d-block">
+                        {formik.errors.phoneNumber}
+                      </div>
+                    )}
+                </Form.Group>
               </Col>
+
+
+
 
               <Col lg={12} className="px-2 py-1">
                 <Form.Group>

@@ -1,5 +1,8 @@
 import { Col, Form, Row } from "react-bootstrap";
 import Select from "react-select";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import { isValidPhoneNumber } from "react-phone-number-input";
 
 export const languageOptions = [
   { value: "english", label: "English" },
@@ -79,7 +82,7 @@ export default function ContactForm({ formik, isEdit = false }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
-      <Col lg={6} className="px-2 py-1">
+      {/* <Col lg={6} className="px-2 py-1">
         <Form.Group>
           <Form.Label className="col-form-label">Phone Number</Form.Label>
           <Form.Control
@@ -96,7 +99,43 @@ export default function ContactForm({ formik, isEdit = false }: any) {
             {formik.errors.phoneNumber}
           </Form.Control.Feedback>
         </Form.Group>
+      </Col> */}
+
+      <Col lg={12} className="px-2 py-1">
+        <Form.Group>
+          <Form.Label className="col-form-label">
+            Phone Number
+          </Form.Label>
+
+          <PhoneInput
+            international
+            defaultCountry="IN"
+            countryCallingCodeEditable={true}   // ✅ manual +91 allowed
+            placeholder="Phone Number"
+            value={formik.values.phoneNumber}
+            onChange={(value) =>
+              formik.setFieldValue("phoneNumber", value)
+            }
+            onBlur={() =>
+              formik.setFieldTouched("phoneNumber", true)
+            }
+            disabled={isEdit}
+            className={`phone-bootstrap ${formik.touched.phoneNumber &&
+              formik.errors.phoneNumber
+              ? "is-invalid"
+              : ""
+              }`}
+          />
+
+          {formik.touched.phoneNumber &&
+            formik.errors.phoneNumber && (
+              <div className="invalid-feedback d-block">
+                {formik.errors.phoneNumber}
+              </div>
+            )}
+        </Form.Group>
       </Col>
+
       <Col lg={6} className="px-2 py-1">
         <Form.Group>
           <Form.Label className="col-form-label">Email</Form.Label>
@@ -161,14 +200,14 @@ export default function ContactForm({ formik, isEdit = false }: any) {
             onChange={(e) =>
               formik.setFieldValue("priority", Number(e.target.value))
             }
-            // isInvalid={
-            //   !!formik.errors.priority && formik.touched.priority
-            // }
+          // isInvalid={
+          //   !!formik.errors.priority && formik.touched.priority
+          // }
           >
             <option disabled selected hidden value="">
               Select Priority
             </option>
-            {[0,1, 2, 3, 4, 5].map((item: number, index: number) => (
+            {[0, 1, 2, 3, 4, 5].map((item: number, index: number) => (
               <option key={index} value={item}>
                 {item}
               </option>

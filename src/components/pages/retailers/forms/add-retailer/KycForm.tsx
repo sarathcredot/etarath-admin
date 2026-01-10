@@ -6,6 +6,8 @@ import { timeFormat } from "src/components/pages/vendors/forms/add-vendor/Profil
 import { BUSSINESS_TYPES } from "src/components/pages/vendors/popups/AddBussinessDetails";
 import { Country, State, City } from 'country-state-city';
 import { useEffect, useRef, useState } from "react";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 export default function KycForm({ formik }: any) {
 
@@ -120,7 +122,9 @@ export default function KycForm({ formik }: any) {
           </div>
         )}
       </Col>
-      <Col lg={6} className="px-4 pb-1  ">
+
+
+      {/* <Col lg={6} className="px-4 pb-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">
             Shop Contact Number
@@ -140,7 +144,48 @@ export default function KycForm({ formik }: any) {
             {formik.errors.shop_contact_number}
           </Form.Control.Feedback>
         </Form.Group>
+      </Col> */}
+
+
+      <Col lg={6} className="px-2 py-1">
+        <Form.Group>
+          <Form.Label className="col-form-label">
+            Phone Number
+          </Form.Label>
+
+          <PhoneInput
+            international
+            defaultCountry="IN"
+            countryCallingCodeEditable={true}   // ✅ manual +91 allowed
+            placeholder="Phone Number"
+            value={formik.values.shop_contact_number}
+            onChange={(value) =>
+              formik.setFieldValue("shop_contact_number", value)
+            }
+            onBlur={() =>
+              formik.setFieldTouched("shop_contact_number", true)
+            }
+            // disabled={isEdit}
+            className={`phone-bootstrap ${formik.touched.shop_contact_number &&
+              formik.errors.shop_contact_number
+              ? "is-invalid"
+              : ""
+              }`}
+          />
+
+          {formik.touched.shop_contact_number &&
+            formik.errors.shop_contact_number && (
+              <div className="invalid-feedback d-block">
+                {formik.errors.shop_contact_number}
+              </div>
+            )}
+        </Form.Group>
       </Col>
+
+
+
+
+
       <Col lg={4} className="px-4 py-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">
