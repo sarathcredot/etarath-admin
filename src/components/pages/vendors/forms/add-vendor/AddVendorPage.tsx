@@ -104,7 +104,7 @@ export default function AddVendorPage() {
 
           if (typeof values?.vendor_logo !== "string") {
             let formData = new FormData();
-            formData.append("file", values?.vendor_logo?.file);
+            formData.append("file", values?.vendor_logo);
             let response = await uploadFile(formData);
             values.vendor_logo = response.data.data;
           }

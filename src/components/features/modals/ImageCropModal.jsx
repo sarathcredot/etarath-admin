@@ -47,8 +47,19 @@ export default function ImageCropModal({ image, isOpen, onClose, onSave }) {
     };
 
     return (
-        <Modal isOpen={isOpen} className="crop-modal">
-            <div style={{ position: "relative", height: 400 }}>
+
+        <Modal
+            isOpen={isOpen}
+            onRequestClose={onClose}
+            className="crop-modal"
+            overlayClassName="crop-modal-overlay"
+        >
+            <div className="crop-modal-header">
+                <h5>Crop image</h5>
+                <span className="close-btn" onClick={onClose}>×</span>
+            </div>
+
+            <div className="crop-modal-body">
                 <Cropper
                     image={image}
                     crop={crop}
@@ -60,14 +71,12 @@ export default function ImageCropModal({ image, isOpen, onClose, onSave }) {
                 />
             </div>
 
-            <div className="text-right mt-3">
-                <Button variant="secondary" onClick={onClose}>
-                    Cancel
-                </Button>
-                <Button className="ml-2" variant="dark" onClick={createCroppedImage}>
-                    Save
-                </Button>
+            <div className="crop-modal-footer">
+                {/* <button  onClick={onClose}>Cancel</button> */}
+                <button className="btn-black" onClick={createCroppedImage}>Save</button>
             </div>
         </Modal>
+
+
     );
 }

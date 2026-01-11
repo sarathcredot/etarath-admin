@@ -29,6 +29,9 @@ import {
 import { generateFilePath } from "src/services/url.service";
 import { Product } from "./ProductsList";
 import { capitalCase } from "capital-case";
+import { useUploadZipFile, useUploadCsvFileProduct } from "src/services/bulk.service"
+import CsvImportDropModal from "src/components/features/modals/CsvImportModal";
+import ZipImageUploadModal from "src/components/features/modals/ZipImageUploadModal";
 
 const ProductsPage = () => {
   const navigate = useNavigate();
@@ -41,6 +44,8 @@ const ProductsPage = () => {
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedProductId, setSelectedProductId] = useState<string>("");
+  const [isUploadOpen, setIsUploadOpen] = useState(false)
+  const [isUploadOpenZipp, setIsUploadOpenZip] = useState(false)
 
   //USE MEMO
   const queryObj = useMemo(() => {
@@ -77,6 +82,8 @@ const ProductsPage = () => {
   // MUTATIONS
   const { mutateAsync: updateProductStatus } = useUpdateProductStatus();
   const { mutateAsync: deleteProduct } = useDeleteProduct();
+  const { mutateAsync: uploadProductCsv } = useUploadCsvFileProduct()
+  const { mutateAsync: uploadZipFile } = useUploadZipFile()
 
   console.log("products = ", products);
 
@@ -137,6 +144,29 @@ const ProductsPage = () => {
   const handilStatusChange = (value: any) => {
     setStatus(value)
   }
+
+
+  const onImport = async (file: any) => {
+
+    console.log("file", file)
+    const formData = new FormData();
+    formData.append("file", file);
+
+    // // Your backend endpoint for import
+    await uploadProductCsv(formData)
+  };
+
+  const onImportZip = async (file: any) => {
+
+    console.log("zip", file)
+    const formData = new FormData();
+    formData.append("zipFile", file);
+
+    // Your backend endpoint for import
+    await uploadZipFile(formData)
+    // open csv uploder
+    setIsUploadOpen(true)
+  };
 
   return (
     <>
@@ -218,6 +248,28 @@ const ProductsPage = () => {
                         </div>
                       </Col>
                       <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
+
+                        <span
+                          style={{
+                            display: "inline-block",
+                            padding: "6px 12px",
+                            backgroundColor: "#dcfce7",
+                            color: "#166534",
+                            borderRadius: "999px",
+                            fontSize: "13px",
+                            fontWeight: 500,
+                            cursor: "pointer",
+                            marginRight: "20px"
+                          }}
+
+                          onClick={() => { setIsUploadOpenZip(true) }}
+
+                        >
+                          Import CSV
+                        </span>
+
+
+
                         <button
                           // className="font-weight-semibold"
                           className="btn-black"
@@ -461,6 +513,26 @@ const ProductsPage = () => {
         toggle={() => setDeleteOpen(!isDeleteOpen)}
         text={"Are you sure that you want to delete this product?"}
       />
+
+
+      <CsvImportDropModal
+        show={isUploadOpen}
+        onClose={() => setIsUploadOpen(false)}
+        onImport={onImport}
+        title="Import producct CSV"
+        maxSizeMB={10}
+      />
+
+      <ZipImageUploadModal
+        show={isUploadOpenZipp}
+        onClose={() => setIsUploadOpenZip(false)}
+        onUpload={onImportZip}
+        title="Upload Images ZIP"
+        maxSizeMB={10}
+      />
+
+
+
     </>
   );
 };

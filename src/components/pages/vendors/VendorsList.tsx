@@ -20,6 +20,9 @@ import AddBussinessDetails from "./popups/AddBussinessDetails";
 import { generateFilePath } from "src/services/url.service";
 import EditVendor from "./popups/EditVendor";
 import { useUpdateVendorStatus, useDeleteVendor } from "src/services/vendor.service";
+import { exportUserDataCSV } from "src/services/bulk.service";
+import { useExportUserDataCSV } from "src/services/bulk.service"
+
 
 type Props = {
   header?: boolean;
@@ -62,6 +65,8 @@ const VendorsList = ({
   //MUTATIONS
   const { mutateAsync: updateVendorStatus } = useUpdateVendorStatus();
   const { mutateAsync: deleteVendor } = useDeleteVendor();
+
+  const exportMutation: any = useExportUserDataCSV();
 
 
   //HANDLERS
@@ -129,7 +134,7 @@ const VendorsList = ({
   const debouncedHandleFillterStatus = useCallback(
     debounce((text) => {
       try {
-        console.log("text",text)
+        console.log("text", text)
         setStatusU(text);
       } catch (error) {
         console.log(error, "error in the debounce function");
@@ -148,6 +153,10 @@ const VendorsList = ({
     }, 1000),
     []
   );
+
+
+  // csv download
+
 
 
 
@@ -192,7 +201,44 @@ const VendorsList = ({
                       </InputGroup>
                     </div>
                   </Col>
+
                   <Col xl="auto" className="">
+                    {/* <button
+                      className="btn-black"
+                      // variant="dark"
+                      // style={{ background: "#000" }}
+                      // onClick={() => navigate("/vendors/add-vendor")}
+                      onClick={() => exportMutation.mutate("vendor")}
+                      disabled={exportMutation.isPending}
+                    >
+                      {exportMutation.isPending ? "Downloading..." : "Download CSV"}
+                    </button> */}
+                  </Col>
+
+
+                  <Col xl="auto" className="">
+
+                    {/* <span style={{ color: "green", marginRight: "20px", cursor: "pointer" }} >  Export CSV  </span> */}
+
+                    <span
+                      style={{
+                        display: "inline-block",
+                        padding: "6px 12px",
+                        backgroundColor: "#dcfce7",
+                        color: "#166534",
+                        borderRadius: "999px",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        marginRight: "20px"
+                      }}
+
+                      onClick={() => exportMutation.mutate("vendor")}
+                    >
+                      Export CSV
+                    </span>
+
+
                     <button
                       className="btn-black"
                       // variant="dark"
@@ -241,7 +287,7 @@ const VendorsList = ({
                             color: "#000",
                           }}
                           name="verification"
-                           onChange={(e: any) =>
+                          onChange={(e: any) =>
                             debouncedHandleFillterStatus(e.target.value)
                           }
                         >

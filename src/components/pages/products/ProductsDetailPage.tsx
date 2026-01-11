@@ -174,7 +174,7 @@ const ProductsDetailPage = () => {
                 >
                   {product?.isVerified === "pending" && (
                     <>
-                      <div
+                      {/* <div
                         title="Approve Product"
                         className="action_btn bg-success"
                         onClick={() => {
@@ -191,7 +191,7 @@ const ProductsDetailPage = () => {
                         }}
                       >
                         <i className="fas fa-x-mark text-light"></i>
-                      </div>
+                      </div> */}
                     </>
                   )}
                   <div

@@ -77,7 +77,7 @@ export default function EditRetailerPage() {
       try {
         if (typeof values?.imgUrl !== "string") {
           let formData = new FormData();
-          formData.append("file", values?.imgUrl.file);
+          formData.append("file", values?.imgUrl);
           let response = await uploadFile(formData);
           values.imgUrl = response.data.data;
         }

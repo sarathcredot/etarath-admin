@@ -7,12 +7,25 @@ import MediaGalleryModal from "src/components/features/modals/media-gallery-moda
 import { generateFilePath } from "src/services/url.service";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import ImageCropModal from "src/components/features/modals/ImageCropModal";
 
 
 export default function ProfileForm({ formik, isEdit = false }: any) {
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
 
   console.log("retailer profile formik = ", formik.values);
+
+  // image new added
+
+  const [cropOpen, setCropOpen] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+
+  const handleImageSelect = (e: any) => {
+    const file: any = e.target.files[0];
+    if (!file) return;
+    setImageSrc(URL.createObjectURL(file));
+    setCropOpen(true);
+  };
 
   return (
     <Row className="px-1 px-md-3">
@@ -22,7 +35,7 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
         style={{ display: "flex", alignItems: "center", gap: 10 }}
       >
         <Row className="px-2 ">
-          {formik.values.imgUrl ? (
+          {/* {formik.values.imgUrl ? (
             <Col className="px-2 py-1 ">
               <div>
                 profile
@@ -71,7 +84,42 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
                 </div>
               )}
             </Col>
-          )}
+          )} */}
+
+          <Col className="px-2 py-1">
+            <div>
+              Logo
+              <div className="user_image_div mt-2" style={{ width: "190px" }}>
+                <img
+                  src={
+                    typeof formik.values.imgUrl === "string"
+                      ? generateFilePath(formik.values.imgUrl)
+                      : URL.createObjectURL(formik.values.imgUrl)
+                  }
+                  alt="profile"
+                  width="100%"
+                  height="100%"
+                  style={{ objectFit: "cover" }}
+                />
+
+                <div className="edit_div">
+                  <label>
+                    <i className="bx bxs-edit fa"></i>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={handleImageSelect}
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </Col>
+
+
+
+
         </Row>
         <Row className="mx-0 w-100">
           <Col lg={12} className="px-2 py-1">
@@ -256,6 +304,16 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
                 </Form.Control.Feedback> */}
         </Form.Group>
       </Col>
+
+
+      <ImageCropModal
+        image={imageSrc}
+        isOpen={cropOpen}
+        onClose={() => setCropOpen(false)}
+        onSave={(file: any) => {
+          formik.setFieldValue("imgUrl", file);
+        }}
+      />
 
 
 

@@ -121,7 +121,7 @@ export default function AddRetailerPage() {
             try {
                 if (typeof values?.imgUrl !== "string") {
                     const formData = new FormData();
-                    formData.append("file", values?.imgUrl.file);
+                    formData.append("file", values?.imgUrl);
                     const response = await uploadFile(formData);
                     values.imgUrl = response.data.data;
                 }

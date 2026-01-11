@@ -25,6 +25,11 @@ import {
   useDeleteBrand,
   useUpdateBrandStatus,
 } from "src/services/brand.service";
+import MediaGalleryModal from "src/components/features/modals/media-gallery-modal";
+import CsvImportModal from "src/components/features/modals/CsvImportModal";
+import ZipImageUploadModal from "src/components/features/modals/ZipImageUploadModal";
+import axiosAuth from "src/services/axios.service";
+import {  useUploadCsvFileBrand, useUploadZipFile } from "src/services/bulk.service"
 
 // Type definition
 export type Brand = {
@@ -69,10 +74,14 @@ const BrandsList = ({
   const [addBrandOpen, setAddBrandOpen] = useState<boolean>(false);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [selectedBrandId, setSelectedBrandId] = useState<string>("");
+  const [isUploadOpen, setIsUploadOpen] = useState(false)
+  const [isUploadOpenZipp, setIsUploadOpenZip] = useState(false)
 
   // MUTATION
   const { mutateAsync: deleteBrand } = useDeleteBrand();
   const { mutateAsync: updateBrandStatus } = useUpdateBrandStatus();
+  const { mutateAsync: uploadBrandCsv } = useUploadCsvFileBrand()
+  const { mutateAsync: uploadZipFile } = useUploadZipFile()
 
   //HANDLERS
   const handleDeleteBrand = async () => {
@@ -161,6 +170,29 @@ const BrandsList = ({
   );
 
 
+  const onImport = async (file: any) => {
+
+    console.log("file", file)
+    const formData = new FormData();
+    formData.append("file", file);
+
+    // // Your backend endpoint for import
+     await uploadBrandCsv(formData)
+  };
+
+  const onImportZip = async (file: any) => {
+
+    console.log("zip", file)
+    const formData = new FormData();
+    formData.append("zipFile", file);
+
+    // Your backend endpoint for import
+     await uploadZipFile(formData)
+    // open csv uploder
+    setIsUploadOpen(true)
+  };
+
+
   const totalRecords = brandsData?.total || 0;
   const totalPages = brandsData?.totalPages || 0;
 
@@ -201,6 +233,26 @@ const BrandsList = ({
                     </div>
                   </Col>
                   <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
+
+                    <span
+                      style={{
+                        display: "inline-block",
+                        padding: "6px 12px",
+                        backgroundColor: "#dcfce7",
+                        color: "#166534",
+                        borderRadius: "999px",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        marginRight: "20px"
+                      }}
+
+                      onClick={() => { setIsUploadOpenZip(true) }}
+
+                    >
+                      Import CSV
+                    </span>
+
                     <button
                       className="btn-black"
                       // className="font-weight-semibold"
@@ -419,6 +471,27 @@ const BrandsList = ({
         toggle={() => setEditOpen(!isEditOpen)}
         brandId={selectedBrandId}
       />
+
+
+      <CsvImportModal
+        show={isUploadOpen}
+        onClose={() => setIsUploadOpen(false)}
+        onImport={onImport}
+        title="Import brand CSV"
+        maxSizeMB={10}
+      />
+
+      <ZipImageUploadModal
+        show={isUploadOpenZipp}
+        onClose={() => setIsUploadOpenZip(false)}
+        onUpload={onImportZip}
+        title="Upload Images ZIP"
+        maxSizeMB={10}
+      />
+
+
+
+
     </>
   );
 };

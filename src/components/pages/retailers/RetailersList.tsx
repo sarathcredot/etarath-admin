@@ -19,6 +19,7 @@ import AddRetailer from "./popups/AddRetailer";
 import { generateFilePath } from "src/services/url.service";
 import EditRetailer from "./popups/EditRetailer";
 import { useUpdateRetailerStatus, useDeleteRetailer } from "src/services/retailer.service";
+import { useExportUserDataCSV } from "src/services/bulk.service";
 
 type Props = {
   header?: boolean;
@@ -63,6 +64,8 @@ const RetailersList = ({
   //MUTATIONS
   const { mutateAsync: updateRetailerStatus } = useUpdateRetailerStatus();
   const { mutateAsync: deleteRetailer } = useDeleteRetailer()
+
+  const exportMutation: any = useExportUserDataCSV();
 
   //HANDLERS
   const handleChangeStatus = async (retailerId: string, isActive: boolean) => {
@@ -187,10 +190,47 @@ const RetailersList = ({
                     </div>
                   </Col>
                   <Col xl="auto" className="">
+                    <span
+                      style={{
+                        display: "inline-block",
+                        padding: "6px 12px",
+                        backgroundColor: "#dcfce7",
+                        color: "#166534",
+                        borderRadius: "999px",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        marginRight: "20px"
+                      }}
+
+                      onClick={() => exportMutation.mutate("retailer")}
+                    >
+                      Export CSV
+                    </span>
+
+                    <span
+                      style={{
+                        display: "inline-block",
+                        padding: "6px 12px",
+                        backgroundColor: "#dcfce7",
+                        color: "#166534",
+                        borderRadius: "999px",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        marginRight: "20px"
+                      }}
+
+                      onClick={() => exportMutation.mutate("retailer")}
+                    >
+                      Import CSV
+                    </span>
+
+
                     <button
                       // className="font-weight-semibold px-3"
                       // variant="dark"
-                       className="btn-black"
+                      className="btn-black"
                       // style={{ background: "#000" }}
                       onClick={() => navigate("/retailers/add-retailer")}
                     // onClick={() => setAddOpen(true)}

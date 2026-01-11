@@ -13,6 +13,8 @@ import {
 } from "src/services/attribute.service";
 import PtSwitch from "src/components/features/elements/switch";
 import { debounce } from "lodash";
+import { useUploadCsvFileAttribute } from "src/services/bulk.service"
+import CsvImportDropModal from "src/components/features/modals/CsvImportModal";
 
 
 // Type definition
@@ -54,10 +56,12 @@ const AttributesList = ({
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedAttribute, setSelectedAttribute] = useState<any>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isUploadOpen, setIsUploadOpen] = useState(false)
 
   // MUTATION
   const { mutateAsync: deleteAttribute } = useDeleteAttribute();
   const { mutateAsync: updateAttributeStatus } = useUpdateAttributeStatus();
+  const { mutateAsync: uploadProductCsv } = useUploadCsvFileAttribute()
 
   //HANDLERS
   const handleDeleteAttribute = async () => {
@@ -128,6 +132,20 @@ const AttributesList = ({
     }, 1000),
     []
   );
+
+
+  const onImport = async (file: any) => {
+
+    console.log("file", file)
+    const formData = new FormData();
+    formData.append("file", file);
+
+    // // Your backend endpoint for import
+    await uploadProductCsv(formData)
+  };
+
+
+
   const totalRecords = data?.total || 0;
   const totalPages = data?.totalPages || 0;
 
@@ -168,6 +186,24 @@ const AttributesList = ({
                     </div>
                   </Col>
                   <Col xl="auto" className="mb-2 mb-xl-0">
+                    <span
+                      style={{
+                        display: "inline-block",
+                        padding: "6px 12px",
+                        backgroundColor: "#dcfce7",
+                        color: "#166534",
+                        borderRadius: "999px",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        marginRight: "20px"
+                      }}
+
+                      onClick={() => { setIsUploadOpen(true) }}
+
+                    >
+                      Import CSV
+                    </span>
                     <button
                       // className="font-weight-semibold"
                       // variant="dark"
@@ -238,7 +274,7 @@ const AttributesList = ({
                           {/* <strong> */}
 
                           {/* {index + 1} */}
-                           {(data?.currentPage - 1) * limit + index + 1}
+                          {(data?.currentPage - 1) * limit + index + 1}
                           {/* </strong> */}
                         </td>
 
@@ -325,6 +361,17 @@ const AttributesList = ({
         toggle={() => setDeleteOpen(!isDeleteOpen)}
         text={"Are you sure that you want to delete this attribute?"}
       />
+
+
+      <CsvImportDropModal
+        show={isUploadOpen}
+        onClose={() => setIsUploadOpen(false)}
+        onImport={onImport}
+        title="Import Origin & Year CSV"
+        maxSizeMB={10}
+      />
+
+
     </>
   );
 };
