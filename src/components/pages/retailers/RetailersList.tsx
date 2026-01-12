@@ -208,24 +208,7 @@ const RetailersList = ({
                       Export CSV
                     </span>
 
-                    <span
-                      style={{
-                        display: "inline-block",
-                        padding: "6px 12px",
-                        backgroundColor: "#dcfce7",
-                        color: "#166534",
-                        borderRadius: "999px",
-                        fontSize: "13px",
-                        fontWeight: 500,
-                        cursor: "pointer",
-                        marginRight: "20px"
-                      }}
-
-                      onClick={() => exportMutation.mutate("retailer")}
-                    >
-                      Import CSV
-                    </span>
-
+                   
 
                     <button
                       // className="font-weight-semibold px-3"
