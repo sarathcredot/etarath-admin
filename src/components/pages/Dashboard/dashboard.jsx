@@ -146,7 +146,7 @@ export default function Dashboard() {
                   className="text-center text-sm-right  mt-4 mt-sm-0 d-flex justify-content-end"
                 >
                   {/* <i className="bx bx-user icon icon-inline icon-md  p-0"></i> */}
-                  <i className="bx bx-group icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  <i className="bx bx-user icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
                 </Col>
               </Row>
             </Card.Body>
@@ -170,16 +170,16 @@ export default function Dashboard() {
                     className="text-4-1 my-0 "
                     style={{ whiteSpace: "nowrap" }}
                   >
-                    Total Sales Executives
+                    Total Product
                   </h3>
                   <strong className="text-6 ">
-                    {totalOverviewData?.salesExecutives?.total}
+                    {totalOverviewData?.product?.total}
                   </strong>
                 </Col>
                 <Col className="  mt-auto">
                   <div className="d-flex align-items-end ">
                     <span className="text-color-success mr-1">
-                      +{totalOverviewData?.salesExecutives?.thisMonth}
+                      +{totalOverviewData?.product?.thisMonth}
                     </span>
 
                     <span>This month</span>
@@ -190,7 +190,7 @@ export default function Dashboard() {
                   className="text-center text-sm-right  mt-4 mt-sm-0 d-flex justify-content-end"
                 >
                   {/* <i className="bx bx-user icon icon-inline icon-md  p-0"></i> */}
-                  <i className="bx bx-group icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  <i className="bx bx-cube  icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
                 </Col>
               </Row>
             </Card.Body>
@@ -230,7 +230,7 @@ export default function Dashboard() {
                   className="text-center text-sm-right  mt-4 mt-sm-0 d-flex justify-content-end"
                 >
                   {/* <i className="bx bx-user icon icon-inline icon-md  p-0"></i> */}
-                  <i className="bx bx-trending-up icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
+                  <i className="bx bx-cart icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
                 </Col>
               </Row>
             </Card.Body>

@@ -234,24 +234,14 @@ const BrandsList = ({
                   </Col>
                   <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
 
-                    <span
-                      style={{
-                        display: "inline-block",
-                        padding: "6px 12px",
-                        backgroundColor: "#dcfce7",
-                        color: "#166534",
-                        borderRadius: "999px",
-                        fontSize: "13px",
-                        fontWeight: 500,
-                        cursor: "pointer",
-                        marginRight: "20px"
-                      }}
-
+                    <button
+                       className="btn-green"
+                      style={{ marginRight: "30px" }}
                       onClick={() => { setIsUploadOpenZip(true) }}
 
                     >
                       Import CSV
-                    </span>
+                    </button>
 
                     <button
                       className="btn-black"

@@ -278,6 +278,7 @@ export default function EditVendorPage() {
       durationType: "",
       plan_end_date: "" as any,
       plan_start_date: "" as any,
+      trial_period: 0 as any,
       trial_end_date: "" as any
 
     },
@@ -430,8 +431,8 @@ export default function EditVendorPage() {
           .split("T")[0] || "",
         plan_start_date: new Date(vendorActivePlan?.plan_start_date).toISOString()
           .split("T")[0] || "",
-        trial_end_date: vendorActivePlan?.trial_end_date ? new Date(vendorActivePlan?.trial_end_date).toISOString()
-          .split("T")[0] : ""
+        trial_period: vendorActivePlan?.trial_period || 0,
+        trial_end_date: vendorActivePlan?.trial_end_date || 0,
       });
     }
   }, [vendorActivePlan]);

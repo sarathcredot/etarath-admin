@@ -281,9 +281,12 @@ const Retailers = () => {
                 <div style={{ display: "flex", justifyContent: "space-between" }} >
 
                   <Card.Title>Top Retailers</Card.Title>
-                  <button onClick={() => { navigate("/retailers") }} style={{ height: "40px" }} className="btn-black">
+                  {/* <button onClick={() => { navigate("/retailers") }} style={{ height: "40px" }} className="btn-black">
                     View More
-                  </button>
+                  </button> */}
+
+                  <span onClick={() => { navigate("/retailers") }} style={{ cursor: "pointer", color: "black" }} > View More  </span>
+
 
                 </div>
               </Card.Header>

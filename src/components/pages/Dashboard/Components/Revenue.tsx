@@ -685,10 +685,10 @@ const Revenue = () => {
                     <strong className="text-6">{formatAED(totals.year)}</strong>
                   </Col>
                   <Col className="mt-auto">
-                    <div className="d-flex align-items-end">
+                    {/* <div className="d-flex align-items-end">
                       <span className="text-color-success mr-1">{formatAED(totals.total)}</span>
                       <span>Total Revenue</span>
-                    </div>
+                    </div> */}
                   </Col>
                   <Col sm={4} className="text-center text-sm-right mt-4 mt-sm-0 d-flex justify-content-end">
                     <i className="bx bx-dollar icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
@@ -713,10 +713,10 @@ const Revenue = () => {
                     <strong className="text-6">{formatAED(totals.month)}</strong>
                   </Col>
                   <Col className="mt-auto">
-                    <div className="d-flex align-items-end">
+                    {/* <div className="d-flex align-items-end">
                       <span className="text-color-success mr-1">{formatAED(totals.total)}</span>
                       <span>Total Revenue</span>
-                    </div>
+                    </div> */}
                   </Col>
                   <Col sm={4} className="text-center text-sm-right mt-4 mt-sm-0 d-flex justify-content-end">
                     <i className="bx bx-dollar icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>
@@ -741,10 +741,10 @@ const Revenue = () => {
                     <strong className="text-6">{formatAED(totals.week)}</strong>
                   </Col>
                   <Col className="mt-auto">
-                    <div className="d-flex align-items-end">
+                    {/* <div className="d-flex align-items-end">
                       <span className="text-color-success mr-1">{formatAED(totals.total)}</span>
                       <span>Total Revenue</span>
-                    </div>
+                    </div> */}
                   </Col>
                   <Col sm={4} className="text-center text-sm-right mt-4 mt-sm-0 d-flex justify-content-end">
                     <i className="bx bx-dollar icon icon-inline icon-md bg-primary rounded-circle text-color-light p-0"></i>

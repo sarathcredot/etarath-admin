@@ -21,6 +21,31 @@ export const useGetAllRetailers = (enabled: boolean = true, queryParams: any) =>
     enabled: enabled,
   });
 };
+
+
+// GET ALL RETAILERS
+export const getAllDeletedRetailers = async (queryParams: any) => {
+  return await axiosAuth.get(`${baseUrl}/deleted-users`, {
+    params: {
+      role: 'retailer',
+      ...queryParams
+    }
+  });
+};
+
+export const useGetAllDeletedRetailers = (enabled: boolean = true, queryParams: any) => {
+  return useQuery({
+    queryKey: ["retailers-deleted", queryParams],
+    queryFn: () => getAllDeletedRetailers(queryParams).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};
+
+
+
+
+
+
 // GET RETAILER BY ID
 export const getRetailerById = async (id: any | undefined) => {
   if (!id) throw new Error("No id provided");

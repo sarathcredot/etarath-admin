@@ -400,6 +400,26 @@ input [type="number"]::-webkit-outer-spin-button {
 }
 
 
+.btn-green {
+  background-color: #21ad02;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px 16px;
+  cursor: pointer;
+  border: none;
+}
+
+/* Explicitly disable hover/focus/active changes */
+.btn-green:hover,
+.btn-green:focus,
+.btn-green:active {
+  background-color: #21ad02;
+  color: #fff;
+  outline: none;
+  border: none;
+}
+
+
 
 
 

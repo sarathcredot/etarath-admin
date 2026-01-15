@@ -190,26 +190,7 @@ const RetailersList = ({
                     </div>
                   </Col>
                   <Col xl="auto" className="">
-                    <button
-                      className="btn-green"
-                      style={{ marginRight: "30px" }}
-                      onClick={() => exportMutation.mutate("retailer")}
-                    >
-                      Export CSV
-                    </button>
 
-
-
-                    <button
-                      // className="font-weight-semibold px-3"
-                      // variant="dark"
-                      className="btn-black"
-                      // style={{ background: "#000" }}
-                      onClick={() => navigate("/retailers/add-retailer")}
-                    // onClick={() => setAddOpen(true)}
-                    >
-                      + Add Retailer
-                    </button>
                   </Col>
                 </Row>
               </div>
@@ -227,67 +208,7 @@ const RetailersList = ({
                     <th></th>
                     <th>Phone Number</th>
                     <th>Email</th>
-                    <th>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        <span>Verification</span>
 
-                        <Form.Control
-                          as="select"
-                          size="sm"
-                          className="no-focus"
-                          style={{
-                            width: "110px",
-                            color: "#000",
-                          }}
-                          name="verification"
-                          onChange={(e: any) =>
-                            debouncedHandleFillterStatus(e.target.value)
-                          }
-                        >
-                          <option value="all">All</option>
-                          <option value="approved">Approved</option>
-                          <option value="pending">Pending</option>
-                          <option value="rejected">Rejected</option>
-                        </Form.Control>
-                      </div>
-                    </th>
-
-                    <th>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        <span>Status</span>
-
-                        <Form.Control
-                          as="select"
-                          size="sm"
-                          style={{
-                            width: "110px",
-                            color: "#000",
-                          }}
-                          name="issuspend"
-                          onChange={(e: any) =>
-                            debouncedHandleSearchFillterisSupaend(e.target.value)
-                          }
-                        >
-                          <option value="all">All</option>
-                          <option value="active">Active</option>
-                          <option value="blocked">Blocked</option>
-                        </Form.Control>
-                      </div>
-                    </th>
 
 
 
@@ -380,48 +301,16 @@ const RetailersList = ({
                             </strong>
                           </td>
                         </td>
-                        <td>{item?.phoneNumber}</td>
-                        <td>{item?.email}</td>
                         <td>
-                          <div
-                            className={`ecommerce-status ${item?.isVerified}`}
-                            style={{ textTransform: "capitalize" }}
-                          >
-                            {item?.isVerified}
-                          </div>
+                          {(item?.phoneNumber)?.split('/')?.[0]}
+                        </td>
+                        <td>
+                          {(item?.email)?.split('/')?.[0]}
                         </td>
 
                         <td onClick={(e) => e.stopPropagation()}>
-                          <div
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setStatusOpen(true);
-                              setSelectedRetailer(item);
-                            }}
-                          >
-                            <PtSwitch
-                              className="mr-1"
-                              on={!item?.isSuspend}
-                              size="sm"
-                              variant="success"
-                            />
-                          </div>
-                        </td>
-                        <td onClick={(e) => e.stopPropagation()}>
                           <div className="d-flex align-items-center justify-content-around">
-                            <div
-                              className="action_btn "
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                // setSelectedRetailer(item);
-                                // setEditOpen(true);
-                                navigate(
-                                  `/retailers/edit-retailer?_id=${item?._id}`
-                                );
-                              }}
-                            >
-                              <i className="fas fa-pencil-alt"></i>
-                            </div>
+
                             <div
                               className="action_btn "
                               onClick={(e) => {
@@ -431,15 +320,7 @@ const RetailersList = ({
                             >
                               <i className="far fa-eye"></i>
                             </div>
-                            <div
-                              className="action_btn"
-                              onClick={() => {
-                                setDeleteOpen(true);
-                                setSelectedRetailer(item);
-                              }}
-                            >
-                              <i className="far fa-trash-alt"></i>
-                            </div>
+
                           </div>
                         </td>
                       </tr>

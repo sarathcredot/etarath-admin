@@ -5,23 +5,23 @@ import withRouter from '../../common/WithRouter';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Field } from 'formik';
 import { LoginValidationSchema } from 'src/validations/validationSchemas';
-import { useForgetPassword } from 'src/services/auth.service';
+import { useOtpVerify } from 'src/services/auth.service';
 import { toast, ToastContainer } from 'react-toastify';
 import * as Yup from "yup";
 
 
-function SignIn(props) {
+function OTP(props) {
     const navigate = useNavigate();
-    const { mutateAsync: forgetPassword } = useForgetPassword();
+    const { mutateAsync: VerifyOtp } = useOtpVerify();
 
     const [rememberMe, setRememberMe] = useState(false);
     const [initialValues, setInitialValues] = useState({
-        emailOrPhoneNumber: "",
+        otp: "",
 
     });
 
-    const ReseatValidationSchema = Yup.object().shape({
-        emailOrPhoneNumber: Yup.string().required("Email is required"),
+    const OTPValidationSchema = Yup.object().shape({
+        otp: Yup.string().required("OTP is required"),
         // .email("Enter a valid email address")
 
     });
@@ -39,24 +39,31 @@ function SignIn(props) {
 
     const handleSubmitForm = async (values, { setSubmitting }) => {
         try {
-            const res = await forgetPassword(values);
+
+            const savedCredentials = localStorage.getItem("passwordResetCredentials");
+
+            if (!savedCredentials) {
+
+                throw new Error("")
+            }
+
+            const parsed = JSON.parse(savedCredentials);
+
+
+            const res = await VerifyOtp({
+                otp: values?.otp,
+                emailOrPhoneNumber: parsed?.emailOrPhoneNumber
+            });
 
             if (res?.status === 200) {
+
 
                 toast(res?.data?.message, {
                     containerId: "default",
                     className: "no-icon notification-success",
                 });
 
-                localStorage.setItem(
-                    "passwordResetCredentials",
-                    JSON.stringify({
-                        emailOrPhoneNumber: values.emailOrPhoneNumber,
-
-                    })
-                );
-
-                navigate("/verify-otp")
+                navigate("/reset-password")
 
             } else {
                 toast(res?.data?.message, {
@@ -81,13 +88,13 @@ function SignIn(props) {
             <div className="center-sign">
                 <Card className="card-sign">
                     <Card.Body>
-                        <h2 className="sign-title">Verify Email</h2>
+                        <h2 className="sign-title">Verify OTP</h2>
 
 
                         <Formik
                             enableReinitialize
                             initialValues={initialValues}
-                            validationSchema={ReseatValidationSchema}
+                            validationSchema={OTPValidationSchema}
                             onSubmit={handleSubmitForm}
                         >
                             {({ errors, touched, handleChange, values, handleSubmit, isSubmitting }) => (
@@ -96,25 +103,25 @@ function SignIn(props) {
                                     {/* Email */}
                                     <Form.Group className="form-custom-group">
                                         <Form.Label>
-                                            Email Address <span className="required">*</span>
+                                            otp <span className="required">*</span>
                                         </Form.Label>
 
                                         <Field
                                             as={Form.Control}
                                             type="text"
-                                            name="emailOrPhoneNumber"
-                                            value={values.emailOrPhoneNumber}
+                                            name="otp"
+                                            value={values.otp}
                                             onChange={handleChange}
                                             className={
-                                                errors.emailOrPhoneNumber && touched.emailOrPhoneNumber
+                                                errors.otp && touched.otp
                                                     ? "is-invalid"
                                                     : ""
                                             }
                                         />
 
-                                        {errors.emailOrPhoneNumber && touched.emailOrPhoneNumber && (
+                                        {errors.otp && touched.otp && (
                                             <p style={{ color: "red" }}>
-                                                {errors.emailOrPhoneNumber}
+                                                {errors.otp}
                                             </p>
                                         )}
                                     </Form.Group>
@@ -136,7 +143,7 @@ function SignIn(props) {
                             )}
                         </Formik>
 
-                        <span style={{ cursor: "pointer" }} > Sign in  </span>
+                        {/* <span style={{ cursor: "pointer" }} > Sign in  </span> */}
 
 
                     </Card.Body>
@@ -158,4 +165,4 @@ function SignIn(props) {
     );
 }
 
-export default React.memo(withRouter(SignIn));
+export default React.memo(withRouter(OTP));

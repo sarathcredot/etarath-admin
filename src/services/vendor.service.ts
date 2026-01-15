@@ -22,6 +22,35 @@ export const useGetAllVendors = (enabled: boolean = true, queryParams?: any) => 
   });
 };
 
+
+
+// GET ALL deleted VENDORS
+export const getAllDeletedVendors = async (queryParams?: any) => {
+  return await axiosAuth.get(`${baseUrl}/deleted-users`, {
+    params: {
+      role: 'vendor',
+      ...queryParams
+    }
+  });
+};
+
+export const useGetAllDeletedVendors = (enabled: boolean = true, queryParams?: any) => {
+  return useQuery({
+    queryKey: ["vendors-deleted", queryParams],
+    queryFn: () => getAllDeletedVendors(queryParams).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};
+
+
+
+
+
+
+
+
+
+
 // GET VENDOR BY ID
 export const getVendorById = async (id: string | undefined) => {
   if (!id) throw new Error("No id provided");

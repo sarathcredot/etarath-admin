@@ -4,7 +4,7 @@ import Chart from "react-apexcharts";
 import { Reveal } from "react-awesome-reveal";
 import { Button, Card, Col, Form, Row, Table } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { convertTimelineToApexSeries, useGetAllTopUsersAndOrders, usegetchartData } from "src/services/dashboard.service";
+import { convertProductTimelineToApexSeries, useGetAllTopUsersAndOrders, usegetchartDataProduct } from "src/services/dashboard.service";
 import { User } from "src/types/types";
 import { fadeIn } from "src/utils/data/keyframes";
 const executives: any[] = [
@@ -86,7 +86,7 @@ const SalesExecutives = () => {
 
 
   // QUERIES
-  const { data: topExecutives } = useGetAllTopUsersAndOrders("sales_executive");
+  const { data: topExecutives } = useGetAllTopUsersAndOrders("product");
 
   const getCategories = (filterType: string) => {
     const currentYear = new Date().getFullYear();
@@ -232,18 +232,16 @@ const SalesExecutives = () => {
 
 
 
-  const { data: chartData } = usegetchartData(true, agentQueryObj)
+  const { data: chartData } = usegetchartDataProduct(true, agentQueryObj)
 
 
   useEffect(() => {
 
     if (!chartData?.timeline || !filter) return;
 
-    const result = convertTimelineToApexSeries(
+    const result = convertProductTimelineToApexSeries(
       chartData.timeline,
       filter,
-      "user",
-      "vendor"
     );
 
     setChartResult(result);
@@ -273,10 +271,12 @@ const SalesExecutives = () => {
               <Card.Header>
                 <div style={{ display: "flex", justifyContent: "space-between" }} >
 
-                  <Card.Title>Top Sales Executives</Card.Title>
-                  <button style={{ height: "40px" }} className="btn-black">
+                  <Card.Title>Top Products</Card.Title>
+                  {/* <button style={{ height: "40px" }} className="btn-black">
                     View More
-                  </button>
+                  </button> */}
+
+                  <span onClick={()=>{navigate("/products")}} style={{ cursor: "pointer", color: "black" }} > View More  </span>
 
                 </div>
               </Card.Header>
@@ -288,7 +288,7 @@ const SalesExecutives = () => {
                 >
                   <thead>
                     <tr>
-                      <th>Sales Executive</th>
+                      <th>Product Executive</th>
                       {/* <th> Phone Number</th> */}
                       <th className="text-lg-right">Total Orders</th>
                     </tr>
@@ -298,20 +298,16 @@ const SalesExecutives = () => {
                       topExecutives?.length &&
                       topExecutives?.map(
                         (
-                          item: {
-                            agentId: string;
-                            agentName: string;
-                            orderCount: number;
-                          },
+                          item: any,
                           index: number
                         ) => (
                           <tr key={index}>
                             <td>
                               <Link
-                                to={`/sales-executives/detail?_id=${item?.agentId}`}
+                                to={`/products/detail?_id=${item?.productId}`}
                                 style={{ textDecoration: "none", color: "#000" }}
                               >
-                                {item?.agentName}
+                                {item?.productName}
                               </Link>
                             </td>
                             {/* <td>{item?.phoneNumber}</td> */}
@@ -331,7 +327,7 @@ const SalesExecutives = () => {
               <Card.Header>
                 <Row>
                   <Col>
-                    <Card.Title>Sales Executives</Card.Title>
+                    <Card.Title>Products</Card.Title>
                   </Col>
                   <Col lg="auto" className="mb-2 mb-lg-0 ml-xl-auto pl-xl-1">
                     <div className="d-flex align-items-lg-center flex-wrap">
@@ -364,8 +360,8 @@ const SalesExecutives = () => {
                     <h3 className="text-4 mt-0 mb-2">Last  {filter}</h3>
                   </Col>
                   <Col className="col-auto">
-                    <strong className="text-color-dark text-6">{chartData?.summary?.totalUsers}</strong>
-                    <h3 className="text-4 mt-0 mb-2">Total Sales Executives</h3>
+                    <strong className="text-color-dark text-6">{chartData?.summary?.totalProducts}</strong>
+                    <h3 className="text-4 mt-0 mb-2">Total Products</h3>
                   </Col>
                 </Row>
 

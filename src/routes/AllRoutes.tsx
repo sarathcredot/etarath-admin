@@ -31,6 +31,9 @@ import ForgotPassword from "src/components/pages/others/forgot-password";
 import LockedScreen from "src/components/pages/others/locked-screen";
 import SignIn from "src/components/pages/others/sign-in";
 import SignUp from "src/components/pages/others/sign-up";
+import OTP from "src/components/pages/others/otp";
+import ResetPassword from "src/components/pages/others/resetPassword";
+
 import PageNotFound from "src/components/pages/others/page-not-found";
 import ErrorPage from "src/components/pages/others/error-page";
 import Invoice from "src/components/pages/others/invoice";
@@ -45,6 +48,8 @@ import UserList from "src/components/pages/users/user-list";
 import UserCreate from "src/components/pages/users/user-create";
 import UserDetail from "src/components/pages/users/user-detail";
 import VendorsPage from "src/components/pages/vendors/VendorsPage";
+import VendorsDeletedPage from "src/components/pages/vendors/VendorsPageDeleted";
+
 import VendorsDetailPage from "src/components/pages/vendors/VendorsDetailPage";
 import SalesExecutivesPage from "src/components/pages/sales_executives/SalesExecutivesPage";
 import SalesExecutivesDetailPage from "src/components/pages/sales_executives/SalesExecutivesDetailPage";
@@ -70,6 +75,8 @@ import AttributesPage from "src/components/pages/attributes/AttributesPage";
 import RetailersList from "src/components/pages/retailers/RetailersList";
 import RetailersDetailPage from "src/components/pages/retailers/RetailersDetailPage";
 import RetailersPage from "src/components/pages/retailers/RetailersPage";
+import RetailersPageDelete from "src/components/pages/retailers/RetailersPageDelete";
+
 import ProductsDetailPage from "src/components/pages/products/ProductsDetailPage";
 import BrandsDetailPage from "src/components/pages/brands/BrandsDetailPage";
 import AttributePage from "src/components/pages/attributes/attribute/AttributePage";
@@ -101,12 +108,14 @@ const adminRoutes: Array<RouteProps> = [
 
   // Vendors
   { path: "/vendors", exact: true, component: <VendorsPage /> },
+  { path: "/vendors/deactive", exact: true, component: <VendorsDeletedPage /> },
   { path: "/vendors/detail", component: <VendorsDetailPage /> },
   { path: "/vendors/add-vendor", component: <AddVendorPage /> },
   { path: "/vendors/edit-vendor", component: <EditVendorPage /> },
 
   // Retailers
   { path: "/retailers", exact: true, component: <RetailersPage /> },
+  { path: "/retailers/deactive", exact: true, component: <RetailersPageDelete /> },
   { path: "/retailers/detail", component: <RetailersDetailPage /> },
   { path: "/retailers/add-retailer", component: <AddRetailerPage /> },
   { path: "/retailers/edit-retailer", component: <EditRetailerPage /> },
@@ -247,6 +256,7 @@ const adminRoutes: Array<RouteProps> = [
 
   { path: "*", component: <Blank /> },
 
+
   // { path: "/media/settings", exact: true, component: <MediaSetting /> },
   // { path: "/media/create", exact: true, component: <MediaAdd /> },
   // { path: "/elements", exact: true, component: <Typography /> },
@@ -270,14 +280,17 @@ const adminRoutes: Array<RouteProps> = [
 const authRoutes: Array<RouteProps> = [
   { path: "/login", component: <Blank /> },
   {
-    path: "/pages/forgot-password",
+    path: "/forgot-password",
     exact: true,
     component: <ForgotPassword />,
   },
+  { path: "/verify-otp", exact: true, component: <OTP /> },
+  { path: "/reset-password", exact: true, component: <ResetPassword /> },
   { path: "/pages/locked-screen", exact: true, component: <LockedScreen /> },
   { path: "/sign-in", exact: true, component: <SignIn /> },
   // { path: "/sign-in", exact: true, component: <Blank /> },
   { path: "/pages/sign-up", exact: true, component: <SignUp /> },
+
 ];
 
 export { adminRoutes, authRoutes };

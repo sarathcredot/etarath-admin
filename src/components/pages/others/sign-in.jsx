@@ -168,19 +168,25 @@ function SignIn(props) {
                                         </Col>
                                     </Row>
 
+
                                     {/* Submit */}
-                                    <Button
+                                    <button
                                         type="submit"
-                                        className="btn-login mt-3"
+                                        // className="btn-login mt-3"
+                                        className='btn-black'
+                                        style={{ width: "100%" , marginBottom: "10px"}}
                                         block
                                         disabled={isSubmitting}
                                     >
                                         {isSubmitting ? 'Signing in...' : 'Sign In'}
-                                    </Button>
+                                    </button>
 
                                 </Form>
                             )}
                         </Formik>
+
+                        <span onClick={()=>{navigate("/forgot-password")}} style={{ cursor: "pointer" }} > Forgot Password   </span>
+
 
                     </Card.Body>
                 </Card>

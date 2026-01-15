@@ -428,6 +428,17 @@ const VendorsDetailPage = () => {
     }
   }, [vendor]);
 
+  let isExpired: any
+
+  useEffect(() => {
+
+    const planEndDate = new Date(vendorActivePlan?.plan_end_date); // 2027-03-26T00:00:00.000Z
+    const now = new Date();
+
+    isExpired = planEndDate.getTime() <= now.getTime();
+
+  }, [vendorActivePlan])
+
   return (
     <>
       <Breadcrumb
@@ -571,13 +582,13 @@ const VendorsDetailPage = () => {
                           <div>
                             <h6>Shop Contact Number</h6>
                             <h5 className=" text-dark font-weight-500 ">
-                              {vendor?.kyc?.phoneNumber || "-"}
+                              {(vendor?.kyc?.phoneNumber || "-")?.split('/')?.[0]}
                             </h5>
                           </div>
                           <div>
                             <h6>Email</h6>
                             <h5 className=" text-dark font-weight-500 ">
-                              {vendor?.kyc?.email || "-"}
+                              {(vendor?.kyc?.email || "-")?.split('/')?.[0]}
                             </h5>
                           </div>
                           <div>
@@ -710,6 +721,12 @@ const VendorsDetailPage = () => {
                             ) : (
                               "-"
                             )}
+                          </div>
+                          <div>
+                            <h6>Description</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {vendor?.kyc?.description || "-"}
+                            </h5>
                           </div>
                         </Col>
                       </Row>
@@ -912,15 +929,17 @@ const VendorsDetailPage = () => {
                         className="d-flex align-items-center"
                         style={{ gap: 10 }}
                       >
-                        <Button
-                          className="font-weight-semibold"
-                          variant="dark"
-                          onClick={() => {
-                            setSubRenew(true)
-                          }}
-                        >
-                          Renew Subscription
-                        </Button>
+                       { 
+                          isExpired && <Button
+                            className="font-weight-semibold"
+                            variant="dark"
+                            onClick={() => {
+                              setSubRenew(true)
+                            }}
+                          >
+                            Renew Subscription
+                          </Button>
+                        }
                         <div
                           title="Edit subscription "
                           className="action_btn bg-dark"
@@ -929,7 +948,7 @@ const VendorsDetailPage = () => {
                           }}
                         >
                           <i className="fas fa-pencil-alt text-light"></i>
-                         
+
                         </div>
                       </div>
                     ) : (
@@ -937,7 +956,7 @@ const VendorsDetailPage = () => {
                         className="font-weight-semibold"
                         variant="dark"
                         onClick={() => {
-                          navigate(`/vendors/edit-vendor?_id=${vendor?._id}`);
+                         setSubRenew(true)
                         }}
                       >
                         + Purchase Plan
@@ -956,7 +975,7 @@ const VendorsDetailPage = () => {
                         </h5>
                       </div> */}
                       <div>
-                        <h6>Subscription Plan</h6>
+                        <h6> Active Plan</h6>
                         <h5
                           className=" text-dark font-weight-500 "
                           style={{ textTransform: "capitalize" }}
@@ -965,7 +984,7 @@ const VendorsDetailPage = () => {
                         </h5>
                       </div>
                       <div>
-                        <h6>Duration</h6>
+                        <h6>Plan Type</h6>
                         <h5
                           className=" text-dark font-weight-500 "
                           style={{ textTransform: "capitalize" }}
@@ -973,7 +992,7 @@ const VendorsDetailPage = () => {
                           {vendorActivePlan?.durationType || "-"}
                         </h5>
                       </div>
-                      <div>
+                      {/* <div>
                         <h6>Plan Price</h6>
                         <h5
                           className=" text-dark font-weight-500 "
@@ -981,7 +1000,7 @@ const VendorsDetailPage = () => {
                         >
                           {formatCurrency(vendorActivePlan?.plan_price || 0)}
                         </h5>
-                      </div>
+                      </div> */}
                       <div>
                         <h6>Total</h6>
                         <h5
@@ -1000,6 +1019,15 @@ const VendorsDetailPage = () => {
                           style={{ textTransform: "capitalize" }}
                         >
                           {formatDate(vendorActivePlan?.purchased_Date)}
+                        </h5>
+                      </div>
+                      <div>
+                        <h6>plan start date</h6>
+                        <h5
+                          className=" text-dark font-weight-500 "
+                          style={{ textTransform: "capitalize" }}
+                        >
+                          {formatDate(vendorActivePlan?.plan_start_date)}
                         </h5>
                       </div>
                       <div>
@@ -1027,12 +1055,12 @@ const VendorsDetailPage = () => {
                         >
                           {formatDate(vendorActivePlan?.plan_end_date)}
 
-                          <div
+                          {/* <div
                             className="action_btn "
                             onClick={() => { setStatusOpenSub(true) }}
                           >
                             <i className="fas fa-pencil-alt"></i>
-                          </div>
+                          </div> */}
                         </h5>
                       </div>
                       {/* <div>

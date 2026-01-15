@@ -39,7 +39,7 @@ type Props = {
   search: string;
 };
 
-const VendorsList = ({
+const VendorsListDeleted = ({
   header = false,
   vendors,
   data,
@@ -180,7 +180,7 @@ const VendorsList = ({
                   {header && (
                     <Col>
                       <h5 className="m-0 card-title h5 font-weight-bold">
-                        Vendors
+                        Deactive Vendors
                       </h5>
                     </Col>
                   )}
@@ -220,7 +220,7 @@ const VendorsList = ({
 
                     {/* <span style={{ color: "green", marginRight: "20px", cursor: "pointer" }} >  Export CSV  </span> */}
 
-                    <button
+                    {/* <button
                       style={{ marginRight: "30px" }}
                       className="btn-green"
                       // style={{
@@ -252,7 +252,7 @@ const VendorsList = ({
                       }}
                     >
                       + Add Vendor
-                    </button>
+                    </button> */}
                   </Col>
                 </Row>
               </div>
@@ -270,7 +270,7 @@ const VendorsList = ({
                     <th></th>
                     <th>Phone Number</th>
                     <th>Email</th>
-                    <th>
+                    {/* <th>
                       <div
                         style={{
                           display: "flex",
@@ -329,7 +329,7 @@ const VendorsList = ({
                           <option value="blocked">Blocked</option>
                         </Form.Control>
                       </div>
-                    </th>
+                    </th> */}
 
                     <th className="text-center" style={{ width: "80px" }}>
                       Actions
@@ -421,12 +421,11 @@ const VendorsList = ({
                                   textTransform: "uppercase",
                                 }}
                               >
-                                {item?.kycDetails?.business_name?.charAt(0) || item?.userName?.charAt(0) ||  "?"}
+                                {item?.kycDetails?.business_name?.charAt(0) || item?.userName?.charAt(0) || "?"}
                               </div>
                             )}
 
                           </Link>
-
                         </td>
                         <td>
                           <strong>
@@ -435,10 +434,13 @@ const VendorsList = ({
 
                         </td>
                         <td>
-                          {item?.kycDetails?.phoneNumber || item?.phoneNumber}
+                          {(item?.kycDetails?.phoneNumber || item?.phoneNumber)?.split('/')?.[0]}
                         </td>
-                        <td>{item?.kycDetails?.email || item?.email}</td>
                         <td>
+                          {(item?.kycDetails?.email || item?.email)?.split('/')?.[0]}
+
+                        </td>
+                        {/* <td>
                           <div
                             className={`ecommerce-status ${item?.isVerified}`}
                             style={{ textTransform: "capitalize" }}
@@ -462,10 +464,10 @@ const VendorsList = ({
                               variant="success"
                             />
                           </div>
-                        </td>
+                        </td> */}
                         <td onClick={(e) => e.stopPropagation()}>
                           <div className="d-flex align-items-center justify-content-around">
-                            <div
+                            {/* <div
                               className="action_btn "
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -477,7 +479,7 @@ const VendorsList = ({
                               }}
                             >
                               <i className="fas fa-pencil-alt"></i>
-                            </div>
+                            </div> */}
                             <div
                               className="action_btn "
                               onClick={(e) => {
@@ -487,7 +489,7 @@ const VendorsList = ({
                             >
                               <i className="far fa-eye"></i>
                             </div>
-                            <div
+                            {/* <div
                               className="action_btn"
                               onClick={() => {
                                 setDeleteOpen(true);
@@ -495,7 +497,7 @@ const VendorsList = ({
                               }}
                             >
                               <i className="far fa-trash-alt"></i>
-                            </div>
+                            </div> */}
                           </div>
                         </td>
                       </tr>
@@ -545,4 +547,4 @@ const VendorsList = ({
   );
 };
 
-export default VendorsList;
+export default VendorsListDeleted;

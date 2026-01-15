@@ -7,12 +7,30 @@
   {
     "name": "Vendors",
     "icon": "bx bx-group",
-    "url": "/vendors"
+    "children": [
+      {
+        "name": "Manage Vendors",
+        "url": "/vendors"
+      },
+      {
+        "name": "Deactive Vendors",
+        "url": "/vendors/deactive"
+      }
+    ]
   },
   {
     "name": "Retailers",
     "icon": "bx bx-group",
-    "url": "/retailers"
+    "children": [
+      {
+        "name": "Manage Retailers",
+        "url": "/retailers"
+      },
+      {
+        "name": "Deactive Retailers",
+        "url": "/retailers/deactive"
+      }
+    ]
   },
   {
     "name": "Products",
@@ -34,7 +52,6 @@
     "icon": "bx bx-grid-alt",
     "url": "/brands"
   },
-
   {
     "name": "Attributes",
     "icon": "bx bx-tag",
@@ -74,7 +91,7 @@
         "name": "Offers",
         "url": "/cms/offers"
       },
-       {
+      {
         "name": "Advertisement",
         "url": "/cms/advertisement"
       },

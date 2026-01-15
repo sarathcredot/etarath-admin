@@ -1,27 +1,29 @@
 
+
+
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Card, Form, Button } from 'react-bootstrap';
 import withRouter from '../../common/WithRouter';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Field } from 'formik';
 import { LoginValidationSchema } from 'src/validations/validationSchemas';
-import { useForgetPassword } from 'src/services/auth.service';
+import { useResetPassword } from 'src/services/auth.service';
 import { toast, ToastContainer } from 'react-toastify';
 import * as Yup from "yup";
 
 
-function SignIn(props) {
+function ResetPassword(props) {
     const navigate = useNavigate();
-    const { mutateAsync: forgetPassword } = useForgetPassword();
+    const { mutateAsync: resetPassword } = useResetPassword();
 
     const [rememberMe, setRememberMe] = useState(false);
     const [initialValues, setInitialValues] = useState({
-        emailOrPhoneNumber: "",
+        newPassword: "",
 
     });
 
-    const ReseatValidationSchema = Yup.object().shape({
-        emailOrPhoneNumber: Yup.string().required("Email is required"),
+    const OTPValidationSchema = Yup.object().shape({
+        newPassword: Yup.string().required("password is required"),
         // .email("Enter a valid email address")
 
     });
@@ -39,24 +41,31 @@ function SignIn(props) {
 
     const handleSubmitForm = async (values, { setSubmitting }) => {
         try {
-            const res = await forgetPassword(values);
+
+            const savedCredentials = localStorage.getItem("passwordResetCredentials");
+
+            if (!savedCredentials) {
+
+                throw new Error("")
+            }
+
+            const parsed = JSON.parse(savedCredentials);
+
+
+            const res = await resetPassword({
+                newPassword: values?.newPassword,
+                emailOrPhoneNumber: parsed?.emailOrPhoneNumber
+            });
 
             if (res?.status === 200) {
+
 
                 toast(res?.data?.message, {
                     containerId: "default",
                     className: "no-icon notification-success",
                 });
 
-                localStorage.setItem(
-                    "passwordResetCredentials",
-                    JSON.stringify({
-                        emailOrPhoneNumber: values.emailOrPhoneNumber,
-
-                    })
-                );
-
-                navigate("/verify-otp")
+                 navigate("/sign-in")
 
             } else {
                 toast(res?.data?.message, {
@@ -81,13 +90,13 @@ function SignIn(props) {
             <div className="center-sign">
                 <Card className="card-sign">
                     <Card.Body>
-                        <h2 className="sign-title">Verify Email</h2>
+                        <h2 className="sign-title">Reset Password</h2>
 
 
                         <Formik
                             enableReinitialize
                             initialValues={initialValues}
-                            validationSchema={ReseatValidationSchema}
+                            validationSchema={OTPValidationSchema}
                             onSubmit={handleSubmitForm}
                         >
                             {({ errors, touched, handleChange, values, handleSubmit, isSubmitting }) => (
@@ -96,25 +105,25 @@ function SignIn(props) {
                                     {/* Email */}
                                     <Form.Group className="form-custom-group">
                                         <Form.Label>
-                                            Email Address <span className="required">*</span>
+                                            Password <span className="required">*</span>
                                         </Form.Label>
 
                                         <Field
                                             as={Form.Control}
-                                            type="text"
-                                            name="emailOrPhoneNumber"
-                                            value={values.emailOrPhoneNumber}
+                                            type="password"
+                                            name="newPassword"
+                                            value={values.newPassword}
                                             onChange={handleChange}
                                             className={
-                                                errors.emailOrPhoneNumber && touched.emailOrPhoneNumber
+                                                errors.newPassword && touched.newPassword
                                                     ? "is-invalid"
                                                     : ""
                                             }
                                         />
 
-                                        {errors.emailOrPhoneNumber && touched.emailOrPhoneNumber && (
+                                        {errors.newPassword && touched.newPassword && (
                                             <p style={{ color: "red" }}>
-                                                {errors.emailOrPhoneNumber}
+                                                {errors.newPassword}
                                             </p>
                                         )}
                                     </Form.Group>
@@ -136,7 +145,7 @@ function SignIn(props) {
                             )}
                         </Formik>
 
-                        <span style={{ cursor: "pointer" }} > Sign in  </span>
+                        {/* <span style={{ cursor: "pointer" }} > Sign in  </span> */}
 
 
                     </Card.Body>
@@ -158,4 +167,4 @@ function SignIn(props) {
     );
 }
 
-export default React.memo(withRouter(SignIn));
+export default React.memo(withRouter(ResetPassword));

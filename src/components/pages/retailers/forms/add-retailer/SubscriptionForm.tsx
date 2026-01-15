@@ -17,6 +17,9 @@ export const durationTypes = [
 ];
 
 
+
+
+
 export default function SubscriptionForm({ formik, edit = false }: any) {
   // QUERIES
   const {
@@ -33,6 +36,63 @@ export default function SubscriptionForm({ formik, edit = false }: any) {
 
   console.log("plan", { planId: formik.values.planId, durationType: formik.values.durationType });
 
+
+  const calcDates = (values: any) => {
+    const trialPeriod = Number(values?.trial_period || 0);
+    const startDate = values?.plan_start_date;
+    const durationType = values?.durationType;
+
+    if (!startDate) return;
+
+    const start = new Date(startDate);
+
+    // trial end date = start + trial days
+    const trialEnd = new Date(start);
+    trialEnd.setDate(trialEnd.getDate() + trialPeriod);
+
+    // plan end date = trialEnd + duration
+    const planEnd = new Date(trialEnd);
+
+    if (durationType === "monthly") {
+      planEnd.setMonth(planEnd.getMonth() + 1);
+    } else if (durationType === "yearly") {
+      planEnd.setFullYear(planEnd.getFullYear() + 1);
+    } else if (durationType === "weekly") {
+      planEnd.setDate(planEnd.getDate() + 7);
+    }
+
+    if (trialPeriod === 0) {
+      formik.setFieldValue("trial_end_date", "");
+    } else {
+      formik.setFieldValue("trial_end_date", trialEnd.toISOString().split("T")[0]);
+    }
+    formik.setFieldValue("plan_end_date", planEnd.toISOString().split("T")[0]);
+  };
+
+
+  const handilChangetrialPeriod = (e: any) => {
+    const trialPeriod = Number(e?.target?.value || 0);
+    formik.setFieldValue("trial_period", trialPeriod);
+
+    calcDates({ ...formik.values, trial_period: trialPeriod });
+  };
+
+  const handilChangetrialStart = (e: any) => {
+    const startDate = e?.target?.value;
+    formik.setFieldValue("plan_start_date", startDate);
+
+    calcDates({ ...formik.values, plan_start_date: startDate });
+  };
+
+  const handilChangeDuration = (e: any) => {
+    const durationType = e
+    formik.setFieldValue("durationType", durationType);
+
+    calcDates({ ...formik.values, durationType });
+  };
+
+
+
   return (
     <Row className="px-1 px-md-3">
       <Col lg={12} className="px-2 py-1  ">
@@ -43,7 +103,7 @@ export default function SubscriptionForm({ formik, edit = false }: any) {
             value: item?._id,
             label: item?.plan?.toUpperCase(),
           }))}
-          isDisabled={edit}
+          // isDisabled={edit}
           value={plans
             ?.map((item: any) => ({
               value: item?._id,
@@ -74,7 +134,7 @@ export default function SubscriptionForm({ formik, edit = false }: any) {
         <Select
           name="durationType"
           options={durationTypes}
-          isDisabled={edit}
+          // isDisabled={edit}
           value={durationTypes.find(
             (opt) => opt.value === formik.values.durationType
           )}
@@ -85,7 +145,7 @@ export default function SubscriptionForm({ formik, edit = false }: any) {
           //   .filter((opt) => formik.values.brands.includes(opt.value))}
           onChange={(selected) => {
             console.log({ selected });
-            formik.setFieldValue("durationType", selected?.value);
+            handilChangeDuration(selected?.value)
           }}
           onBlur={() => formik.setFieldTouched("durationType", true)}
           classNamePrefix={
@@ -112,7 +172,7 @@ export default function SubscriptionForm({ formik, edit = false }: any) {
                 placeholder="plan start date"
                 name="plan_start_date"
                 value={formik.values.plan_start_date}
-                onChange={formik.handleChange}
+                onChange={handilChangetrialStart}
               // isInvalid={
               //   !!formik.errors.endDate && !!formik.touched.endDate
               // }
@@ -142,26 +202,26 @@ export default function SubscriptionForm({ formik, edit = false }: any) {
             </Form.Group>
           </Col>
 
-          {
-            formik.values.trial_end_date && <Col lg={12} className="px-4 py-1  ">
-              <Form.Group as={Row} className="align-items-center">
-                <Form.Label className="col-form-label"> Trial end date</Form.Label>
-                <Form.Control
-                  type="date"
-                  placeholder="plan end datejkl"
-                  name="trial_end_date"
-                  value={formik.values.trial_end_date}
-                  onChange={formik.handleChange}
-                // isInvalid={
-                //   !!formik.errors.endDate && !!formik.touched.endDate
-                // }
-                />
-                {/* <Form.Control.Feedback type="invalid">
-                  {formik.errors.endDate}
-                </Form.Control.Feedback> */}
-              </Form.Group>
-            </Col>
-          }
+          <Col lg={12} className="px-4 py-1  ">
+            <Form.Group as={Row} className="align-items-center">
+              <Form.Label className="col-form-label"> Trial Period</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="trial period"
+                name="trial_period"
+                value={formik.values.trial_period}
+                onChange={handilChangetrialPeriod}
+              // isInvalid={
+              //   !!formik.errors.endDate && !!formik.touched.endDate
+              // }
+              />
+              {/* <Form.Control.Feedback type="invalid">
+                      {formik.errors.endDate}
+                    </Form.Control.Feedback> */}
+            </Form.Group>
+          </Col>
+
+
 
 
 

@@ -86,6 +86,33 @@ export const usegetchartDataOrder = (
 };
 
 
+
+// GET ALL TOP USERS AND PRODUCT
+export const getchartDataProduct = async (queryParams: any) => {
+  return await axiosAuth.get(`${baseUrl}/time-line-data-product`, {
+    params: {
+      ...queryParams
+    }
+  });
+};
+
+export const usegetchartDataProduct = (
+
+  enabled: boolean = true,
+  queryparams: any
+) => {
+  return useQuery({
+    queryKey: ["chart-data-product", queryparams],
+    queryFn: () =>
+      getchartDataProduct(queryparams).then((res) => res?.data?.data),
+    enabled: enabled,
+  });
+};
+
+
+
+
+
 // GET REVENUE DATA
 
 
@@ -110,9 +137,9 @@ export const usegetDataRevenue = (
 
 
 
-export const getDataSubcriptionDataRole = async (queryParams?:any) => {
-  return await axiosAuth.get(`${baseUrl}/subscription-data`,{
-    params:{
+export const getDataSubcriptionDataRole = async (queryParams?: any) => {
+  return await axiosAuth.get(`${baseUrl}/subscription-data`, {
+    params: {
       ...queryParams
     }
   });
@@ -121,11 +148,11 @@ export const getDataSubcriptionDataRole = async (queryParams?:any) => {
 export const usegetDataSubcriptionDataRole = (
 
   enabled: boolean = true,
-  queryParams:any
+  queryParams: any
 
 ) => {
   return useQuery({
-    queryKey: ["sub-data-role",queryParams],
+    queryKey: ["sub-data-role", queryParams],
     queryFn: () =>
       getDataSubcriptionDataRole(queryParams).then((res) => res?.data?.data),
     enabled: enabled,
@@ -137,9 +164,9 @@ export const usegetDataSubcriptionDataRole = (
 
 
 
-export const getDataSubcriptionDataRoleChart = async (queryParams?:any) => {
-  return await axiosAuth.get(`${baseUrl}/revenue-data-role-graphical`,{
-    params:{
+export const getDataSubcriptionDataRoleChart = async (queryParams?: any) => {
+  return await axiosAuth.get(`${baseUrl}/revenue-data-role-graphical`, {
+    params: {
       ...queryParams
     }
   });
@@ -148,11 +175,11 @@ export const getDataSubcriptionDataRoleChart = async (queryParams?:any) => {
 export const usegetDataSubcriptionDataRoleChart = (
 
   enabled: boolean = true,
-  queryParams:any
+  queryParams: any
 
 ) => {
   return useQuery({
-    queryKey: ["sub-data-role-chart",queryParams],
+    queryKey: ["sub-data-role-chart", queryParams],
     queryFn: () =>
       getDataSubcriptionDataRoleChart(queryParams).then((res) => res?.data?.data),
     enabled: enabled,
@@ -270,7 +297,65 @@ export const convertTimelineToApexSeries = (
 
 
 
+export type ProductTimelineItem = {
+  period: number;      // hour (0-23) OR week (1-4) OR month (1-12) OR year (YYYY)
+  active?: number;
+  deactive?: number;
+  total?: number;
+};
 
+export const convertProductTimelineToApexSeries = (
+  timeline: ProductTimelineItem[] = [],
+  filter: any
+) => {
+  let length = 0;
+
+  switch (filter) {
+    case "day":
+      length = 24;
+      break;
+    case "week":
+      length = 4;
+      break;
+    case "month":
+      length = 12;
+      break;
+    case "year":
+      length = timeline.length; // last 5 years (or dynamic)
+      break;
+    default:
+      length = timeline.length;
+      break;
+  }
+
+  const active = Array(length).fill(0);
+  const deactive = Array(length).fill(0);
+  const total = Array(length).fill(0);
+
+  timeline.forEach((item) => {
+    const index =
+      filter === "day"
+        ? item.period // 0..23
+        : filter === "week"
+          ? item.period - 1 // 1..4 -> 0..3
+          : filter === "month"
+            ? item.period - 1 // 1..12 -> 0..11
+            : timeline.findIndex((t) => t.period === item.period); // year
+
+    if (index >= 0 && index < length) {
+      active[index] = item.active ?? 0;
+      deactive[index] = item.deactive ?? 0;
+      total[index] = item.total ?? (active[index] + deactive[index]);
+    }
+  });
+
+  // ✅ Return Apex series (stacked bar/area supported)
+  return [
+    { name: "Active Products", data: active },
+    { name: "Deactive Products", data: deactive },
+    // { name: "Total Products", data: total }, // optional (remove if you don't want)
+  ];
+};
 
 
 
@@ -335,10 +420,10 @@ export const convertSubscriptionTimelineToApexSeries = (
       filter === "day"
         ? Number(item.period) // 0..23
         : filter === "week"
-        ? Number(item.period) - 1 // 1..4
-        : filter === "month"
-        ? Number(item.period) - 1 // 1..12
-        : timeline.findIndex((t) => t.period === item.period); // year: by match
+          ? Number(item.period) - 1 // 1..4
+          : filter === "month"
+            ? Number(item.period) - 1 // 1..12
+            : timeline.findIndex((t) => t.period === item.period); // year: by match
 
     if (index >= 0 && index < length) {
       for (const key of planKeys) {

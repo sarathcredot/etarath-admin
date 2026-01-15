@@ -256,6 +256,17 @@ const RetailersDetailPage = () => {
     }
   }, [retailer]);
 
+  let isExpired: any
+
+  useEffect(() => {
+
+    const planEndDate = new Date(retailerActivePlan?.plan_end_date); // 2027-03-26T00:00:00.000Z
+    const now = new Date();
+
+    isExpired = planEndDate.getTime() <= now.getTime();
+
+  }, [retailerActivePlan])
+
   return (
     <>
       <Breadcrumb
@@ -662,6 +673,12 @@ const RetailersDetailPage = () => {
                               "-"
                             )}
                           </div>
+                          <div>
+                            <h6>Description</h6>
+                            <h5 className=" text-dark font-weight-500 ">
+                              {retailer?.kyc?.description || "-"}
+                            </h5>
+                          </div>
                         </Col>
                       </Row>
                     </Card.Body>
@@ -775,15 +792,18 @@ const RetailersDetailPage = () => {
                         className="d-flex align-items-center"
                         style={{ gap: 10 }}
                       >
-                        <Button
-                          className="font-weight-semibold"
-                          variant="dark"
-                          onClick={() => {
-                            setSubRenew(true)
-                          }}
-                        >
-                          Renew Subscription
-                        </Button>
+                        {
+                          isExpired && <Button
+                            className="font-weight-semibold"
+                            variant="dark"
+                            onClick={() => {
+                              setSubRenew(true)
+                            }}
+                          >
+                            Renew Subscription
+                          </Button>
+                        }
+
                         <div
                           title="Edit subscription "
                           className="action_btn bg-dark"
@@ -800,9 +820,7 @@ const RetailersDetailPage = () => {
                         className="font-weight-semibold"
                         variant="dark"
                         onClick={() => {
-                          navigate(
-                            `/retailers/edit-retailer?_id=${retailer?._id}`
-                          );
+                         setSubRenew(true)
                         }}
                       >
                         + Purchase Plan
