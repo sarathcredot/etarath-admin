@@ -22,6 +22,7 @@ import EditVendor from "./popups/EditVendor";
 import { useUpdateVendorStatus, useDeleteVendor } from "src/services/vendor.service";
 import { exportUserDataCSV } from "src/services/bulk.service";
 import { useExportUserDataCSV } from "src/services/bulk.service"
+import { truncate } from "src/utils/formats";
 
 
 type Props = {
@@ -429,7 +430,9 @@ const VendorsListDeleted = ({
                         </td>
                         <td>
                           <strong>
-                            {item?.kycDetails?.business_name || item?.userName}
+                            {/* {item?.kycDetails?.business_name || item?.userName} */}
+
+                            {truncate(item?.kycDetails?.business_name || item?.userName)}
                           </strong>
 
                         </td>

@@ -10,6 +10,9 @@ import AddWarehouse from "./popups/AddWarehouse";
 import { toast } from "react-toastify";
 import ConfirmationPopup from "src/components/common/Popups/ConfirmationPopup";
 import { errorMsg } from "src/utils/toast";
+import EditWarehouse from "./forms/edit-vendor/EditWarehouse";
+import Pagination from "src/components/common/Pagination";
+import { truncate } from "src/utils/formats";
 
 const VendorWarehousesList = ({
 
@@ -44,6 +47,7 @@ const VendorWarehousesList = ({
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [selectedStock, setSelectedStock] = useState<any>(null);
+  //  const [selectedStock, setSelectedStock] = useState<any>(null);
 
   const { mutateAsync: deleteWarehouse } = useDeleteWarehouse()
 
@@ -164,7 +168,7 @@ const VendorWarehousesList = ({
                   </Col>
                   <Col xl="auto" className="mb-2 mt-1 mb-xl-0">
                     <button
-                      style={{height:"40px"}}
+                      style={{ height: "40px" }}
                       // className="font-weight-semibold"
                       // variant="dark"
                       className="btn-black"
@@ -265,7 +269,11 @@ const VendorWarehousesList = ({
                           </Link>
 
                         </td>
-                        <td>{item?.location || "-"}</td>
+                        <td>
+
+                          {truncate(item?.location)}
+
+                        </td>
                         <td>
                           {item?.createdAt
                             ? dayjs(item?.createdAt).format("DD-MM-YYYY")
@@ -281,6 +289,15 @@ const VendorWarehousesList = ({
                         </td>
                         <td>
                           <div className="d-flex align-items-center justify-content-around">
+                            <div
+                              className="action_btn"
+                              onClick={() => {
+                                setSelectedStock(item);
+                                setEditOpen(true);
+                              }}
+                            >
+                              <i className="fas fa-pencil-alt"></i>
+                            </div>
                             <div
                               className="action_btn"
                               onClick={() => {
@@ -308,13 +325,13 @@ const VendorWarehousesList = ({
                 </tbody>
               </Table>
             </div>
-            {/* <Pagination
+            <Pagination
               currentPage={page}
               setCurrentPage={setPage}
               totalButtonsToShow={3}
               totalPages={totalPages}
               style={{ marginTop: "20px" }}
-            /> */}
+            />
             {/* </Card.Body>
             </Card> */}
           </Col>
@@ -332,6 +349,15 @@ const VendorWarehousesList = ({
         toggle={() => setAddOpen(!isAddOpen)}
         vendorId={vendorId}
       />
+
+      <EditWarehouse
+        isOpen={isEditOpen}
+        toggle={() => setEditOpen(!isEditOpen)}
+        warehouseId={selectedStock?._id}
+        vendorId={vendorId}
+        data={selectedStock}
+      />
+
     </>
   );
 };

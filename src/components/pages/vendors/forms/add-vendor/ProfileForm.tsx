@@ -10,6 +10,7 @@ import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import ImageCropModal from "src/components/features/modals/ImageCropModal";
+import LocationInput from "src/components/common/LocationInput"
 
 
 
@@ -318,7 +319,7 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
 
 
 
-      <Col lg={6} className="px-2 py-1  ">
+      {/* <Col lg={6} className="px-2 py-1  ">
         <Form.Label className="col-form-label">Shop Location</Form.Label>
         <Select
           name="location"
@@ -337,6 +338,25 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
               : ""
           }
         />
+        {formik.touched.location && formik.errors.location && (
+          <div className="text-danger mt-1" style={{ fontSize: "11px" }}>
+            {formik.errors.location}
+          </div>
+        )}
+      </Col> */}
+
+
+      <Col lg={6} className="px-2 py-1">
+        <Form.Label className="col-form-label">Shop Location</Form.Label>
+
+        <LocationInput
+          placeholder="Enter location"
+          value={formik.values.location}
+          onChange={(val: any) => formik.setFieldValue("location", val)}
+          onBlur={() => formik.setFieldTouched("location", true)}
+          isInvalid={formik.touched.location && !!formik.errors.location}
+        />
+
         {formik.touched.location && formik.errors.location && (
           <div className="text-danger mt-1" style={{ fontSize: "11px" }}>
             {formik.errors.location}

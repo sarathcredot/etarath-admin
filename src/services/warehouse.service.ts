@@ -114,6 +114,7 @@ export const useUpdateWarehouse = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["warehouse"] });
       queryClient.invalidateQueries({ queryKey: ["warehouse"] });
+      queryClient.invalidateQueries({ queryKey: ["warehouses"] });
     },
   });
 };

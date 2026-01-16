@@ -332,12 +332,43 @@ const RetailersDetailPage = () => {
                       <div>
                         <h6>Profile</h6>
                         <div>
-                          <img
+                          {/* <img
                             src={generateFilePath(retailer?.imgUrl)}
                             width={100}
                             height={100}
                             alt="profile"
-                          />
+                          /> */}
+
+                          {retailer?.imgUrl ? (
+                            <img
+                              src={generateFilePath(retailer.imgUrl)}
+                              alt="profile"
+                              width="50"
+                              height="50"
+                              style={{
+                                objectFit: "cover",
+                                borderRadius: "50%",
+                              }}
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                width: "50px",
+                                height: "50px",
+                                borderRadius: "50%",
+                                backgroundColor: "#ff600f", // orange
+                                color: "#fff",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontWeight: "600",
+                                fontSize: "20px",
+                                textTransform: "uppercase",
+                              }}
+                            >
+                              {retailer?.userName?.charAt(0) || "?"}
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div>
@@ -820,7 +851,7 @@ const RetailersDetailPage = () => {
                         className="font-weight-semibold"
                         variant="dark"
                         onClick={() => {
-                         setSubRenew(true)
+                          setSubRenew(true)
                         }}
                       >
                         + Purchase Plan

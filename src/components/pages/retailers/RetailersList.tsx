@@ -20,6 +20,7 @@ import { generateFilePath } from "src/services/url.service";
 import EditRetailer from "./popups/EditRetailer";
 import { useUpdateRetailerStatus, useDeleteRetailer } from "src/services/retailer.service";
 import { useExportUserDataCSV } from "src/services/bulk.service";
+import { truncate } from "src/utils/formats";
 
 type Props = {
   header?: boolean;
@@ -376,7 +377,10 @@ const RetailersList = ({
                           </Link> */}
                           <td>
                             <strong>
-                              {item?.userName}
+                              {/* {item?.userName} */}
+
+                               {truncate(item?.userName)}
+                              
                             </strong>
                           </td>
                         </td>

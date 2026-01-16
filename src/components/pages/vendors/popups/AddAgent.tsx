@@ -20,6 +20,7 @@ import { useUploadFile } from "src/services/fileUpload.service";
 import { useCreateAgent } from "src/services/salesAgent.service"
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
+import LocationInput from "src/components/common/LocationInput";
 
 type Props = {
   isOpen: boolean;
@@ -302,7 +303,7 @@ const AddAgent = ({ isOpen, toggle, vendorId }: Props) => {
 
 
 
-              <Col lg={12} className="px-2 py-1">
+              {/* <Col lg={12} className="px-2 py-1">
                 <Form.Group>
                   <Form.Label className="col-form-label">Location</Form.Label>
                   <Select
@@ -325,6 +326,30 @@ const AddAgent = ({ isOpen, toggle, vendorId }: Props) => {
                   )}
                 </Form.Group>
               </Col>
+ */}
+
+              <Col lg={12} className="px-2 py-1">
+                <Form.Label className="col-form-label"> Location</Form.Label>
+
+                <LocationInput
+                  placeholder="Select Location"
+                  value={formik.values.location}
+                  onChange={(val: any) => formik.setFieldValue("location", val)}
+                  onBlur={() => formik.setFieldTouched("location", true)}
+                  isInvalid={formik.touched.location && !!formik.errors.location}
+                />
+
+                {formik.touched.location && formik.errors.location && (
+                  <div className="text-danger mt-1" style={{ fontSize: "11px" }}>
+                    {formik.errors.location}
+                  </div>
+                )}
+              </Col>
+
+
+
+
+
               <Col lg={12} className="px-4 py-1  ">
                 <Form.Group as={Row} className="align-items-center">
                   <Form.Label className="col-form-label">

@@ -12,6 +12,7 @@ import PhoneInput from "react-phone-number-input";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { Country, State, City } from "country-state-city";
 import Select from "react-select";
+import LocationInput from "src/components/common/LocationInput";
 
 
 
@@ -99,8 +100,8 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
       email: data?.email,
       isVerified: data?.isSuspend,
       imgUrl: data?.imgUrl || " ",
-      location:data?.location || " ",
-      salesAgentTarget:data?.salesAgentTarget || ""
+      location: data?.location || " ",
+      salesAgentTarget: data?.salesAgentTarget || ""
     },
     validationSchema: AgentValidationSchema,
     enableReinitialize: true,
@@ -250,7 +251,7 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
                 </Form.Group>
               </Col>
 
-              <Col lg={12} className="px-2 py-1">
+              {/* <Col lg={12} className="px-2 py-1">
                 <Form.Group>
                   <Form.Label className="col-form-label">Location</Form.Label>
                   <Select
@@ -272,7 +273,31 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
                     </div>
                   )}
                 </Form.Group>
+              </Col> */}
+
+
+              <Col lg={12} className="px-2 py-1">
+                <Form.Label className="col-form-label"> Location</Form.Label>
+
+                <LocationInput
+                  placeholder="Select Location"
+                  value={formik.values.location}
+                  onChange={(val: any) => formik.setFieldValue("location", val)}
+                  onBlur={() => formik.setFieldTouched("location", true)}
+                  isInvalid={formik.touched.location && !!formik.errors.location}
+                />
+
+                {formik.touched.location && formik.errors.location && (
+                  <div className="text-danger mt-1" style={{ fontSize: "11px" }}>
+                    {formik.errors.location}
+                  </div>
+                )}
               </Col>
+
+
+
+
+
               <Col lg={12} className="px-4 py-1  ">
                 <Form.Group as={Row} className="align-items-center">
                   <Form.Label className="col-form-label">

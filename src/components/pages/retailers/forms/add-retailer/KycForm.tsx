@@ -8,6 +8,8 @@ import { Country, State, City } from 'country-state-city';
 import { useEffect, useRef, useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import LocationInput from "src/components/common/LocationInput"
+
 
 export default function KycForm({ formik, isEdit = false }: any) {
 
@@ -78,26 +80,9 @@ export default function KycForm({ formik, isEdit = false }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
-      <Col lg={6} className="px-2 py-1  ">
-        {/* <Form.Group as={Row} className="align-items-center">
-              <Form.Label className="col-form-label">
-                Shop Location
-              </Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Shop Location"
-                name="shop_location"
-                value={formik.values.shop_location}
-                onChange={formik.handleChange}
-                isInvalid={
-                  !!formik.errors.shop_location &&
-                  formik.touched.shop_location
-                }
-              />
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.shop_location}
-              </Form.Control.Feedback>
-            </Form.Group> */}
+
+      {/* <Col lg={6} className="px-2 py-1  ">
+       
         <Form.Label className="col-form-label">Shop Location</Form.Label>
         <Select
           name="shop_location"
@@ -121,7 +106,28 @@ export default function KycForm({ formik, isEdit = false }: any) {
             {formik.errors.shop_location}
           </div>
         )}
+      </Col> */}
+
+
+      <Col lg={6} className="px-2 py-1">
+        <Form.Label className="col-form-label">Shop Location</Form.Label>
+
+        <LocationInput
+          placeholder="Enter shop location"
+          value={formik.values.shop_location}
+          onChange={(val: any) => formik.setFieldValue("shop_location", val)}
+          onBlur={() => formik.setFieldTouched("shop_location", true)}
+          isInvalid={formik.touched.shop_location && !!formik.errors.shop_location}
+        />
+
+        {formik.touched.shop_location && formik.errors.shop_location && (
+          <div className="text-danger mt-1" style={{ fontSize: "11px" }}>
+            {formik.errors.shop_location}
+          </div>
+        )}
       </Col>
+
+
 
 
       {/* <Col lg={6} className="px-4 pb-1  ">
@@ -355,6 +361,8 @@ export default function KycForm({ formik, isEdit = false }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
+
+
       <Col lg={12} className="px-4 pb-1  ">
         <Form.Group as={Row} className="align-items-center">
           <Form.Label className="col-form-label">Shop Address</Form.Label>
@@ -373,6 +381,38 @@ export default function KycForm({ formik, isEdit = false }: any) {
           </Form.Control.Feedback>
         </Form.Group>
       </Col>
+
+      {/* <Col lg={12} className="px-4 pb-1">
+        <Form.Group as={Row} className="align-items-center">
+          <Form.Label className="col-form-label">
+            Shop Address
+          </Form.Label>
+
+          <LocationInput
+            placeholder="Shop Address"
+            value={formik.values.shop_address}
+            onChange={(val:any) =>
+              formik.setFieldValue("shop_address", val)
+            }
+            onBlur={() =>
+              formik.setFieldTouched("shop_address", true)
+            }
+            isInvalid={
+              !!formik.errors.shop_address &&
+              formik.touched.shop_address
+            }
+          />
+
+          {formik.touched.shop_address &&
+            formik.errors.shop_address && (
+              <div className="invalid-feedback d-block">
+                {formik.errors.shop_address}
+              </div>
+            )}
+        </Form.Group>
+      </Col> */}
+
+
 
       <Col lg={6} className="px-4 pb-1  ">
         <Form.Group as={Row} className="align-items-center">

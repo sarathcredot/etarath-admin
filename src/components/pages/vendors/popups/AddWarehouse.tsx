@@ -16,6 +16,8 @@ import { useCreateStock } from "src/services/stock.service";
 import { Country, State, City } from "country-state-city";
 import { useCreateWarehouse } from "src/services/warehouse.service";
 import { useUploadFile } from "src/services/fileUpload.service";
+import LocationInput from "src/components/common/LocationInput";
+
 
 type Props = {
   isOpen: boolean;
@@ -139,8 +141,8 @@ const AddWarehouse = ({ isOpen, toggle, vendorId }: Props) => {
                             typeof formik.values.shop_photo_logo === "string"
                               ? formik.values.shop_photo_logo
                               : formik.values.shop_photo_logo.copy_link
-                              ? formik.values.shop_photo_logo.copy_link
-                              : URL.createObjectURL(
+                                ? formik.values.shop_photo_logo.copy_link
+                                : URL.createObjectURL(
                                   formik.values.shop_photo_logo?.file
                                 )
                           }
@@ -226,7 +228,7 @@ const AddWarehouse = ({ isOpen, toggle, vendorId }: Props) => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              <Col lg={12} className="px-2 py-1">
+              {/* <Col lg={12} className="px-2 py-1">
                 <Form.Group>
                   <Form.Label className="col-form-label">Location</Form.Label>
                   <Select
@@ -248,7 +250,31 @@ const AddWarehouse = ({ isOpen, toggle, vendorId }: Props) => {
                     </div>
                   )}
                 </Form.Group>
+              </Col> */}
+
+
+              <Col lg={12} className="px-2 py-1">
+                <Form.Label className="col-form-label"> Location</Form.Label>
+
+                <LocationInput
+                  placeholder="Select Location"
+                  value={formik.values.location}
+                  onChange={(val: any) => formik.setFieldValue("location", val)}
+                  onBlur={() => formik.setFieldTouched("location", true)}
+                  isInvalid={formik.touched.location && !!formik.errors.location}
+                />
+
+                {formik.touched.location && formik.errors.location && (
+                  <div className="text-danger mt-1" style={{ fontSize: "11px" }}>
+                    {formik.errors.location}
+                  </div>
+                )}
               </Col>
+
+
+
+
+
             </Row>
           </Modal.Body>
           <Modal.Footer>

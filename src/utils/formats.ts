@@ -28,3 +28,8 @@ export const formatText = (str: string = "") =>
 export const formatCurrency = (amount: number) => {
   return `${amount?.toFixed(2) || 0} AED`;
 };
+
+
+
+export const truncate = (text:any, length:any = 10) =>
+  text?.length > length ? text.slice(0, length) + "..." : text;

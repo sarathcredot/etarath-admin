@@ -488,7 +488,7 @@ const VendorsDetailPage = () => {
                           <Col className="text-center">
                             <div>
                               <div>
-                                <img
+                                {/* <img
                                   src={generateFilePath(
                                     vendor?.kyc?.vendor_logo
                                   )}
@@ -500,7 +500,44 @@ const VendorsDetailPage = () => {
                                     marginBottom: 20,
                                     objectFit: "cover",
                                   }}
-                                />
+                                /> */}
+
+
+                                {vendor?.kyc?.vendor_logo ? (
+                                  <img
+                                    src={generateFilePath(vendor.kyc.vendor_logo)}
+                                    alt="profile"
+                                    width="50"
+                                    height="50"
+                                    style={{
+                                      objectFit: "cover",
+                                      borderRadius: "50%",
+                                    }}
+                                  />
+                                ) : (
+                                  <div
+                                    style={{
+                                      width: "100px",
+                                      height: "100px",
+                                      borderRadius: "50%",
+                                      backgroundColor: "#ff600f", // 🔶 orange
+                                      color: "#fff",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      fontWeight: "600",
+                                      fontSize: "20px",
+                                      textTransform: "uppercase",
+                                      marginLeft:"20px"
+                                    }}
+                                  >
+                                    {vendor?.kyc?.business_name?.charAt(0) || vendor?.userName?.charAt(0) || "?"}
+                                  </div>
+                                )}
+
+
+
+
                               </div>
                             </div>
                             <div>
@@ -929,7 +966,7 @@ const VendorsDetailPage = () => {
                         className="d-flex align-items-center"
                         style={{ gap: 10 }}
                       >
-                       { 
+                        {
                           isExpired && <Button
                             className="font-weight-semibold"
                             variant="dark"
@@ -956,7 +993,7 @@ const VendorsDetailPage = () => {
                         className="font-weight-semibold"
                         variant="dark"
                         onClick={() => {
-                         setSubRenew(true)
+                          setSubRenew(true)
                         }}
                       >
                         + Purchase Plan
