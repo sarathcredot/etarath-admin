@@ -149,7 +149,7 @@ const AddAgent = ({ isOpen, toggle, vendorId }: Props) => {
                         className="warehouse_image_div mt-1"
                         style={{ height: "180px", width: "100%" }}
                       >
-                        <img
+                        {/* <img
                           src={
                             typeof formik.values.imgUrl === "string"
                               ? formik.values.imgUrl
@@ -168,7 +168,38 @@ const AddAgent = ({ isOpen, toggle, vendorId }: Props) => {
                             height: "100%",
                             background: "#000",
                           }}
+                        /> */}
+
+                        <img
+                          src={
+                            typeof formik.values.vendor_logo === "string"
+                              ? generateFilePath(formik.values.vendor_logo)
+                              : URL.createObjectURL(formik.values.vendor_logo)
+                          }
+                          alt="profile"
+                          width="100%"
+                          height="100%"
+                          style={{ objectFit: "cover" }}
                         />
+
+                        {/* Clickable edit overlay */}
+                        <div className="edit_div">
+                          <label htmlFor="vendorLogoInput" style={{ cursor: "pointer", margin: 0 }}>
+                            <i className="bx bxs-edit fa"></i>
+                          </label>
+                        </div>
+
+                        {/* Hidden input */}
+                        <input
+                          id="vendorLogoInput"
+                          type="file"
+                          accept="image/*"
+                          hidden
+                          onChange={handleImageSelect}
+                        />
+
+
+
                         <div
                           onClick={() => setIsUploadOpen(true)}
                           className="edit_div"
