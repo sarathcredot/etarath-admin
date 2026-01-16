@@ -137,6 +137,7 @@ export const useUpdateAgent = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["agent"] });
             queryClient.invalidateQueries({ queryKey: ["agent"] });
+            queryClient.invalidateQueries({ queryKey: ["sales-agents"] });
         },
     });
 };

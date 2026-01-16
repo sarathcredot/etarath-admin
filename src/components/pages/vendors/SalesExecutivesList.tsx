@@ -16,6 +16,7 @@ import { errorMsg } from "src/utils/toast";
 import AddAgent from "./popups/AddAgent";
 import dayjs from "dayjs";
 import { useDeleteAgent } from "src/services/salesAgent.service"
+import EditAgent from "./forms/edit-vendor/EditSalesExecutive"
 
 const SalesExecutivesList = ({
   agents,
@@ -45,8 +46,9 @@ const SalesExecutivesList = ({
   //STATES
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [isAddOpen, setAddOpen] = useState<boolean>(false);
+  // const [isEditOpenAgent, setEditOpenAgent] = useState<boolean>(false);
+  const [selectedAgent, setSelectedAgent] = useState<any>(null);
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
-  const [selectedStock, setSelectedStock] = useState<any>(null);
   // const [search, setSearch] = useState<string>("");
 
   // MUTATION
@@ -148,13 +150,13 @@ const SalesExecutivesList = ({
   );
 
 
-  const handleDeleteStock = async () => {
+  const handleDeleteAgent = async () => {
 
     try {
 
-      console.log("de", selectedStock)
+      // console.log("de", selectedStock)
 
-      const res = await deletAgent({ id: selectedStock?._id })
+      const res = await deletAgent({ id: selectedAgent?._id })
       toast(res?.data?.message, {
         containerId: "default",
         className: "no-icon notification-success",
@@ -365,40 +367,33 @@ const SalesExecutivesList = ({
                           </td>
 
                           <td>
-                            <div
-                              className="action_btn"
-                              onClick={() => {
-                                setSelectedStock(item);
-                                setDeleteOpen(true);
-                              }}
-                            >
-                              <i className="far fa-trash-alt"></i>
+                            <div className="d-flex align-items-center justify-content-around" >
+                              <div
+                                className="action_btn"
+                                onClick={() => {
+                                  setSelectedAgent(item);
+                                  setEditOpen(true);
+                                }}
+                              >
+                                <i className="fas fa-pencil-alt"></i>
+                              </div>
+                              <div
+                                className="action_btn"
+                                onClick={() => {
+                                  setSelectedAgent(item);
+                                  setDeleteOpen(true);
+                                }}
+                              >
+                                <i className="far fa-trash-alt"></i>
+                              </div>
+
                             </div>
                           </td>
 
 
+
                           {/* <td>
-                            <div className="d-flex align-items-center justify-content-around">
-                              {isEditOpen &&
-                                selectedStock &&
-                                selectedStock?._id === item?._id ? (
-                                <>
-                                  <button className="action_btn" type="submit">
-                                    <i className="fas fa-check"></i>
-                                  </button>
-                                  <div
-                                    className="action_btn"
-                                    onClick={() => {
-                                      formik.resetForm();
-                                      setSelectedStock(null);
-                                      setEditOpen(false);
-                                    }}
-                                  >
-                                    <i className="fas fa-x-mark"></i>
-                                  </div>
-                                </>
-                              ) : (
-                                <>
+                            
                                   <div
                                     className="action_btn"
                                     onClick={() => {
@@ -417,8 +412,7 @@ const SalesExecutivesList = ({
                                   >
                                     <i className="far fa-trash-alt"></i>
                                   </div>
-                                </>
-                              )}
+                              
                             </div>
                           </td> */}
                         </tr>
@@ -450,7 +444,7 @@ const SalesExecutivesList = ({
         </Row>
       </div>
       <ConfirmationPopup
-        submit={() => handleDeleteStock()}
+        submit={() => handleDeleteAgent()}
         isOpen={isDeleteOpen}
         toggle={() => setDeleteOpen(!isDeleteOpen)}
         text={"Are you sure that you want to delete agent ?"}
@@ -461,6 +455,16 @@ const SalesExecutivesList = ({
         toggle={() => setAddOpen(!isAddOpen)}
         vendorId={vendorId}
       />
+
+
+      <EditAgent
+        isOpen={isEditOpen}
+        toggle={() => setEditOpen(!isEditOpen)}
+        agentId={selectedAgent?._id}
+        data={selectedAgent}
+      />
+
+
     </>
   );
 };
