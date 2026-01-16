@@ -13,6 +13,7 @@ import { isValidPhoneNumber } from "react-phone-number-input";
 import { Country, State, City } from "country-state-city";
 import Select from "react-select";
 import LocationInput from "src/components/common/LocationInput";
+import ImageCropModal from "src/components/features/modals/ImageCropModal";
 
 
 
@@ -37,6 +38,8 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
   const [locations, setLocations] = useState<
     { label: string; value: string }[]
   >([]);
+  const [cropOpen, setCropOpen] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
   const uaeCountry: any = Country.getAllCountries().find(
     (c) => c.isoCode === "AE"
   ); // UAE country code
@@ -66,7 +69,7 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
     try {
       if (typeof values?.imgUrl !== "string") {
         let formData = new FormData();
-        formData.append("file", values?.imgUrl.file);
+        formData.append("file", values?.imgUrl);
         let response = await uploadFile(formData);
         values.imgUrl = response.data.data;
       }
@@ -108,6 +111,13 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
     onSubmit: handleEditExecutive,
   });
 
+  const handleImageSelect = (e: any) => {
+    const file: any = e.target.files[0];
+    if (!file) return;
+    setImageSrc(URL.createObjectURL(file));
+    setCropOpen(true);
+  };
+
   return (
     <>
       <Modal
@@ -123,29 +133,39 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
           <Modal.Body className="pb-4">
             <Row className="px-3">
 
-              <div style={{ width: "200px" }} className="user_image_div mt-1">
+              <div className="user_image_div mt-2" style={{ width: "190px" }}>
                 <img
-                  // src={generateFilePath(img)}
                   src={
                     typeof formik.values.imgUrl === "string"
                       ? generateFilePath(formik.values.imgUrl)
-                      : formik.values.imgUrl.copy_link
-                        ? formik.values.imgUrl.copy_link
-                        : URL.createObjectURL(formik.values.imgUrl?.file)
+                      : URL.createObjectURL(formik.values.imgUrl)
                   }
-                  alt="brand logo"
-                  width={"100%"}
-                  height={"100%"}
+                  alt="profile"
+                  width="100%"
+                  height="100%"
                   style={{ objectFit: "cover" }}
-                // crossOrigin="anonymous"
                 />
-                <div
-                  onClick={() => setIsUploadOpen(true)}
-                  className="edit_div"
-                >
-                  <i className="bx bxs-edit fa "></i>
+
+                {/* Clickable edit overlay */}
+                <div className="edit_div">
+                  <label
+                    htmlFor="profileImgInput"
+                    style={{ cursor: "pointer", margin: 0 }}
+                  >
+                    <i className="bx bxs-edit fa"></i>
+                  </label>
                 </div>
+
+                {/* Hidden input */}
+                <input
+                  id="profileImgInput"
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handleImageSelect}
+                />
               </div>
+
 
               <Col lg={12} className="px-4 py-1">
                 <Form.Group as={Row} className="align-items-center">
@@ -341,6 +361,17 @@ const EditSalesExecutive = ({ isOpen, toggle, agentId, data }: Props) => {
           </Modal.Footer>
         </Form>
       </Modal>
+
+      <ImageCropModal
+        image={imageSrc}
+        isOpen={cropOpen}
+        onClose={() => setCropOpen(false)}
+        onSave={(file: any) => {
+          formik.setFieldValue("imgUrl", file);
+        }}
+      />
+
+
       <MediaGalleryModal
         isOpen={isUploadOpen}
         onClose={(files: any) => {

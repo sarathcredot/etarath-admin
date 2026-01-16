@@ -21,6 +21,8 @@ import { useCreateAgent } from "src/services/salesAgent.service"
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import LocationInput from "src/components/common/LocationInput";
+import ImageCropModal from "src/components/features/modals/ImageCropModal";
+import { generateFilePath } from "src/services/url.service";
 
 type Props = {
   isOpen: boolean;
@@ -34,6 +36,8 @@ const AddAgent = ({ isOpen, toggle, vendorId }: Props) => {
   const [locations, setLocations] = useState<
     { label: string; value: string }[]
   >([]);
+  const [cropOpen, setCropOpen] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
   const uaeCountry: any = Country.getAllCountries().find(
     (c) => c.isoCode === "AE"
   ); // UAE country code
@@ -97,7 +101,7 @@ const AddAgent = ({ isOpen, toggle, vendorId }: Props) => {
 
       if (typeof values?.imgUrl !== "string") {
         let formData = new FormData();
-        formData.append("file", values?.imgUrl.file);
+        formData.append("file", values?.imgUrl);
         let response = await uploadFile(formData);
         values.imgUrl = response.data.data;
       }
@@ -130,6 +134,14 @@ const AddAgent = ({ isOpen, toggle, vendorId }: Props) => {
     }
   }, [isOpen, vendorId]);
 
+  const handleImageSelect = (e: any) => {
+    const file: any = e.target.files[0];
+    if (!file) return;
+    setImageSrc(URL.createObjectURL(file));
+    setCropOpen(true);
+  };
+
+
   return (
     <>
       <Modal show={isOpen} onHide={toggle} centered={true}>
@@ -140,98 +152,57 @@ const AddAgent = ({ isOpen, toggle, vendorId }: Props) => {
         <Form onSubmit={formik.handleSubmit}>
           <Modal.Body>
             <Row className="px-1 px-md-3  ">
+
               <Col className="px-2 py-1" lg={12}>
-                {formik.values.imgUrl ? (
-                  <Col lg={12} className="px-0 py-1">
-                    <div>
-                      Profile Image
-                      <div
-                        className="warehouse_image_div mt-1"
-                        style={{ height: "180px", width: "100%" }}
-                      >
-                        {/* <img
-                          src={
-                            typeof formik.values.imgUrl === "string"
-                              ? formik.values.imgUrl
-                              : formik.values.imgUrl.copy_link
-                                ? formik.values.imgUrl.copy_link
-                                : URL.createObjectURL(
-                                  formik.values.imgUrl?.file
-                                )
-                          }
-                          alt="brand logo"
-                          width={"100%"}
-                          height={"100%"}
-                          style={{
-                            objectFit: "cover",
-                            width: "100%",
-                            height: "100%",
-                            background: "#000",
-                          }}
-                        /> */}
+                <div>
+                  Profile Image
 
-                        <img
-                          src={
-                            typeof formik.values.vendor_logo === "string"
-                              ? generateFilePath(formik.values.vendor_logo)
-                              : URL.createObjectURL(formik.values.vendor_logo)
-                          }
-                          alt="profile"
-                          width="100%"
-                          height="100%"
-                          style={{ objectFit: "cover" }}
-                        />
+                 
+                    <div className="user_image_div mt-2" style={{ width: "190px" }}>
+                      <img
+                        src={
+                          typeof formik.values.imgUrl === "string"
+                            ? generateFilePath(formik.values.imgUrl)
+                            : URL.createObjectURL(formik.values.imgUrl)
+                        }
+                        alt="profile"
+                        width="100%"
+                        height="100%"
+                        style={{ objectFit: "cover" }}
+                      />
 
-                        {/* Clickable edit overlay */}
-                        <div className="edit_div">
-                          <label htmlFor="vendorLogoInput" style={{ cursor: "pointer", margin: 0 }}>
-                            <i className="bx bxs-edit fa"></i>
-                          </label>
-                        </div>
-
-                        {/* Hidden input */}
-                        <input
-                          id="vendorLogoInput"
-                          type="file"
-                          accept="image/*"
-                          hidden
-                          onChange={handleImageSelect}
-                        />
-
-
-
-                        <div
-                          onClick={() => setIsUploadOpen(true)}
-                          className="edit_div"
+                      {/* Clickable edit overlay */}
+                      <div className="edit_div">
+                        <label
+                          htmlFor="profileImgInput"
+                          style={{ cursor: "pointer", margin: 0 }}
                         >
-                          <i className="bx bxs-edit fa "></i>
-                        </div>
+                          <i className="bx bxs-edit fa"></i>
+                        </label>
                       </div>
+
+                      {/* Hidden input */}
+                      <input
+                        id="profileImgInput"
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={handleImageSelect}
+                      />
                     </div>
-                  </Col>
-                ) : (
-                  <Col lg={12} className="px-0 py-1 ">
-                    <div>
-                      Profile Image
-                      <div
-                        className="product_image_div mt-1"
-                        onClick={() => setIsUploadOpen(true)}
-                        style={{ height: "180px" }}
-                      >
-                        <Button variant="dark" className="">
-                          Upload image
-                        </Button>
-                      </div>
-                    </div>
-                  </Col>
+                
+                </div>
+
+                {formik.touched.imgUrl && formik.errors.imgUrl && (
+                  <div className="text-danger small mt-1 px-2">
+                    {formik.errors.imgUrl}
+                  </div>
                 )}
-                {formik.touched.imgUrl &&
-                  formik.errors.imgUrl && (
-                    <div className="text-danger small mt-1 px-2">
-                      {formik.errors.imgUrl}
-                    </div>
-                  )}
               </Col>
+
+
+
+
               <Col lg={12} className="px-4 py-1  ">
                 <Form.Group as={Row} className="align-items-center">
                   <Form.Label className="col-form-label">
@@ -417,6 +388,16 @@ const AddAgent = ({ isOpen, toggle, vendorId }: Props) => {
           </Modal.Footer>
         </Form>
       </Modal>
+
+      <ImageCropModal
+        image={imageSrc}
+        isOpen={cropOpen}
+        onClose={() => setCropOpen(false)}
+        onSave={(file: any) => {
+          formik.setFieldValue("imgUrl", file);
+        }}
+      />
+
 
       <MediaGalleryModal
         isOpen={isUploadOpen}
