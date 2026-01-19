@@ -238,7 +238,7 @@ const VendorsList = ({
 
                       onClick={() => exportMutation.mutate("vendor")}
                     >
-                      Export CSV
+                     <i className="fas fa-download"></i> Export CSV
                     </button>
 
 

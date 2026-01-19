@@ -192,7 +192,7 @@ const AttributesList = ({
                       onClick={() => { setIsUploadOpen(true) }}
 
                     >
-                      Import CSV
+                    <i className="fas fa-upload"></i>  Import CSV
                     </button>
                     <button
                       // className="font-weight-semibold"

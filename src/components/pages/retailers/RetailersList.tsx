@@ -196,7 +196,9 @@ const RetailersList = ({
                       style={{ marginRight: "30px" }}
                       onClick={() => exportMutation.mutate("retailer")}
                     >
-                      Export CSV
+                    
+                    <i className="fas fa-download"></i>  Export CSV
+                    
                     </button>
 
 

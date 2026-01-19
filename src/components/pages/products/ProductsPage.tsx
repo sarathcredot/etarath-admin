@@ -256,7 +256,7 @@ const ProductsPage = () => {
                           onClick={() => { setIsUploadOpenZip(true) }}
 
                         >
-                          Import CSV
+                          <i className="fas fa-upload"></i>  Import CSV
                         </button>
 
 
