@@ -19,7 +19,7 @@ export type User = {
   vendorTag: string;
   createdAt: string;
   updatedAt: string;
-  priority:number;
+  priority: number;
 
   kyc?: {
     _id: string;
@@ -48,7 +48,9 @@ export type User = {
     shop_photo_logo: string;
     vendor_logo: string;
     kycStatus: string;
-    description:string;
+    description: string;
+    geoLat: any,
+    geoLng: any,
   };
 };
 

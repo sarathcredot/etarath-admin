@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Col, Row, Tabs, Tab, Card } from "react-bootstrap";
+import { Col, Row, Tabs, Tab, Card, Form } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import Breadcrumb from "src/components/common/breadcrumb";
 import PtSwitch from "src/components/features/elements/switch";
@@ -15,7 +15,7 @@ import {
   useVerifyProduct,
 } from "src/services/product.service";
 import { generateFilePath } from "src/services/url.service";
-import { useGetClaimById } from "src/services/claim.service";
+import { useGetClaimById, useUpdateClaimStatus } from "src/services/claim.service";
 import { capitalize } from "lodash";
 import dayjs from "dayjs";
 
@@ -28,6 +28,8 @@ const ClaimDetailPage = () => {
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [selectedProductId, setSelectedProductId] = useState<string>("");
   const [isStatusOpen, setStatusOpen] = useState<boolean>(false);
+  const [status, setstatus] = useState<any>("")
+
   //pagination
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
@@ -65,33 +67,33 @@ const ClaimDetailPage = () => {
   } = useGetClaimById(claimId ? claimId : "", !!claimId);
 
   // MUTATIONS
-  const { mutateAsync: updateProductStatus } = useUpdateProductStatus();
+  const { mutateAsync: updateClaimStatus } = useUpdateClaimStatus();
   const { mutateAsync: verifyProduct } = useVerifyProduct();
 
   //HANDLERS
-  const handlestatusChange = async (id: string, status: boolean) => {
-    try {
-      if (id) {
-        const res = await updateProductStatus({ id, status });
-        if (res) {
-          toast(res?.data?.message, {
-            containerId: "default",
-            className: "no-icon notification-success",
-          });
-        }
-      }
-    } catch (error: any) {
-      console.log("error status updation :", error);
-      toast(
-        error?.response?.data?.message ||
-        "Something went wrong while updating the status.",
-        {
-          containerId: "default",
-          className: "no-icon notification-danger",
-        }
-      );
-    }
-  };
+  // const handlestatusChange = async (id: string, status: boolean) => {
+  //   try {
+  //     if (id) {
+  //       const res = await updateProductStatus({ id, status });
+  //       if (res) {
+  //         toast(res?.data?.message, {
+  //           containerId: "default",
+  //           className: "no-icon notification-success",
+  //         });
+  //       }
+  //     }
+  //   } catch (error: any) {
+  //     console.log("error status updation :", error);
+  //     toast(
+  //       error?.response?.data?.message ||
+  //       "Something went wrong while updating the status.",
+  //       {
+  //         containerId: "default",
+  //         className: "no-icon notification-danger",
+  //       }
+  //     );
+  //   }
+  // };
   const handleVerifyProduct = async (id: string, status: string) => {
     try {
       if (id) {
@@ -115,6 +117,45 @@ const ClaimDetailPage = () => {
       );
     }
   };
+
+
+  const handleStatusChangeOpen = (status: string) => {
+    console.log("Selected status:", status);
+    setStatusOpen(true)
+    setstatus(status)
+
+
+  };
+
+  const handlestatusChange = async () => {
+    try {
+      if (claimId) {
+        const res = await updateClaimStatus({ id: claimId, status: status });
+        if (res) {
+          toast(res?.data?.message, {
+            containerId: "default",
+            className: "no-icon notification-success",
+          });
+          setStatusOpen(false)
+          setstatus("")
+        }
+      }
+    } catch (error: any) {
+      console.log("error status updation :", error);
+      toast(
+        error?.response?.data?.message ||
+        "Something went wrong while updating the status.",
+        {
+          containerId: "default",
+          className: "no-icon notification-danger",
+        }
+      );
+
+      setStatusOpen(false)
+      setstatus("")
+    }
+  };
+
 
   return (
     <>
@@ -163,7 +204,7 @@ const ClaimDetailPage = () => {
                               } R${order?.productDetails?.size}`}
                           </h5>
                         </div>
-                        
+
                       </Col>
                       <Col lg={4}>
                         <div>
@@ -181,7 +222,7 @@ const ClaimDetailPage = () => {
                       </Col>
                       <Col lg={4}>
                         <div>
-                        
+
                         </div>
 
                         <div>
@@ -265,7 +306,29 @@ const ClaimDetailPage = () => {
                             </h5> */}
 
                             <div className={`ecommerce-status ${order?.status}`}>
-                              {capitalize(order?.status)}
+                              {/* {capitalize(order?.status)} */}
+                              <Form.Control
+                                as="select"
+                                size="sm"
+                                value={order?.status || ""}
+                                name="status"
+                                style={{
+                                  width: "110px",
+                                  color: "#000",
+                                }}
+                                onChange={(e) => handleStatusChangeOpen(e.target.value)}
+                              >
+                                <option value="">Select</option>
+                                <option value="completed">Completed</option>
+                                <option value="pending">Pending</option>
+                                <option value="verified">Verified</option>
+                                <option value="approved">Approved</option>
+                                <option value="in-Progress">In-Progress</option>
+                                <option value="cancelled">Cancelled</option>
+                                <option value="rejected">Rejected</option>
+
+
+                              </Form.Control>
                             </div>
                           </div>
                         </div>
@@ -304,62 +367,46 @@ const ClaimDetailPage = () => {
                                 </Col>
                               )
                             )} */}
-                            <Col className="p-1 p-xl-3">
-                              <div
-                                className="product_image_div"
-                                style={{ cursor: "default" }}
-                              >
-                                <img
-                                  src={generateFilePath(order?.userAttchedOfficialImgs?.fullTyrePicture)}
-                                  alt="product"
-                                  width="110"
-                                  height="110"
-                                // crossOrigin="anonymous"
-                                />
-                              </div>
-                            </Col>
-                            <Col className="p-1 p-xl-3">
-                              <div
-                                className="product_image_div"
-                                style={{ cursor: "default" }}
-                              >
-                                <img
-                                  src={generateFilePath(order?.userAttchedOfficialImgs?.brandName)}
-                                  alt="product"
-                                  width="110"
-                                  height="110"
-                                // crossOrigin="anonymous"
-                                />
-                              </div>
-                            </Col>
-                            <Col className="p-1 p-xl-3">
-                              <div
-                                className="product_image_div"
-                                style={{ cursor: "default" }}
-                              >
-                                <img
-                                  src={generateFilePath(order?.userAttchedOfficialImgs?.seriaNo)}
-                                  alt="product"
-                                  width="110"
-                                  height="110"
-                                // crossOrigin="anonymous"
-                                />
-                              </div>
-                            </Col>
-                            <Col className="p-1 p-xl-3">
-                              <div
-                                className="product_image_div"
-                                style={{ cursor: "default" }}
-                              >
-                                <img
-                                  src={generateFilePath(order?.userAttchedOfficialImgs?.dOT)}
-                                  alt="product"
-                                  width="110"
-                                  height="110"
-                                // crossOrigin="anonymous"
-                                />
-                              </div>
-                            </Col>
+
+                            {
+                              order?.userAttchedImgUrls?.length === 0 ?
+                                <Col className="p-1 p-xl-3">
+                                  <div
+                                    className="product_image_div"
+                                    style={{ cursor: "default" }}
+                                  >
+                                    <img
+                                      src={generateFilePath("")}
+                                      alt="product"
+                                      width="110"
+                                      height="110"
+                                    // crossOrigin="anonymous"
+                                    />
+                                  </div>
+                                </Col>
+
+                                :
+                                order?.userAttchedImgUrls?.map((item:any,index:any) => (
+
+                                  <Col key={index} className="p-1 p-xl-3">
+                                    <div
+                                      className="product_image_div"
+                                      style={{ cursor: "default" }}
+                                    >
+                                      <img
+                                        src={generateFilePath(item)}
+                                        alt="product"
+                                        width="110"
+                                        height="110"
+                                      // crossOrigin="anonymous"
+                                      />
+                                    </div>
+                                  </Col>
+                                ))
+
+                            }
+
+
 
                             {/* <Col  className="p-1 p-xl-3">
                               <div
@@ -382,7 +429,7 @@ const ClaimDetailPage = () => {
 
                       <Col xl={12} className="px-3 mb-n3 mt-auto">
                         <div>
-                          <h6>User Attched Defective Imgs</h6>
+                          <h6>Sales executives Attched Defective Imgs</h6>
                           <Row>
                             <Col className="p-1 p-xl-3">
                               <div
@@ -390,7 +437,7 @@ const ClaimDetailPage = () => {
                                 style={{ cursor: "default" }}
                               >
                                 <img
-                                  src={generateFilePath(order?.userAttchedDefectiveImgs?.tyreTread)}
+                                  src={generateFilePath(order?.salesAgentAttchedDefectiveImgs?.tyreTread)}
                                   alt="product"
                                   width="110"
                                   height="110"
@@ -404,22 +451,7 @@ const ClaimDetailPage = () => {
                                 style={{ cursor: "default" }}
                               >
                                 <img
-                                  src={generateFilePath(order?.userAttchedDefectiveImgs?.defectPicture1)}
-                                  alt="product"
-                                  width="110"
-                                  height="110"
-                                // crossOrigin="anonymous"
-                                />
-                              </div>
-                            </Col>
-
-                            <Col className="p-1 p-xl-3">
-                              <div
-                                className="product_image_div"
-                                style={{ cursor: "default" }}
-                              >
-                                <img
-                                  src={generateFilePath(order?.userAttchedDefectiveImgs?.defectPicture2)}
+                                  src={generateFilePath(order?.salesAgentAttchedDefectiveImgs?.defectPicture1)}
                                   alt="product"
                                   width="110"
                                   height="110"
@@ -434,7 +466,22 @@ const ClaimDetailPage = () => {
                                 style={{ cursor: "default" }}
                               >
                                 <img
-                                  src={generateFilePath(order?.userAttchedDefectiveImgs?.innerlinePicture)}
+                                  src={generateFilePath(order?.salesAgentAttchedDefectiveImgs?.defectPicture2)}
+                                  alt="product"
+                                  width="110"
+                                  height="110"
+                                // crossOrigin="anonymous"
+                                />
+                              </div>
+                            </Col>
+
+                            <Col className="p-1 p-xl-3">
+                              <div
+                                className="product_image_div"
+                                style={{ cursor: "default" }}
+                              >
+                                <img
+                                  src={generateFilePath(order?.salesAgentAttchedDefectiveImgs?.innerlinePicture)}
                                   alt="product"
                                   width="110"
                                   height="110"
@@ -693,6 +740,12 @@ const ClaimDetailPage = () => {
           </Card>
         </Col> */}
       </div>
+      <ConfirmationPopup
+        submit={() => handlestatusChange()}
+        isOpen={isStatusOpen}
+        toggle={() => setStatusOpen(!isStatusOpen)}
+        text={"Are you sure that you want to change claim status ?"}
+      />
     </>
   );
 };

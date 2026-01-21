@@ -169,6 +169,9 @@ export default function AddRetailerPage() {
             shop_contact_number: "",
             shop_photo_logo: "" as any,
             description: "" as any,
+            geoLat: 0 as any,
+            geoLng: 0 as any,
+
             retailerId: "",
         },
 
@@ -369,6 +372,8 @@ export default function AddRetailerPage() {
             shop_contact_number: retailer?.kyc?.shop_contact_number || "",
             shop_photo_logo: retailer?.kyc?.shop_photo_logo || "",
             description: retailer?.kyc?.description || "",
+            geoLat: retailer?.kyc?.geoLat || 25.2048,
+            geoLng: retailer?.kyc?.geoLng || 55.2708,
             retailerId: retailer?._id || "",
         });
     }, [retailer, retailerIdobj]);
@@ -428,7 +433,7 @@ export default function AddRetailerPage() {
                     className="form-horizontal"
                     showProgress={true}
                     progressSize="lg"
-                    validators={[profileFormik, kycFormik, preferenceFormik, subscriptionFormik]}
+                    validators={[profileFormik, kycFormik, preferenceFormik]}
                     onFinish={handleWizardFinish}
                     stepIndex={stepIndex}
                     onStepChange={setStepIndex}

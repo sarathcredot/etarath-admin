@@ -54,19 +54,21 @@ export default function AddVendorPage() {
       email: "",
       location: "",
       tradeLicenseNumber: "",
-      vatNumber:"",
+      vatNumber: "",
       tradeLicenseRegistrationDate: "",
       tradeLicenseExpiryDate: "",
       documents: {
         tradeLicense: "" as any,
-        vatDoc:"" as any
+        vatDoc: "" as any
       },
       business_address: "",
       post: "",
       business_hours: "",
       vendor_logo: "" as any,
       shop_photo_logo: "" as any,
-      description:"" as any,
+      description: "" as any,
+      geoLat: 0 as any,
+      geoLng: 0 as any,
 
       vendorId: "",
     },
@@ -100,6 +102,15 @@ export default function AddVendorPage() {
             values.documents.vatDoc = response.data.data;
           }
 
+          // location setup chekc location is defalt
+
+          if (values.geoLat === 25.2048) {
+            values.geoLat = null
+          }
+
+          if (values.geoLng === 55.2708) {
+            values.geoLng = null
+          }
 
 
           if (typeof values?.vendor_logo !== "string") {
@@ -151,7 +162,7 @@ export default function AddVendorPage() {
       email: "",
       language: [] as string[],
       role: "vendor",
-      priority:0
+      priority: 0
     },
 
     validationSchema: VendorContactValidationSchema,
@@ -239,7 +250,8 @@ export default function AddVendorPage() {
     validationSchema: VendorSubscriptionValidationSchema,
 
     onSubmit: async (values) => {
-      console.log("SUBSCRIPTION SUBMIT:", values);
+      console.log("SUBSCRIPTION SUBMIT:", values)
+
       toast.loading("purchasing subscription plan", {
         containerId: "default",
         className: "no-icon notification-warning",
@@ -338,7 +350,7 @@ export default function AddVendorPage() {
           className="form-horizontal"
           showProgress={true}
           progressSize="lg"
-          validators={[profileFormik, contactFormik, preferenceFormik,subscriptionFormik]}
+          validators={[profileFormik, contactFormik, preferenceFormik, subscriptionFormik]}
           onFinish={handleWizardFinish}
         >
           {/* ------------------------- */}

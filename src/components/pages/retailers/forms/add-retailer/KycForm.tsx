@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import LocationInput from "src/components/common/LocationInput"
+import MapPicker from "src/components/common/MapPicker";
 
 
 export default function KycForm({ formik, isEdit = false }: any) {
@@ -18,6 +19,10 @@ export default function KycForm({ formik, isEdit = false }: any) {
   const allCities: { label: string; value: string }[] = [];
   const res = State.getStatesOfCountry(uaeCountry.isoCode)
   const vatDocInputRef = useRef<HTMLInputElement | null>(null);
+  const [location, setLocation] = useState({
+    lat: 25.2048,
+    lng: 55.2708,
+  });
 
   useEffect(() => {
     res?.map((state) => {
@@ -32,6 +37,31 @@ export default function KycForm({ formik, isEdit = false }: any) {
     console.log("loc", allCities)
     setLocations(allCities)
   }, [])
+
+
+  useEffect(() => {
+
+    location.lat = formik?.values.geoLat || 25.2048
+    location.lng = formik?.values.geoLng || 55.2708
+
+  }, [formik])
+
+  const setGeoLocation = (value: any) => {
+
+    formik.setFieldValue(
+      "geoLat",
+      value?.lat
+    )
+
+    formik.setFieldValue(
+      "geoLng",
+      value?.lng
+    )
+  }
+
+
+
+
   return (
     <Row className="px-1 px-md-3">
       <Col lg={6} className="px-4 py-1">
@@ -553,6 +583,13 @@ export default function KycForm({ formik, isEdit = false }: any) {
                         {formik.errors.business_name}
                       </Form.Control.Feedback> */}
         </Form.Group>
+      </Col>
+
+
+      <Col lg={12} className="px-2 py-1">
+
+        <MapPicker value={location} onChange={(value: any) => { setGeoLocation(value) }} />
+
       </Col>
 
 

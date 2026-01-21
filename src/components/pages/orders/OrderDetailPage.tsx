@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Col, Row, Tabs, Tab, Card } from "react-bootstrap";
+import { Col, Row, Tabs, Tab, Card, Form } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import Breadcrumb from "src/components/common/breadcrumb";
 import PtSwitch from "src/components/features/elements/switch";
@@ -15,7 +15,7 @@ import {
   useVerifyProduct,
 } from "src/services/product.service";
 import { generateFilePath } from "src/services/url.service";
-import { useGetOrderById } from "src/services/order.service";
+import { useGetOrderById, useUpdateOrderStatus } from "src/services/order.service";
 import { capitalize } from "lodash";
 import dayjs from "dayjs";
 
@@ -28,6 +28,7 @@ const OrderDetailPage = () => {
   const [isEditOpen, setEditOpen] = useState<boolean>(false);
   const [selectedProductId, setSelectedProductId] = useState<string>("");
   const [isStatusOpen, setStatusOpen] = useState<boolean>(false);
+  const [status, setstatus] = useState<any>("")
   //pagination
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
@@ -65,19 +66,77 @@ const OrderDetailPage = () => {
   } = useGetOrderById(orderId ? orderId : "", !!orderId);
 
   // MUTATIONS
-  const { mutateAsync: updateProductStatus } = useUpdateProductStatus();
+  const { mutateAsync: updateOrderStatus } = useUpdateOrderStatus();
   const { mutateAsync: verifyProduct } = useVerifyProduct();
 
   //HANDLERS
-  const handlestatusChange = async (id: string, status: boolean) => {
+  // const handlestatusChange = async (id: string, status: boolean) => {
+  //   try {
+  //     if (id) {
+  //       const res = await updateProductStatus({ id, status });
+  //       if (res) {
+  //         toast(res?.data?.message, {
+  //           containerId: "default",
+  //           className: "no-icon notification-success",
+  //         });
+  //       }
+  //     }
+  //   } catch (error: any) {
+  //     console.log("error status updation :", error);
+  //     toast(
+  //       error?.response?.data?.message ||
+  //       "Something went wrong while updating the status.",
+  //       {
+  //         containerId: "default",
+  //         className: "no-icon notification-danger",
+  //       }
+  //     );
+  //   }
+  // };
+  // const handleVerifyProduct = async (id: string, status: string) => {
+  //   try {
+  //     if (id) {
+  //       const res = await verifyProduct({ id, status });
+  //       if (res) {
+  //         toast(res?.data?.message, {
+  //           containerId: "default",
+  //           className: "no-icon notification-success",
+  //         });
+  //       }
+  //     }
+  //   } catch (error: any) {
+  //     console.log("error product verification :", error);
+  //     toast(
+  //       error?.response?.data?.message ||
+  //       "Something went wrong while verifying the product.",
+  //       {
+  //         containerId: "default",
+  //         className: "no-icon notification-danger",
+  //       }
+  //     );
+  //   }
+  // };
+
+
+  const handleStatusChangeOpen = (status: string) => {
+    console.log("Selected status:", status);
+    setStatusOpen(true)
+    setstatus(status)
+
+
+  };
+
+  const handlestatusChange = async () => {
     try {
-      if (id) {
-        const res = await updateProductStatus({ id, status });
+      if (orderId) {
+        const res = await updateOrderStatus({ id: orderId, status: status });
         if (res) {
           toast(res?.data?.message, {
             containerId: "default",
             className: "no-icon notification-success",
           });
+          setStatusOpen(false)
+          setstatus("")
         }
       }
     } catch (error: any) {
@@ -90,31 +149,13 @@ const OrderDetailPage = () => {
           className: "no-icon notification-danger",
         }
       );
+
+      setStatusOpen(false)
+      setstatus("")
     }
   };
-  const handleVerifyProduct = async (id: string, status: string) => {
-    try {
-      if (id) {
-        const res = await verifyProduct({ id, status });
-        if (res) {
-          toast(res?.data?.message, {
-            containerId: "default",
-            className: "no-icon notification-success",
-          });
-        }
-      }
-    } catch (error: any) {
-      console.log("error product verification :", error);
-      toast(
-        error?.response?.data?.message ||
-        "Something went wrong while verifying the product.",
-        {
-          containerId: "default",
-          className: "no-icon notification-danger",
-        }
-      );
-    }
-  };
+
+
 
   return (
 
@@ -266,7 +307,26 @@ const OrderDetailPage = () => {
                              </h5> */}
 
                         <div className={`ecommerce-status ${order?.status}`}>
-                          {capitalize(order?.status)}
+                          {/* {capitalize(order?.status)} */}
+                          <Form.Control
+                            as="select"
+                            size="sm"
+                            value={order?.status || ""}
+                            name="status"
+                            style={{
+                              width: "110px",
+                              color: "#000",
+                            }}
+                            onChange={(e) => handleStatusChangeOpen(e.target.value)}
+                          >
+                            <option value="">Select</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="rejected">Rejected</option>
+                          </Form.Control>
+
                         </div>
                       </div>
                       <div>
@@ -323,7 +383,7 @@ const OrderDetailPage = () => {
                         {order?.vendorDetails?.phoneNumber}
                       </h5>
                     </div>
-                     {/* <Col lg={4}> */}
+                    {/* <Col lg={4}> */}
                     <div>
                       <h6>Warehouse</h6>
                       <h5 className=" text-dark font-weight-500 ">
@@ -336,9 +396,9 @@ const OrderDetailPage = () => {
                         {order?.warehouseDetails?.location}
                       </h5>
                     </div>
-                  {/* </Col> */}
+                    {/* </Col> */}
                   </Col>
-                 
+
 
                   <Col xl={6} className="px-3 mb-n3 ">
                     <div>
@@ -412,7 +472,7 @@ const OrderDetailPage = () => {
                     <div>
                       <h6>Location</h6>
                       <h5 className=" text-dark font-weight-500 ">
-                        {order?.userDetailsKyc?.location} , {order?.userDetailsKyc?.business_address}
+                        {order?.userDetailsKyc?.shop_location} , {order?.userDetailsKyc?.shop_address}
                       </h5>
                     </div>
 
@@ -503,6 +563,12 @@ const OrderDetailPage = () => {
               "Are you sure that you want to change the status of this product?"
             }
           /> */}
+      <ConfirmationPopup
+        submit={() => handlestatusChange()}
+        isOpen={isStatusOpen}
+        toggle={() => setStatusOpen(!isStatusOpen)}
+        text={"Are you sure that you want to change order status ?"}
+      />
     </>
 
   );

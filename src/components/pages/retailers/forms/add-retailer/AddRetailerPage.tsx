@@ -58,7 +58,7 @@ export default function EditRetailerPage() {
       imgUrl: "" as any,
       role: "retailer",
       priority: 0,
-      description: "" as any
+
     },
 
     validationSchema: VendorValidationSchema,
@@ -129,6 +129,9 @@ export default function EditRetailerPage() {
       business_hours: "",
       shop_contact_number: "",
       shop_photo_logo: "" as any,
+      description: "" as any,
+      geoLat: 0 as any,
+      geoLng: 0 as any,
 
       retailerId: "",
     },
@@ -153,6 +156,14 @@ export default function EditRetailerPage() {
             formData.append("file", values?.documents?.vatDoc);
             let response = await uploadFile(formData);
             values.documents.vatDoc = response.data.data;
+          }
+
+          if (values.geoLat === 25.2048) {
+            values.geoLat = null
+          }
+
+          if (values.geoLng === 55.2708) {
+            values.geoLng = null
           }
 
           if (typeof values?.shop_photo_logo !== "string") {

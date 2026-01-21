@@ -17,3 +17,29 @@ export const useGetOrderById = (id: string | undefined, enabled: boolean) => {
     enabled: enabled,
   });
 };
+
+
+
+export const updateOrderStatus = async ({
+  id,
+  status,
+}: {
+  id: any;
+  status: any;
+}) => {
+  if (!id) throw new Error("Id is required");
+  return await axiosAuth.put(`${baseUrl}/${id}/update-status`, { status });
+};
+
+export const useUpdateOrderStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateOrderStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["order"] });
+       queryClient.invalidateQueries({ queryKey: ["orders"] });
+
+
+    },
+  });
+};

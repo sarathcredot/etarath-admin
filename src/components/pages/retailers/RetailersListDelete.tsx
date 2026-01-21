@@ -299,7 +299,7 @@ const RetailersList = ({
                           <td>
                             <strong>
                               {/* {item?.userName} */}
-                              {truncate(item?.kycDetails?.business_name || item?.userName)}
+                              {truncate(item?.userName , 20)}
                             </strong>
                           </td>
                         </td>

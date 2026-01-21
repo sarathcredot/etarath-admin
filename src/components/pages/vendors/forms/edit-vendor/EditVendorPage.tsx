@@ -117,6 +117,8 @@ export default function EditVendorPage() {
       vendor_logo: "" as any,
       shop_photo_logo: "" as any,
       description: "" as any,
+      geoLat: 0 as any,
+      geoLng: 0 as any,
 
       vendorId: "",
     },
@@ -261,7 +263,7 @@ export default function EditVendorPage() {
           navigate(-1);
 
           setStepIndex(3);
-          await subscriptionFormik.submitForm();
+          subscriptionFormik.submitForm();
         }
       } catch (error: any) {
         toast.dismiss();
@@ -272,6 +274,7 @@ export default function EditVendorPage() {
       }
     },
   });
+
   const subscriptionFormik = useFormik({
     initialValues: {
       planId: "",
@@ -280,32 +283,28 @@ export default function EditVendorPage() {
       plan_start_date: "" as any,
       trial_period: 0 as any,
       trial_end_date: "" as any
-
     },
 
     validationSchema: VendorSubscriptionValidationSchema,
 
     onSubmit: async (values) => {
-      console.log("SUBSCRIPTION SUBMIT:", values);
-      toast.loading("Upading subscription plan", {
+      toast.loading("updating subscription plan", {
         containerId: "default",
         className: "no-icon notification-warning",
       });
+
       try {
         const res = await updateSubscription({
           id: vendorActivePlan?._id,
           data: values
         });
+
         if (res.status === 200) {
           toast.dismiss();
-          toast("Vendor created successfully!", {
+          toast("Updation completed successfully!", {
             containerId: "default",
             className: "no-icon notification-success",
           });
-          // toast(res?.data?.message, {
-          //   containerId: "default",
-          //   className: "no-icon notification-success",
-          // });
 
           setStepIndex(0);
           subscriptionFormik.resetForm();
@@ -324,13 +323,14 @@ export default function EditVendorPage() {
     },
   });
 
+
   const handleWizardFinish = () => {
     // if (stepIndex === 0) contactFormik.submitForm();
     // if (stepIndex === 1) profileFormik.submitForm();
     // if (stepIndex === 2) preferenceFormik.submitForm();
     // if (stepIndex === 3) subscriptionFormik.submitForm();
 
-    profileFormik.submitForm();
+    contactFormik.submitForm();
   };
 
   console.log({ stepIndex });
@@ -400,6 +400,8 @@ export default function EditVendorPage() {
           shop_photo_logo: vendor?.kyc?.shop_photo_logo || "",
           vendorId: vendor?._id || "",
           description: vendor?.kyc?.description as any,
+          geoLat: vendor?.kyc?.geoLat || 25.2048,
+          geoLng: vendor?.kyc?.geoLng || 55.2708,
         });
       }
     }
@@ -469,6 +471,7 @@ export default function EditVendorPage() {
             profileFormik,
             contactFormik,
             preferenceFormik,
+            // subscriptionFormik
           ]}
           stepIndex={stepIndex}
           onStepChange={setStepIndex}

@@ -381,7 +381,7 @@ const RetailersList = ({
                             <strong>
                               {/* {item?.userName} */}
 
-                               {truncate(item?.userName)}
+                               {truncate(item?.userName , 20)}
                               
                             </strong>
                           </td>

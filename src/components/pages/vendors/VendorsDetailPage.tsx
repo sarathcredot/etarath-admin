@@ -422,6 +422,12 @@ const VendorsDetailPage = () => {
     }
   };
 
+  const openInGoogleMaps = (lat:any,lng:any) => {
+    if (!lat || !lng) return;
+    const url = `https://www.google.com/maps?q=${lat},${lng}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   useEffect(() => {
     if (vendor && vendor?.kyc && vendor?.kyc?.kycStatus === "pending") {
       setVerifyKyc(true);
@@ -507,8 +513,8 @@ const VendorsDetailPage = () => {
                                   <img
                                     src={generateFilePath(vendor.kyc.vendor_logo)}
                                     alt="profile"
-                                    width="50"
-                                    height="50"
+                                    width="150"
+                                    height="150"
                                     style={{
                                       objectFit: "cover",
                                       borderRadius: "50%",
@@ -528,7 +534,7 @@ const VendorsDetailPage = () => {
                                       fontWeight: "600",
                                       fontSize: "20px",
                                       textTransform: "uppercase",
-                                      marginLeft:"20px"
+                                      marginLeft: "20px"
                                     }}
                                   >
                                     {vendor?.kyc?.business_name?.charAt(0) || vendor?.userName?.charAt(0) || "?"}
@@ -647,7 +653,28 @@ const VendorsDetailPage = () => {
                                 View
                               </Button>
                             </div>
+
                           )}
+
+                          {
+                            vendor?.kyc?.geoLat && vendor?.kyc?.geoLng &&
+
+                            <div className="">
+                              <h6>Location in Map </h6>
+                              <Button
+                                variant="default"
+                                onClick={() =>
+                                  openInGoogleMaps( vendor?.kyc?.geoLat , vendor?.kyc?.geoLng)
+                                }
+                              >
+                                <i className="far fa-eye mr-2"></i>
+                                View
+                              </Button>
+                            </div>
+
+                          }
+
+
                         </Col>
                         <Col>
                           <div>
@@ -770,6 +797,7 @@ const VendorsDetailPage = () => {
                     </Card.Body>
                   </Card>
                 </Col>
+
               </Row>
             </Tab>
             <Tab eventKey="contact" title="Contact Details">
@@ -1561,6 +1589,7 @@ const VendorsDetailPage = () => {
         isOpen={isEditOpenSubRenew}
         toggle={() => setEditOpenSubRenew(!isEditOpenSubRenew)}
         data={vendorActivePlan}
+        userId={vendorID}
       />
     </>
   );

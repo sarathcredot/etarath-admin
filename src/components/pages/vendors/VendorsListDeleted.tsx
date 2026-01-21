@@ -432,7 +432,7 @@ const VendorsListDeleted = ({
                           <strong>
                             {/* {item?.kycDetails?.business_name || item?.userName} */}
 
-                            {truncate(item?.kycDetails?.business_name || item?.userName)}
+                            {truncate(item?.kycDetails?.business_name || item?.userName , 20)}
                           </strong>
 
                         </td>

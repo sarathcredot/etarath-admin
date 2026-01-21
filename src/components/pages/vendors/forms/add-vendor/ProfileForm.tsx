@@ -11,6 +11,7 @@ import "react-phone-number-input/style.css";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import ImageCropModal from "src/components/features/modals/ImageCropModal";
 import LocationInput from "src/components/common/LocationInput"
+import MapPicker from "src/components/common/MapPicker";
 
 
 
@@ -27,6 +28,11 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
 
   const [cropOpen, setCropOpen] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
+
+  const [location, setLocation] = useState({
+    lat: 25.2048,
+    lng: 55.2708,
+  });
 
   const handleImageSelect = (e: any) => {
     const file: any = e.target.files[0];
@@ -52,6 +58,28 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
     console.log("loc", allCities)
     setLocations(allCities)
   }, [])
+
+  useEffect(() => {
+
+    location.lat = formik?.values.geoLat || 25.2048
+    location.lng = formik?.values.geoLng || 55.2708
+
+  }, [formik])
+
+
+  const setGeoLocation = (value: any) => {
+
+    formik.setFieldValue(
+      "geoLat",
+      value?.lat
+    )
+
+    formik.setFieldValue(
+      "geoLng",
+      value?.lng
+    )
+  }
+
 
   console.log("profile formik values", formik.values);
 
@@ -702,6 +730,15 @@ export default function ProfileForm({ formik, isEdit = false }: any) {
           </Form.Control.Feedback> */}
         </Form.Group>
       </Col>
+
+
+      <Col lg={12} className="px-2 py-1">
+
+        <MapPicker value={location} onChange={(value: any) => { setGeoLocation(value) }} />
+
+      </Col>
+
+
 
       <ImageCropModal
         image={imageSrc}

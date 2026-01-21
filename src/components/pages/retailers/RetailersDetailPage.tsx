@@ -250,6 +250,12 @@ const RetailersDetailPage = () => {
     }
   };
 
+  const openInGoogleMaps = (lat: any, lng: any) => {
+    if (!lat || !lng) return;
+    const url = `https://www.google.com/maps?q=${lat},${lng}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   useEffect(() => {
     if (retailer && retailer?.kyc && retailer?.kyc?.kycStatus === "pending") {
       setVerifyKyc(true);
@@ -343,8 +349,8 @@ const RetailersDetailPage = () => {
                             <img
                               src={generateFilePath(retailer.imgUrl)}
                               alt="profile"
-                              width="50"
-                              height="50"
+                              width="150"
+                              height="150"
                               style={{
                                 objectFit: "cover",
                                 borderRadius: "50%",
@@ -597,6 +603,26 @@ const RetailersDetailPage = () => {
                               </Button>
                             </div>
                           )}
+
+                          {
+                            retailer?.kyc?.geoLat && retailer?.kyc?.geoLng &&
+
+                            <div className="">
+                              <h6>Location in Map </h6>
+                              <Button
+                                variant="default"
+                                onClick={() =>
+                                  openInGoogleMaps(retailer?.kyc?.geoLat, retailer?.kyc?.geoLng)
+                                }
+                              >
+                                <i className="far fa-eye mr-2"></i>
+                                View
+                              </Button>
+                            </div>
+
+                          }
+
+
                         </Col>
                         <Col>
                           <div>
@@ -946,12 +972,12 @@ const RetailersDetailPage = () => {
                           style={{ textTransform: "capitalize", display: "flex", gap: "5px" }}
                         >
                           {formatDate(retailerActivePlan?.plan_end_date)}
-                          <div
+                          {/* <div
                             className="action_btn "
                             onClick={() => { setStatusOpensub(true) }}
                           >
                             <i className="fas fa-pencil-alt"></i>
-                          </div>
+                          </div> */}
 
                         </h5>
                       </div>
@@ -1346,6 +1372,7 @@ const RetailersDetailPage = () => {
         isOpen={isEditOpenSubRenew}
         toggle={() => setEditOpenSubRenew(!isEditOpenSubRenew)}
         data={retailerActivePlan}
+        userId={retailerID}
       />
 
 

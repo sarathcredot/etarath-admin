@@ -18,7 +18,8 @@ type Props = {
   isOpen: boolean;
   toggle: () => void;
   orderId: string;
-  data: any
+  data: any,
+  userId:any
 };
 
 export const durationTypes = [
@@ -32,7 +33,7 @@ export const durationTypes = [
   },
 ];
 
-const SubRenew = ({ isOpen, toggle, orderId, data }: Props) => {
+const SubRenew = ({ isOpen, toggle, orderId, data ,userId }: Props) => {
   // STATES
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
   const [isUploadOpen2, setIsUploadOpen2] = useState<boolean>(false);
@@ -89,7 +90,7 @@ const SubRenew = ({ isOpen, toggle, orderId, data }: Props) => {
       });
       try {
         const res = await purchasePlan({
-          userId: data?.userId,
+          userId:userId,
           planId: values.planId,
           durationType: values.durationType,
         });

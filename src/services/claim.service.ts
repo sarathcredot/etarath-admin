@@ -19,3 +19,28 @@ export const useGetClaimById = (id: string | undefined, enabled: boolean) => {
     enabled: enabled,
   });
 };
+
+
+export const updateClaimStatus = async ({
+  id,
+  status,
+}: {
+  id: any;
+  status: any;
+}) => {
+  if (!id) throw new Error("Id is required");
+  return await axiosAuth.put(`${baseUrl}/${id}/update-status`, { status });
+};
+
+export const useUpdateClaimStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateClaimStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["claim"] });
+      queryClient.invalidateQueries({ queryKey: ["claims"] });
+
+
+    },
+  });
+};
